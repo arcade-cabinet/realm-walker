@@ -6,8 +6,22 @@
 import { DialogueUI, DialogueUIOptions } from '../../ui/DialogueUI';
 import { QuestLogUI, QuestLogUIOptions, QuestInfo } from '../../ui/QuestLogUI';
 import { DialogueManager, DialogueNode } from './DialogueManager';
-import { QuestManager, Quest } from './QuestManager';
+import { QuestManager } from './QuestManager';
 import { StoryCompositor } from './StoryCompositor';
+
+// Define Quest interface inline since it's not exported from QuestManager
+interface Quest {
+  id: string;
+  title: string;
+  description: string;
+  objectives?: Record<string, QuestObjective>;
+  rewards?: string[];
+}
+
+interface QuestObjective {
+  description: string;
+  requiredFlags?: string[];
+}
 
 export interface GameUIManagerOptions {
   container: HTMLElement;
