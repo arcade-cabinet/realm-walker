@@ -64,6 +64,7 @@ export class RealmWalker {
       slots: [] 
     } as SceneData);
     const activeContent = this.storyCompositor.compose(storyData);
+    this.gameCompositor.compose(composedScene, activeContent);
   }
 
   /**
