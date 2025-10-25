@@ -354,7 +354,7 @@ npm run demo:import all
 
 Required:
 - `ANTHROPIC_API_KEY` - Claude Sonnet 4.5 access
-- `OPENAI_API_KEY` - GPT-4.5 and embeddings
+- `OPENAI_API_KEY` - GPT-4 and embeddings
 - `MESHY_API_KEY` - 3D model generation
 
 Optional:

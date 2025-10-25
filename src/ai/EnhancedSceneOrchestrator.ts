@@ -108,7 +108,8 @@ export class EnhancedSceneOrchestrator extends AISceneOrchestrator {
       return ['quest', 'dialogue', 'npc', 'lore', 'location'];
     }
 
-    return types;
+    // Remove duplicates using Set and Array.from for compatibility
+    return Array.from(new Set(types));
   }
 
   /**

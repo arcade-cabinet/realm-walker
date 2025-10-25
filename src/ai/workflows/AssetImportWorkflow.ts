@@ -6,6 +6,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import * as crypto from 'crypto';
 import { AnthropicClient } from '../AnthropicClient';
 import { AssetLibrary } from '../AssetLibrary';
 
@@ -149,7 +150,7 @@ export class AssetImportWorkflow {
     glbFiles: Array<{ fileName: string; path: string }>;
     metadataFiles: Array<{ fileName: string; path: string }>;
   }> {
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    const entries = await fs.promises.readdir(dir, { withFileTypes: true });
 
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
@@ -185,7 +186,7 @@ export class AssetImportWorkflow {
 
     for (const file of files) {
       try {
-        const content = fs.readFileSync(file.path, 'utf-8');
+        const content = await fs.promises.readFile(file.path, 'utf-8');
         results.push({
           fileName: file.fileName,
           path: file.path,
@@ -212,7 +213,7 @@ export class AssetImportWorkflow {
     };
     confidence: number;
   }): Promise<ImportedAsset> {
-    const assetId = `imported_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+    const assetId = `imported_${Date.now()}_${crypto.randomUUID().split('-')[0]}`;
     
     // Generate organized path in target directory
     const category = this.categorizeAsset(correlation.metadata.tags || []);

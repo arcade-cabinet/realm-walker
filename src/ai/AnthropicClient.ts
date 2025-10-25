@@ -137,12 +137,14 @@ Extract all useful game content from the above, maintaining narrative consistenc
     );
 
     try {
-      // Parse JSON from response
-      const jsonMatch = response.content.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
+      // Parse JSON from response using more reliable method
+      const startIdx = response.content.indexOf('{');
+      const endIdx = response.content.lastIndexOf('}');
+      if (startIdx === -1 || endIdx === -1) {
         throw new Error('No JSON found in response');
       }
-      return JSON.parse(jsonMatch[0]);
+      const jsonStr = response.content.substring(startIdx, endIdx + 1);
+      return JSON.parse(jsonStr);
     } catch (error) {
       console.error('Failed to parse narrative analysis:', error);
       console.error('Raw response:', response.content);
@@ -204,11 +206,13 @@ Correlate these files and extract metadata for each GLB.`;
     );
 
     try {
-      const jsonMatch = response.content.match(/\[[\s\S]*\]/);
-      if (!jsonMatch) {
+      const startIdx = response.content.indexOf('[');
+      const endIdx = response.content.lastIndexOf(']');
+      if (startIdx === -1 || endIdx === -1) {
         throw new Error('No JSON array found in response');
       }
-      return JSON.parse(jsonMatch[0]);
+      const jsonStr = response.content.substring(startIdx, endIdx + 1);
+      return JSON.parse(jsonStr);
     } catch (error) {
       console.error('Failed to parse asset correlation:', error);
       console.error('Raw response:', response.content);

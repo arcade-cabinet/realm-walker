@@ -297,8 +297,8 @@ export class AssetLibrary {
   } = {}): AssetRecord[] {
     const { thread, limit = 10 } = options;
 
-    let sql = 'SELECT * FROM assets WHERE metadata LIKE ?';
-    const params: any[] = [`%"contentType":"${contentType}"%`];
+    let sql = "SELECT * FROM assets WHERE json_extract(metadata, '$.contentType') = ?";
+    const params: any[] = [contentType];
 
     if (thread) {
       sql += ' AND tags LIKE ?';

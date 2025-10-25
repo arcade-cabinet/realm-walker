@@ -71,7 +71,9 @@ export class ImportOrchestrator {
 
         try {
           const imported = await assetWorkflow.execute((progress) => {
-            const percent = (progress.processed / progress.total) * 100;
+            const percent = progress.total > 0 
+              ? (progress.processed / progress.total) * 100 
+              : 0;
             onProgress?.(progress.stage, progress.message, percent);
           });
 
