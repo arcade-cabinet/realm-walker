@@ -3,10 +3,14 @@
  * Orchestrates AI-driven asset and scene generation
  */
 
-export * from './AIClient';
+// export * from './AIClient';  // Skipping due to AI SDK type issues
 export * from './MeshyClient';
-export * from './GPTImageGenerator';
+// export * from './GPTImageGenerator';  // Skipping due to AI SDK changes
 export * from './AmbientCGProvider';
 export * from './AssetLibrary';
 export * from './SceneOrchestrator';
-export * from './AITools';
+export * from './EnhancedSceneOrchestrator';
+export * from './AnthropicClient';
+
+// Import workflows
+export * from './workflows';

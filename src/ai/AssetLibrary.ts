@@ -65,6 +65,22 @@ export class AssetLibrary {
       CREATE INDEX IF NOT EXISTS idx_usage ON assets(usage_count DESC);
     `);
 
+    // Create narrative content tables
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS narrative_content (
+        id TEXT PRIMARY KEY,
+        content_type TEXT NOT NULL,
+        thread TEXT,
+        data TEXT NOT NULL,
+        embedding BLOB NOT NULL,
+        tags TEXT,
+        created INTEGER NOT NULL
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_content_type ON narrative_content(content_type);
+      CREATE INDEX IF NOT EXISTS idx_thread ON narrative_content(thread);
+    `);
+
     console.log('Asset library database initialized');
   }
 
@@ -270,6 +286,68 @@ export class AssetLibrary {
       totalUsage: usage.total || 0,
       averageUsage: usage.avg || 0
     };
+  }
+
+  /**
+   * Get assets by content type (for imported narrative content)
+   */
+  getAssetsByContentType(contentType: string, options: {
+    thread?: string;
+    limit?: number;
+  } = {}): AssetRecord[] {
+    const { thread, limit = 10 } = options;
+
+    let sql = "SELECT * FROM assets WHERE json_extract(metadata, '$.contentType') = ?";
+    const params: any[] = [contentType];
+
+    if (thread) {
+      sql += ' AND tags LIKE ?';
+      params.push(`%thread_${thread}%`);
+    }
+
+    sql += ' ORDER BY created DESC LIMIT ?';
+    params.push(limit);
+
+    const stmt = this.db.prepare(sql);
+    const rows = stmt.all(...params) as any[];
+
+    return rows.map(row => ({
+      id: row.id,
+      type: row.type,
+      prompt: row.prompt,
+      description: row.description,
+      filePath: row.file_path,
+      tags: JSON.parse(row.tags),
+      metadata: JSON.parse(row.metadata),
+      embedding: Array.from(new Float32Array(row.embedding.buffer)),
+      created: row.created,
+      usage_count: row.usage_count
+    }));
+  }
+
+  /**
+   * Get assets by tag
+   */
+  getAssetsByTag(tag: string, limit: number = 10): AssetRecord[] {
+    const rows = this.db.prepare(`
+      SELECT * FROM assets 
+      WHERE tags LIKE ? 
+      ORDER BY usage_count DESC 
+      LIMIT ?
+    `).all(`%"${tag}"%`, limit) as any[];
+
+    return rows.map(row => ({
+      id: row.id,
+      type: row.type,
+      prompt: row.prompt,
+      description: row.description,
+      filePath: row.file_path,
+      tags: JSON.parse(row.tags),
+      metadata: JSON.parse(row.metadata),
+      embedding: Array.from(new Float32Array(row.embedding.buffer)),
+      created: row.created,
+      usage_count: row.usage_count
+    }));
   }
 
   /**

@@ -2,6 +2,31 @@
 
 A ThreeJS TypeScript/Node.js adventure game engine with a three-tier compositor architecture.
 
+## 🆕 New: Content Import Workflows
+
+Import 3D assets and narrative content into your game using AI-powered workflows:
+
+```bash
+# Install and setup
+npm install
+export ANTHROPIC_API_KEY="your-key"
+export OPENAI_API_KEY="your-key"
+
+# Import assets and narrative
+npm run demo:import assets     # Import GLB files with AI correlation
+npm run demo:import narrative  # Extract quests, NPCs, dialogue, lore
+npm run demo:import enhanced   # Generate scenes with imported content
+```
+
+**Features:**
+- 🤖 AI-powered asset correlation using Claude Sonnet 4.5
+- 📚 Extract game content from any text format
+- 🔍 Semantic search via embeddings database
+- 🎨 Automatic organization and cataloging
+- 🎭 Integration with scene generation
+
+See [IMPORT_WORKFLOWS.md](./IMPORT_WORKFLOWS.md) for complete guide.
+
 ## Architecture
 
 The engine uses strict layer separation with three compositors:
@@ -156,6 +181,42 @@ All TypeScript types are exported from the main module:
 - `StoryData`, `SlotContent`, `QuestFlags`
 - `ComposedScene`, `ComposedStory`, `GameViewport`
 
+## Content Import 🆕
+
+Import external content with AI-powered workflows:
+
+### Asset Import
+```typescript
+import { ImportOrchestrator, AnthropicClient, AssetLibrary } from './src/ai';
+
+const orchestrator = new ImportOrchestrator({
+  assetLibrary: new AssetLibrary('./data/asset-library.db'),
+  anthropicClient: new AnthropicClient({ apiKey: process.env.ANTHROPIC_API_KEY }),
+  assetDirectory: './assets',
+  storyBiblePath: './docs/design/world-lore.md'
+});
+
+// Import GLB files with metadata correlation
+const result = await orchestrator.executeImport({
+  type: 'assets',
+  sourceDirectory: './imports/chapter1'
+});
+```
+
+### Narrative Import
+```typescript
+// Extract quests, NPCs, dialogue, lore from any text format
+const result = await orchestrator.executeImport({
+  type: 'narrative',
+  sourceDirectory: './imports/stories',
+  options: {
+    outputDirectory: './extracted-content'
+  }
+});
+```
+
+See [IMPORT_WORKFLOWS.md](./IMPORT_WORKFLOWS.md) and [Content Import Architecture](./docs/architecture/content-import.md) for details.
+
 ## Build
 
 ```bash
@@ -167,10 +228,9 @@ Compiles TypeScript to JavaScript in the `dist/` directory.
 ## Development
 
 ```bash
-npm run dev
+npm run dev        # Run main demo
+npm run demo:import # Run import workflows demo
 ```
-
-Runs the demo in development mode with ts-node.
 
 ## Layer Separation Guarantees
 
@@ -178,6 +238,13 @@ Runs the demo in development mode with ts-node.
 - **StoryCompositor** has no imports from presentation/Three.js
 - **GameCompositor** is the only layer that knows about Three.js rendering
 - Data flows one-way: Scene → Story → Game
+
+## Documentation
+
+- [Import Workflows Guide](./IMPORT_WORKFLOWS.md) 🆕
+- [Implementation Summary](./IMPLEMENTATION_SUMMARY.md) 🆕
+- [Architecture Documentation](./docs/architecture/)
+- [Content Import Architecture](./docs/architecture/content-import.md) 🆕
 
 ## License
 
