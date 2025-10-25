@@ -33,7 +33,9 @@ export class RWMDParser {
       slots: []
     };
 
-    const metadata: Record<string, any> = {};
+    const metadata: Record<string, any> = {
+      grid: { width: 10, height: 10 } // Default grid size
+    };
     
     let currentSection: 'scene' | 'geometry' | 'slot' | null = null;
     let currentGeometry: Partial<SceneGeometry> | null = null;
@@ -79,6 +81,18 @@ export class RWMDParser {
         if (currentSection === 'scene') {
           if (key === 'name') {
             scene.name = value;
+          } else if (key === 'grid') {
+            // Parse grid dimensions: "24x16" or "24 x 16"
+            const gridMatch = value.match(/(\d+)\s*[x×]\s*(\d+)/i);
+            if (gridMatch) {
+              const width = parseInt(gridMatch[1], 10);
+              const height = parseInt(gridMatch[2], 10);
+              if (!isNaN(width) && !isNaN(height)) {
+                metadata.grid = { width, height };
+              }
+            }
+          } else if (key === 'atmosphere' || key === 'tags' || key === 'author' || key === 'version') {
+            metadata[key] = value;
           } else {
             metadata[key] = value;
           }

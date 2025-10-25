@@ -1,0 +1,100 @@
+{
+  "id": "merchant_wares",
+  "title": "Merchant's Wares",
+  "nodes": [
+    {
+      "id": "start",
+      "speaker": "merchant",
+      "text": "Welcome, welcome! Best wares in all of Ashenvale! What catches your eye today?",
+      "choices": [
+        {
+          "text": "What do you have for sale?",
+          "nextNode": "show_wares"
+        },
+        {
+          "text": "Tell me about yourself.",
+          "nextNode": "about_merchant"
+        },
+        {
+          "text": "Nothing today, thanks.",
+          "nextNode": "end"
+        }
+      ]
+    },
+    {
+      "id": "show_wares",
+      "speaker": "merchant",
+      "text": "Ah, interested are we? I've got healing salves, mysterious maps, and the finest travel supplies. Of course, everything has its price...",
+      "choices": [
+        {
+          "text": "I'm just browsing for now.",
+          "nextNode": "browsing"
+        },
+        {
+          "text": "Actually, I'm looking for information.",
+          "nextNode": "information"
+        }
+      ]
+    },
+    {
+      "id": "about_merchant",
+      "speaker": "merchant",
+      "text": "Name's Garrick. Been trading these roads for twenty years. Seen a lot, heard more. If you ever need to know something... well, information is a commodity too, you know.",
+      "choices": [
+        {
+          "text": "I could use some information.",
+          "nextNode": "information"
+        },
+        {
+          "text": "Thanks for the chat.",
+          "nextNode": "end"
+        }
+      ]
+    },
+    {
+      "id": "browsing",
+      "speaker": "merchant",
+      "text": "Take your time, take your time. But remember, the best deals don't last forever!",
+      "choices": [
+        {
+          "text": "I'll keep that in mind.",
+          "nextNode": "end"
+        }
+      ]
+    },
+    {
+      "id": "information",
+      "speaker": "merchant",
+      "text": "Information, eh? Well, I've heard whispers about the Shadow Grove. Strange lights at night, eerie sounds. Some say it's cursed. Others say there's treasure to be found there.",
+      "choices": [
+        {
+          "text": "Interesting. Tell me more about the Shadow Grove.",
+          "nextNode": "shadow_grove_info",
+          "requiresFlags": []
+        },
+        {
+          "text": "Thanks for the tip.",
+          "nextNode": "end"
+        }
+      ]
+    },
+    {
+      "id": "shadow_grove_info",
+      "speaker": "merchant",
+      "text": "The Shadow Grove lies to the east, past the old mill. Used to be a sacred place, but now? Now it's home to things that shouldn't exist. If you're planning to go there, you'll need more than luck.",
+      "choices": [
+        {
+          "text": "I'll be careful. Thanks.",
+          "nextNode": "end",
+          "setFlags": ["merchant_info_shadow_grove"]
+        }
+      ]
+    },
+    {
+      "id": "end",
+      "speaker": "merchant",
+      "text": "Safe travels, friend!",
+      "choices": []
+    }
+  ]
+}

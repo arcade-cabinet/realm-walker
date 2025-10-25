@@ -61,6 +61,11 @@ export class SceneCompositor {
       1.0
     );
 
+    // Mark walls as non-walkable
+    if (template.walls) {
+      this.markWallsNonWalkable(gridSystem, template.walls, template.grid);
+    }
+
     // Build floor
     const floorGeometry = new THREE.PlaneGeometry(
       template.grid.width,
@@ -92,18 +97,23 @@ export class SceneCompositor {
     if (template.slots.npcs) {
       template.slots.npcs.forEach(npc => {
         slots.npcs.set(npc.id, npc.position);
+        // Mark NPC positions as non-walkable
+        gridSystem.setWalkable(npc.position, false);
       });
     }
 
     if (template.slots.props) {
       template.slots.props.forEach(prop => {
         slots.props.set(prop.id, prop.position);
+        // Mark prop positions as non-walkable
+        gridSystem.setWalkable(prop.position, false);
       });
     }
 
     if (template.slots.doors) {
       template.slots.doors.forEach(door => {
         slots.doors.set(door.id, door.position);
+        // Doors are walkable (you can walk through them)
       });
     }
 
@@ -187,6 +197,34 @@ export class SceneCompositor {
     mesh.position.set(...position);
 
     return mesh;
+  }
+
+  /**
+   * Mark wall tiles as non-walkable in the grid system
+   */
+  private markWallsNonWalkable(gridSystem: GridSystemImpl, walls: any[], grid: { width: number; height: number }): void {
+    for (const wall of walls) {
+      const side = wall.side;
+      
+      // Mark entire wall edge as non-walkable
+      if (side === 'north') {
+        for (let x = 0; x < grid.width; x++) {
+          gridSystem.setWalkable([x, 0], false);
+        }
+      } else if (side === 'south') {
+        for (let x = 0; x < grid.width; x++) {
+          gridSystem.setWalkable([x, grid.height - 1], false);
+        }
+      } else if (side === 'east') {
+        for (let y = 0; y < grid.height; y++) {
+          gridSystem.setWalkable([grid.width - 1, y], false);
+        }
+      } else if (side === 'west') {
+        for (let y = 0; y < grid.height; y++) {
+          gridSystem.setWalkable([0, y], false);
+        }
+      }
+    }
   }
 
   /**
