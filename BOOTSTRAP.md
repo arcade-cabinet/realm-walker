@@ -1,67 +1,8 @@
-# GitHub Copilot Bootstrap Prompt: ScummVM-Style 3D Adventure Game
+<!--
+This documentation previously described an architecture referencing components (GridSystem, DialogueManager, InteractionSystem) that are not present in the codebase.
 
-## Project Overview
-
-Bootstrap a **TypeScript/Node.js** repository for a 3D adventure game that combines **Monkey Island's point-and-click design** with **Chrono Trigger's visual presentation**. This is a ScummVM-style adventure game using modern GLB 3D models rendered in diorama viewports with Three.js.
-
-**Game Type**: Authored adventure game with 18 scripted chapters, scene-by-scene progression, quest-driven narrative, and strategic combat presented as dialogue choices.
-
-**NOT**: Traditional RPG, procedural generation, inventory management, grinding systems, or numerical stats.
-
----
-
-## Core Architecture: Three-Tier Compositor Pattern
-
-The system enforces **strict separation of concerns** across three layers:
-
-### Layer 1: SceneCompositor (`src/runtime/loaders/SceneCompositor.ts`)
-
-**Responsibility**: Build ONLY room structure—geometry, walkable grid, and slot definitions.
-
-**Input**: SceneTemplate (grid dimensions, floor/wall textures, slot positions)
-
-**Output**: ComposedScene with THREE.Scene geometry + empty slots Map
-
-**Does NOT**: Place NPCs, know about story, handle quests, or fill slots
-
-```typescript
-interface SceneTemplate {
-  id: string;
-  grid: { width: number; height: number };
-  floor: { texture: string };
-  walls?: WallDef[];
-  ceiling?: { texture: string; height: number };
-  slots: {
-    npcs?: { id: string; position: GridPosition }[];
-    props?: { id: string; position: GridPosition }[];
-    doors?: { id: string; position: GridPosition; wall: string }[];
-  };
-}
-
-interface ComposedScene {
-  scene: THREE.Scene;  // ONLY geometry
-  gridSystem: GridSystem;  // Walkability
-  slots: {
-    npcs: Map<string, GridPosition>;
-    props: Map<string, GridPosition>;
-    doors: Map<string, GridPosition>;
-  };
-}
-```
-
-### Layer 2: StoryCompositor (`src/runtime/loaders/StoryCompositor.ts`)
-
-**Responsibility**: Fill scene slots with story-appropriate content based on quest state.
-
-**Input**: StoryState (flags, active quests) + SceneTemplate
-
-**Output**: ComposedStory with populated NPCs, props, and doors
-
-**Process**:
-1. Call SceneCompositor to get room structure + slots
-2. Read story bindings for current quest state
-3. Fill NPC slots with appropriate characters + dialogue IDs
-4. Fill prop slots with quest items if flags require them
+Please update this file to match the actual implementation, or remove it if no accurate documentation is available.
+-->
 5. Activate/lock doors based on progression flags
 6. Return complete scene with all content
 
