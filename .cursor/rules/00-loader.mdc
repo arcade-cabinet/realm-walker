@@ -1,0 +1,72 @@
+---
+alwaysApply: true
+---
+
+## Configuration Hierarchy
+
+**MUST READ FIRST**: Always read `.clinerules` as the primary configuration file. This file extends and aligns with those core principles.
+
+## Documentation-Driven Development (Primary Source of Truth)
+
+### Documentation Authority
+- **docs/** folder is the SINGLE SOURCE OF TRUTH for all project decisions
+- **FROZEN** documents are authoritative and must be followed exactly
+- **Versioned** documents use semantic versioning (major.minor.patch)
+- When making plans or decisions, ALWAYS reference and update relevant docs
+- Only halt autonomous work when docs are missing, conflicting, or clarification needed
+
+### Documentation Standards
+- **Version Headers**: All critical docs must have version at top (e.g., "**Version**: 1.0 **FROZEN**")
+- **Frozen Documents**: Cannot be changed without explicit user approval and version bump
+- **Version Bumping**: Use discretion for major/minor/patch based on scope of changes
+- **Cross-References**: Maintain links between related documents
+- **Status Tracking**: Document current status and last updated dates
+
+### Key Documentation Categories
+- **Brand Identity**: Visual style, color palettes, typography (BRAND_IDENTITY.md)
+- **World Lore**: Narrative foundation, faction lore, scenario context (WORLD_LORE.md)
+- **Architecture**: Technical systems, data schemas, component relationships (core/ARCHITECTURE.md)
+- **Design Pillars**: Core principles guiding all decisions (vision/DESIGN_PILLARS.md)
+- **Asset Requirements**: What needs to be built, priorities, specifications (assets/*.md)
+- **Scenario Specifications**: Game content, mechanics, progression (content/*.md)
+
+## Continuous Operation Mode (YOLO Mode)
+
+### Execution Pattern
+- **Default mode**: ACT immediately, implement real functionality  
+- **Large, cohesive changes** preferred over small atomic steps
+- Make independent decisions on refactors, dependency changes, deletions
+- Apply each change immediately and proceed
+- Stop only for true hard blockers
+
+### Continuous Flow Protocol
+1. **Read Memory Bank** for full context
+2. **Read relevant docs** before making any decisions
+3. **Execute immediately** - no planning phases unless explicitly requested
+4. **Update docs** when making significant changes or discoveries
+5. **Document changes** in Memory Bank when significant
+6. **Checkpoint frequently** - every ~10-15 min or at feature boundaries
+7. **Update context** at session end
+
+### Change Management (Per .clinerules)
+- **Deletions**: Checkpoint first, then delete unused code directly
+- **Refactors**: Update all affected files in same change
+- **Dependencies**: Add/remove and update code in one operation
+- **Documentation**: Update relevant docs with version bumps when making changes
+
+### Override Behaviors  
+- "Plan" means execute unless exactly "Plan only" is specified
+- Show progress through code, not explanations
+- Never generate placeholders - implement real functionality
+- Bias toward action over discussion
+- **Always defer to docs** when making decisions about codebase, brand, lore, architecture
+
+## Effective Handoff Strategy
+This configuration ensures seamless continuation across sessions by:
+1. Always reading complete Memory Bank context first
+2. **Always reading relevant documentation** before making decisions
+3. Following established architectural patterns from `.clinerules`  
+4. Maintaining continuous execution momentum
+5. Documenting reality in Memory Bank for next session
+6. Strict adherence to coding standards for consistency
+7. **Updating documentation** when making significant changes
