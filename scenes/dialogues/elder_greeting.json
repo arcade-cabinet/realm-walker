@@ -1,0 +1,133 @@
+{
+  "id": "elder_greeting",
+  "title": "Village Elder Greeting",
+  "nodes": [
+    {
+      "id": "start",
+      "speaker": "elder",
+      "text": "Welcome, traveler. I am Aldric, the village elder. What brings you to our humble square?",
+      "choices": [
+        {
+          "text": "I seek the Guardian of the Crimson Palace.",
+          "nextNode": "seek_guardian",
+          "setFlags": ["talked_to_elder"]
+        },
+        {
+          "text": "Just passing through.",
+          "nextNode": "passing_through"
+        },
+        {
+          "text": "What can you tell me about this place?",
+          "nextNode": "about_village"
+        }
+      ]
+    },
+    {
+      "id": "seek_guardian",
+      "speaker": "elder",
+      "text": "Ah, the Guardian! A noble quest indeed. But the path to the Crimson Palace is fraught with danger. You must first prove your worth by completing the Trial of Shadows.",
+      "choices": [
+        {
+          "text": "I'm ready for the trial.",
+          "nextNode": "accept_quest",
+          "setFlags": ["quest_trial_accepted"],
+          "requiresFlags": []
+        },
+        {
+          "text": "Tell me more about this trial.",
+          "nextNode": "trial_details"
+        },
+        {
+          "text": "Perhaps another time.",
+          "nextNode": "maybe_later"
+        }
+      ]
+    },
+    {
+      "id": "accept_quest",
+      "speaker": "elder",
+      "text": "Excellent! The trial awaits in the Shadow Grove to the east. Return to me when you have completed it, and I shall grant you passage to the Crimson Palace.",
+      "choices": [
+        {
+          "text": "I will return victorious.",
+          "nextNode": "end",
+          "setFlags": ["quest_trial_active"]
+        }
+      ]
+    },
+    {
+      "id": "trial_details",
+      "speaker": "elder",
+      "text": "The Trial of Shadows tests your courage, wit, and resolve. Many have entered the Shadow Grove, but few have returned. You must face three challenges: the Riddle of the Ancients, the Combat Trial, and the Test of Sacrifice.",
+      "choices": [
+        {
+          "text": "I accept the challenge.",
+          "nextNode": "accept_quest",
+          "setFlags": ["quest_trial_accepted"]
+        },
+        {
+          "text": "This sounds too dangerous for me.",
+          "nextNode": "maybe_later"
+        }
+      ]
+    },
+    {
+      "id": "maybe_later",
+      "speaker": "elder",
+      "text": "I understand your hesitation. The quest will wait for you when you are ready. Come speak with me again when you wish to begin.",
+      "choices": [
+        {
+          "text": "Thank you for your patience.",
+          "nextNode": "end"
+        }
+      ]
+    },
+    {
+      "id": "passing_through",
+      "speaker": "elder",
+      "text": "Safe travels, then. Should you need anything, our village is always open to weary travelers.",
+      "choices": [
+        {
+          "text": "Thank you.",
+          "nextNode": "end"
+        }
+      ]
+    },
+    {
+      "id": "about_village",
+      "speaker": "elder",
+      "text": "This is the Village of Ashenvale, a peaceful settlement at the edge of the Crimson Realm. We've prospered here for generations, though dark times loom on the horizon.",
+      "choices": [
+        {
+          "text": "What dark times?",
+          "nextNode": "dark_times"
+        },
+        {
+          "text": "I see. I should be going.",
+          "nextNode": "end"
+        }
+      ]
+    },
+    {
+      "id": "dark_times",
+      "speaker": "elder",
+      "text": "Strange creatures have been spotted in the Shadow Grove. The Guardian grows weak, and without their protection, we fear the worst. That is why we desperately need someone brave enough to seek them out.",
+      "choices": [
+        {
+          "text": "Then I shall help you.",
+          "nextNode": "seek_guardian"
+        },
+        {
+          "text": "I wish you luck with that.",
+          "nextNode": "end"
+        }
+      ]
+    },
+    {
+      "id": "end",
+      "speaker": "elder",
+      "text": "May fortune favor you, traveler.",
+      "choices": []
+    }
+  ]
+}

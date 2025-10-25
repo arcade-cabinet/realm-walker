@@ -1,0 +1,199 @@
+/**
+ * RWMD Parser - Parses Realm Walker Markup Description files to JSON
+ * 
+ * RWMD format is a simple text format for defining scenes:
+ * 
+ * @scene <id>
+ * name: <scene name>
+ * 
+ * @geometry <type>
+ * dimensions: <comma-separated numbers>
+ * position: <x, y, z>
+ * color: <hex color>
+ * 
+ * @slot <id>
+ * position: <x, y, z>
+ * rotation: <x, y, z> (optional)
+ * scale: <x, y, z> (optional)
+ */
+
+import { ParsedScene, SceneData, SceneGeometry, SceneSlot } from '../../types';
+
+export class RWMDParser {
+  /**
+   * Parse RWMD text content to JSON scene data
+   */
+  parse(content: string): ParsedScene {
+    const lines = content.split('\n').map(line => line.trim()).filter(line => line && !line.startsWith('#'));
+    
+    const scene: SceneData = {
+      id: '',
+      name: '',
+      geometry: [],
+      slots: []
+    };
+
+    const metadata: Record<string, any> = {
+      grid: { width: 10, height: 10 } // Default grid size
+    };
+    
+    let currentSection: 'scene' | 'geometry' | 'slot' | null = null;
+    let currentGeometry: Partial<SceneGeometry> | null = null;
+    let currentSlot: Partial<SceneSlot> | null = null;
+
+    for (const line of lines) {
+      // Scene definition
+      if (line.startsWith('@scene')) {
+        currentSection = 'scene';
+        scene.id = line.split(' ')[1] || 'default';
+        continue;
+      }
+
+      // Geometry definition
+      if (line.startsWith('@geometry')) {
+        if (currentGeometry) {
+          scene.geometry.push(currentGeometry as SceneGeometry);
+        }
+        currentSection = 'geometry';
+        const type = line.split(' ')[1] as SceneGeometry['type'];
+        currentGeometry = { type, dimensions: [], position: [0, 0, 0] };
+        continue;
+      }
+
+      // Slot definition
+      if (line.startsWith('@slot')) {
+        if (currentGeometry) {
+          scene.geometry.push(currentGeometry as SceneGeometry);
+          currentGeometry = null;
+        }
+        if (currentSlot) {
+          scene.slots.push(currentSlot as SceneSlot);
+        }
+        currentSection = 'slot';
+        currentSlot = { id: line.split(' ')[1] || 'default', position: [0, 0, 0] };
+        continue;
+      }
+
+      // Parse properties
+      if (line.includes(':')) {
+        const [key, value] = line.split(':').map(s => s.trim());
+        
+        if (currentSection === 'scene') {
+          if (key === 'name') {
+            scene.name = value;
+          } else if (key === 'grid') {
+            // Parse grid dimensions: "24x16" or "24 x 16"
+            const gridMatch = value.match(/(\d+)\s*[x×]\s*(\d+)/i);
+            if (gridMatch) {
+              const width = parseInt(gridMatch[1], 10);
+              const height = parseInt(gridMatch[2], 10);
+              if (!isNaN(width) && !isNaN(height)) {
+                metadata.grid = { width, height };
+              }
+            }
+          } else if (key === 'atmosphere' || key === 'tags' || key === 'author' || key === 'version') {
+            metadata[key] = value;
+          } else {
+            metadata[key] = value;
+          }
+        } else if (currentSection === 'geometry' && currentGeometry) {
+          this.parseGeometryProperty(currentGeometry, key, value);
+        } else if (currentSection === 'slot' && currentSlot) {
+          this.parseSlotProperty(currentSlot, key, value);
+        }
+      }
+    }
+
+    // Add final items
+    if (currentGeometry) {
+      scene.geometry.push(currentGeometry as SceneGeometry);
+    }
+    if (currentSlot) {
+      scene.slots.push(currentSlot as SceneSlot);
+    }
+
+    return {
+      scene,
+      metadata: Object.keys(metadata).length > 0 ? metadata : undefined
+    };
+  }
+
+  private parseGeometryProperty(geometry: Partial<SceneGeometry>, key: string, value: string): void {
+    if (key === 'dimensions') {
+      const dims = value.split(',').map(v => {
+        const num = parseFloat(v.trim());
+        if (isNaN(num)) {
+          throw new Error(`Invalid dimension value: "${v.trim()}" (expected a number)`);
+        }
+        return num;
+      });
+      geometry.dimensions = dims;
+    } else if (key === 'position') {
+      const pos = value.split(',').map(v => {
+        const num = parseFloat(v.trim());
+        if (isNaN(num)) {
+          throw new Error(`Invalid position value: "${v.trim()}" (expected a number)`);
+        }
+        return num;
+      });
+      if (pos.length !== 3) {
+        throw new Error(`Position must have exactly 3 values (x, y, z), got ${pos.length}`);
+      }
+      geometry.position = pos as [number, number, number];
+    } else if (key === 'color') {
+      geometry.color = value;
+    }
+  }
+
+  private parseSlotProperty(slot: Partial<SceneSlot>, key: string, value: string): void {
+    if (key === 'position') {
+      const pos = value.split(',').map(v => {
+        const num = parseFloat(v.trim());
+        if (isNaN(num)) {
+          throw new Error(`Invalid position value: "${v.trim()}" (expected a number)`);
+        }
+        return num;
+      });
+      if (pos.length !== 3) {
+        throw new Error(`Position must have exactly 3 values (x, y, z), got ${pos.length}`);
+      }
+      slot.position = pos as [number, number, number];
+    } else if (key === 'rotation') {
+      const rot = value.split(',').map(v => {
+        const num = parseFloat(v.trim());
+        if (isNaN(num)) {
+          throw new Error(`Invalid rotation value: "${v.trim()}" (expected a number)`);
+        }
+        return num;
+      });
+      if (rot.length !== 3) {
+        throw new Error(`Rotation must have exactly 3 values (x, y, z), got ${rot.length}`);
+      }
+      slot.rotation = rot as [number, number, number];
+    } else if (key === 'scale') {
+      const scale = value.split(',').map(v => {
+        const num = parseFloat(v.trim());
+        if (isNaN(num)) {
+          throw new Error(`Invalid scale value: "${v.trim()}" (expected a number)`);
+        }
+        return num;
+      });
+      if (scale.length !== 3) {
+        throw new Error(`Scale must have exactly 3 values (x, y, z), got ${scale.length}`);
+      }
+      slot.scale = scale as [number, number, number];
+    }
+  }
+
+  /**
+   * Parse RWMD file from string content
+   */
+  static parseString(content: string): ParsedScene {
+    try {
+      const parser = new RWMDParser();
+      return parser.parse(content);
+    } catch (error) {
+      throw new Error(`RWMD parsing failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+}

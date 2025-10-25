@@ -1,0 +1,31 @@
+{
+  "scene_id": "village_square",
+  "npc_placements": {
+    "elder": {
+      "npc_id": "village_elder",
+      "dialogue": "elder_greeting",
+      "quest": "seek_guardian"
+    },
+    "merchant": {
+      "npc_id": "traveling_merchant",
+      "dialogue": "merchant_wares"
+    }
+  },
+  "prop_placements": {
+    "fountain": {
+      "prop_id": "decorative_fountain",
+      "interactive": false
+    },
+    "market_stall": {
+      "prop_id": "merchant_stall",
+      "interactive": true
+    }
+  },
+  "door_states": {
+    "forest_exit": {
+      "target": "crimson_palace",
+      "locked": false,
+      "requires_flags": ["seek_guardian"]
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "tutorial_story",
+  "sceneId": "starting_room",
+  "initialFlags": {
+    "game_started": true,
+    "chest_opened": false,
+    "talked_to_guide": false
+  },
+  "slotContents": [
+    {
+      "slotId": "chest",
+      "modelPath": "models/chest.glb",
+      "requiredFlags": []
+    },
+    {
+      "slotId": "door",
+      "modelPath": "models/door.glb",
+      "requiredFlags": ["chest_opened"]
+    },
+    {
+      "slotId": "npc_guide",
+      "modelPath": "models/npc_guide.glb",
+      "requiredFlags": ["game_started"]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+scene: village_square
+grid: 24x16
+atmosphere: peaceful, medieval
+
+# Floor and walls
+floor: @textures/cobblestone
+walls: @textures/stone_brick height:3.0
+
+# Props
+props:
+  - fountain @props/fountain pos:(12, 12, 0)
+  - market_stall @props/market_stall pos:(6, 6, 0)
+
+# NPCs
+npcs:
+  - elder pos:(12, 8) dialogue:elder_greeting
+  - merchant pos:(6, 4) dialogue:merchant_wares
+
+# Portals
+portals:
+  - forest_exit pos:(12, 0) target:crimson_palace requires:seek_guardian
