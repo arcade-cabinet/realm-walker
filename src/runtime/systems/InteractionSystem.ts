@@ -97,7 +97,7 @@ export class InteractionSystem {
   private gridDistance(a: GridPosition, b: GridPosition): number {
     const dx = Math.abs(a[0] - b[0]);
     const dy = Math.abs(a[1] - b[1]);
-    return Math.sqrt(dx * dx + dy * dy);
+    return dx + dy; // Use Manhattan distance for grid
   }
 
   /**
