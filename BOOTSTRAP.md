@@ -1,8 +1,88 @@
-<!--
-This documentation previously described an architecture referencing components (GridSystem, DialogueManager, InteractionSystem) that are not present in the codebase.
+# GitHub Copilot Bootstrap: ScummVM-Style 3D Adventure Game
 
-Please update this file to match the actual implementation, or remove it if no accurate documentation is available.
--->
+## Project Overview
+
+This repository implements a **TypeScript/Node.js** 3D adventure game engine combining **Monkey Island's point-and-click design** with **Chrono Trigger's visual presentation**. It uses modern GLB 3D models rendered in diorama viewports with Three.js.
+
+**Game Type**: Authored adventure game with scripted chapters, scene-by-scene progression, quest-driven narrative, and strategic combat presented as dialogue choices.
+
+**NOT**: Traditional RPG, procedural generation, inventory management, grinding systems, or numerical stats.
+
+---
+
+## Core Architecture: Three-Tier Compositor Pattern
+
+The system enforces **strict separation of concerns** across three layers:
+
+### Layer 1: SceneCompositor (`src/runtime/systems/SceneCompositor.ts`)
+
+**Responsibility**: Build ONLY room structure—geometry, walkable grid, and slot definitions.
+
+**Input**: SceneTemplate (grid dimensions, floor/wall textures, slot positions) or legacy SceneData
+
+**Output**: ComposedScene with THREE.Scene geometry + empty categorized slots (NPCs/props/doors)
+
+**Does NOT**: Place NPCs, know about story, handle quests, or fill slots
+
+```typescript
+interface SceneTemplate {
+  id: string;
+  grid: { width: number; height: number };
+  floor: { texture: string };
+  walls?: WallDef[];
+  ceiling?: { texture: string; height: number };
+  slots: {
+    npcs?: { id: string; position: GridPosition }[];
+    props?: { id: string; position: GridPosition }[];
+    doors?: { id: string; position: GridPosition; wall: string }[];
+  };
+}
+
+interface ComposedScene {
+  scene: THREE.Scene;  // ONLY geometry
+  gridSystem: GridSystem;  // Walkability
+  slots: {
+    npcs: Map<string, GridPosition>;
+    props: Map<string, GridPosition>;
+    doors: Map<string, GridPosition>;
+  };
+}
+```
+
+### Layer 2: StoryCompositor (`src/runtime/systems/StoryCompositor.ts`)
+
+**Responsibility**: Fill scene slots with story-appropriate content based on quest state.
+
+**Input**: StoryData (slot contents with flag requirements)
+
+**Output**: ActiveContent array (which slots to fill based on current flags)
+
+**Process**:
+1. Read story data slot contents
+2. Evaluate flag requirements for each content
+3. Filter to active content based on current quest flags
+4. Return list of slot IDs and their content paths
+5. Activate/lock doors based on progression flags
+6. Return complete scene with all content
+
+**Important**: StoryCompositor does NOT create Three.js meshes - it only determines which content should be active.
+
+```typescript
+interface StoryData {
+  id: string;
+  sceneId: string;
+  slotContents: SlotContent[];
+}
+
+interface SlotContent {
+  slotId: string;
+  modelPath: string;
+  requiredFlags?: string[];
+  position?: [number, number, number];
+  rotation?: [number, number, number];
+  scale?: [number, number, number];
+}
+```
 5. Activate/lock doors based on progression flags
 6. Return complete scene with all content
 

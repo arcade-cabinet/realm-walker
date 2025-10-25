@@ -71,18 +71,18 @@ export class GridSystemImpl implements GridSystem {
       return null;
     }
 
-    interface Node {
+    interface PathNode {
       pos: GridPosition;
       g: number;  // Cost from start
       h: number;  // Heuristic to end
       f: number;  // Total cost
-      parent: Node | null;
+      parent: PathNode | null;
     }
 
-    const openSet: Node[] = [];
+    const openSet: PathNode[] = [];
     const closedSet = new Set<string>();
     
-    const startNode: Node = {
+    const startNode: PathNode = {
       pos: start,
       g: 0,
       h: this.heuristic(start, end),
@@ -121,7 +121,7 @@ export class GridSystemImpl implements GridSystem {
         const h = this.heuristic(neighborPos, end);
         const f = g + h;
 
-        const neighbor: Node = {
+        const neighbor: PathNode = {
           pos: neighborPos,
           g,
           h,
@@ -169,9 +169,7 @@ export class GridSystemImpl implements GridSystem {
   /**
    * Reconstruct path from end node
    */
-  private reconstructPath(endNode: Node): GridPosition[] {
-    const path: GridPosition[] = [];
-    let current: Node | null = endNode;
+  private reconstructPath(endNode: { pos: GridPosition; parent: any }): GridPosition[] {
     const path: GridPosition[] = [];
     let current: any = endNode;
     
