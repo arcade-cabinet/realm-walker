@@ -169,7 +169,9 @@ export class GridSystemImpl implements GridSystem {
   /**
    * Reconstruct path from end node
    */
-  private reconstructPath(endNode: { pos: GridPosition; parent: any | null }): GridPosition[] {
+  private reconstructPath(endNode: Node): GridPosition[] {
+    const path: GridPosition[] = [];
+    let current: Node | null = endNode;
     const path: GridPosition[] = [];
     let current: any = endNode;
     
