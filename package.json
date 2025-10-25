@@ -1,0 +1,27 @@
+{
+  "name": "realm-walker-story",
+  "version": "1.0.0",
+  "description": "ThreeJS TS/Node.js adventure game with three-tier compositor architecture",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/demo.ts",
+    "demo": "ts-node src/demo.ts",
+    "dev": "ts-node src/demo.ts",
+    "clean": "rm -rf dist",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "keywords": ["threejs", "game", "adventure", "typescript"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.9.1",
+    "@types/three": "^0.180.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
