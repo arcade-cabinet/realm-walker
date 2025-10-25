@@ -1,0 +1,88 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "schedule": ["before 6am on Monday"],
+  "timezone": "America/New_York",
+  "vulnerabilityAlerts": {
+    "enabled": true
+  },
+  "dockerfile": {
+    "enabled": true
+  },
+  "regexManagers": [
+    {
+      "fileMatch": ["^\\.cursor/Dockerfile$"],
+      "matchStrings": [
+        "ENV ANDROID_CMDLINE_TOOLS_VERSION=(?<currentValue>\\d+)",
+        "pnpm@(?<currentValue>[0-9.]+)"
+      ],
+      "depNameTemplate": "android-commandline-tools",
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "android/android-tools"
+    },
+    {
+      "fileMatch": ["^\\.cursor/Dockerfile$"],
+      "matchStrings": ["corepack prepare pnpm@(?<currentValue>[0-9.]+)"],
+      "depNameTemplate": "pnpm",
+      "datasourceTemplate": "npm"
+    }
+  ],
+  "packageRules": [
+    {
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchPackagePatterns": ["*"],
+      "excludePackagePatterns": ["^node$"]
+    },
+    {
+      "groupName": "major dependencies",
+      "matchUpdateTypes": ["major"],
+      "matchPackagePatterns": ["*"]
+    },
+    {
+      "description": "Automerge non-major updates after tests pass",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true,
+      "automergeType": "pr",
+      "automergeStrategy": "squash"
+    },
+    {
+      "description": "Group Three.js related packages",
+      "groupName": "Three.js dependencies",
+      "matchPackagePatterns": ["three", "@types/three"]
+    },
+    {
+      "description": "Group AI SDK packages",
+      "groupName": "AI SDK dependencies",
+      "matchPackagePatterns": ["@ai-sdk/", "^ai$", "^openai$"]
+    },
+    {
+      "description": "Group test-related packages",
+      "groupName": "test dependencies",
+      "matchPackagePatterns": ["jest", "@types/jest", "ts-jest"]
+    },
+    {
+      "description": "Docker base images - separate PR for visibility",
+      "matchDatasources": ["docker"],
+      "groupName": "Docker base images",
+      "addLabels": ["docker"],
+      "automerge": false
+    },
+    {
+      "description": "Node.js Docker image - requires testing",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["node"],
+      "automerge": false,
+      "schedule": ["before 6am on Monday"]
+    },
+    {
+      "description": "pnpm version in Dockerfile",
+      "matchManagers": ["regex"],
+      "matchPackageNames": ["pnpm"],
+      "groupName": "pnpm"
+    }
+  ]
+}
