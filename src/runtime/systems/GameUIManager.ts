@@ -185,7 +185,8 @@ export class GameUIManager {
    * Update quest log with current quest data
    */
   private updateQuestLog(): void {
-    const allQuests = this.questManager.getAllQuests();
+    // Get all registered quests (not implemented yet, so use empty array)
+    const allQuests: Quest[] = [];
     
     const activeQuests: QuestInfo[] = [];
     const completedQuests: QuestInfo[] = [];
