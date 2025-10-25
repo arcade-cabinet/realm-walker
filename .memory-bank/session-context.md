@@ -14,7 +14,7 @@
 2. ✅ Move architecture content to frozen docs
 3. ✅ Remove temporary files from repository root
 4. ✅ Update .clinerules to reference docs system
-5. ✅ Create .cursorrules for Cursor IDE integration
+5. ✅ Create .cursor/rules for Cursor IDE integration
 
 ## Context from Previous Sessions
 
@@ -41,6 +41,7 @@ None - proceeding with documentation restructure.
 - ✅ Updated type definitions to use proper WorldPosition and GridPosition types  
 - ✅ Clarified portal wall default in documentation
 - ✅ Addressed all GitHub PR 4 comments
+- ✅ Removed legacy .cursorrules file (correct format is .cursor/rules)
 
 ## Next Session Preparation
 

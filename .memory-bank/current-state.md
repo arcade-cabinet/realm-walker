@@ -59,6 +59,7 @@
 - ✅ Fixed GridPosition type consistency across codebase
 - ✅ Updated type definitions to use proper WorldPosition and GridPosition types
 - ✅ Clarified portal wall default in documentation
+- ✅ Removed legacy .cursorrules file (correct format is .cursor/rules)
 
 ## Technical Debt
 

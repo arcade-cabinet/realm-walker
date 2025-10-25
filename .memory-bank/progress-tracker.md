@@ -11,7 +11,7 @@
 - [x] Move architecture content to frozen docs
 - [x] Remove temporary files from root
 - [x] Update .clinerules configuration
-- [x] Create .cursorrules file
+- [x] Create .cursor/rules file
 
 ### Completed This Session
 - [x] Memory bank README and structure

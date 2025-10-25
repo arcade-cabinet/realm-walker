@@ -45,7 +45,7 @@ memory-bank/
 
 ## Integration with Cursor Rules
 
-The memory bank system integrates with `.clinerules` and `.cursorrules` to ensure:
+The memory bank system integrates with `.clinerules` and `.cursor/rules` to ensure:
 - Docs are always consulted before architectural decisions
 - Memory bank is updated when making changes
 - No duplication of information between docs and memory bank

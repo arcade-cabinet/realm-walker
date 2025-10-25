@@ -141,7 +141,7 @@ This configuration ensures seamless continuation across sessions by:
 
 ## Integration with Cursor IDE
 
-### .cursorrules Alignment
+### .cursor/rules Alignment
 - Memory bank system integrates with Cursor's context tracking
 - Docs as source of truth prevents information duplication
 - Clear separation between authoritative docs and active context
