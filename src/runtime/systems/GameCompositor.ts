@@ -121,6 +121,9 @@ export class GameCompositor {
 
         if (content.scale) {
           model.scale.set(...content.scale);
+        } else {
+          // Set default scale if not provided
+          model.scale.set(1, 1, 1);
         }
 
         this.scene.add(model);

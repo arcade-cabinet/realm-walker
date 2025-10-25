@@ -10,7 +10,7 @@ export * from './types';
 export * from './runtime';
 
 // Main orchestrator class
-import { SceneCompositor, StoryCompositor, GameCompositor, QuestFlagSystem } from './runtime/systems';
+import { SceneCompositor, StoryCompositor, GameCompositor, QuestManager } from './runtime/systems';
 import { RWMDParser } from './runtime/parsers';
 import { SceneData, StoryData, QuestFlags } from './types';
 
@@ -18,19 +18,23 @@ export class RealmWalker {
   private sceneCompositor: SceneCompositor;
   private storyCompositor: StoryCompositor;
   private gameCompositor: GameCompositor;
-  private questFlagSystem: QuestFlagSystem;
+  private questManager: QuestManager;
+  private currentSceneData: SceneData | null = null;
 
   constructor(initialFlags: QuestFlags = {}) {
     this.sceneCompositor = new SceneCompositor();
     this.storyCompositor = new StoryCompositor(initialFlags);
     this.gameCompositor = new GameCompositor();
-    this.questFlagSystem = new QuestFlagSystem(initialFlags);
+    this.questManager = new QuestManager({ storyFlags: initialFlags });
   }
 
   /**
    * Load and compose a complete game scene
    */
   async loadScene(sceneData: SceneData, storyData: StoryData): Promise<void> {
+    // Store scene data for recomposition
+    this.currentSceneData = sceneData;
+
     // Tier 1: Scene composition - builds geometry and empty slots
     const composedScene = this.sceneCompositor.compose(sceneData);
 
@@ -52,19 +56,18 @@ export class RealmWalker {
   /**
    * Set a quest flag and recompose story
    */
-  setFlag(flag: string, value: boolean, storyData: StoryData): void {
+  async setFlag(flag: string, value: boolean, storyData: StoryData): Promise<void> {
     this.storyCompositor.setFlag(flag, value);
-    this.questFlagSystem.setFlag(flag, value);
+    this.questManager.setFlag(flag, value);
     
     // Recompose story with new flags
-    const composedScene = this.sceneCompositor.compose({ 
-      id: storyData.sceneId, 
-      name: '', 
-      geometry: [], 
-      slots: [] 
-    } as SceneData);
+    if (!this.currentSceneData) {
+      throw new Error('Cannot recompose scene: no scene data loaded. Call loadScene() first.');
+    }
+
+    const composedScene = this.sceneCompositor.compose(this.currentSceneData);
     const activeContent = this.storyCompositor.compose(storyData);
-    this.gameCompositor.compose(composedScene, activeContent);
+    await this.gameCompositor.compose(composedScene, activeContent);
   }
 
   /**
@@ -75,7 +78,7 @@ export class RealmWalker {
       scene: this.sceneCompositor,
       story: this.storyCompositor,
       game: this.gameCompositor,
-      questFlags: this.questFlagSystem
+      questManager: this.questManager
     };
   }
 

@@ -49,7 +49,7 @@ async function runDemo() {
   console.log('Step 3: Three-tier composition...\n');
 
   // Get compositors for demonstration
-  const { scene, story, game, questFlags } = realmWalker.getCompositors();
+  const { scene, story, game, questManager } = realmWalker.getCompositors();
 
   console.log('  [Tier 1: SceneCompositor]');
   const composedScene = scene.compose(sceneData);
@@ -60,7 +60,7 @@ async function runDemo() {
 
   console.log('  [Tier 2: StoryCompositor]');
   console.log('    Current flags:');
-  Object.entries(questFlags.getAllFlags()).forEach(([key, value]) => {
+  Object.entries(questManager.getState().storyFlags).forEach(([key, value]) => {
     console.log(`      - ${key}: ${value}`);
   });
   
@@ -79,7 +79,7 @@ async function runDemo() {
   console.log('Step 4: Demonstrating flag changes...\n');
   
   console.log('  Opening chest (setting chest_opened = true)...');
-  questFlags.setFlag('chest_opened', true);
+  questManager.setFlag('chest_opened', true);
   story.setFlag('chest_opened', true);
   
   const activeContent2 = story.compose(storyData);

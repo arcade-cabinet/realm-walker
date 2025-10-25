@@ -334,7 +334,11 @@ For each phase:
 
 ## Known Issues / Technical Debt
 
-- [ ] Current SceneCompositor uses position-based slots (needs grid update)
+- [x] ~~Current SceneCompositor uses position-based slots (needs grid update)~~ ✅ **FIXED**: Now uses grid-based system with categorized slots
+- [x] ~~QuestFlagSystem duplicates QuestManager functionality~~ ✅ **FIXED**: Removed legacy QuestFlagSystem
+- [x] ~~RealmWalker.setFlag() creates empty scenes~~ ✅ **FIXED**: Now stores and reuses sceneData
+- [x] ~~Async/await issues in setFlag()~~ ✅ **FIXED**: Made async and properly awaits
+- [x] ~~Optional rotation/scale properties cause runtime errors~~ ✅ **FIXED**: Added safe handling
 - [ ] StoryBinding not yet integrated with StoryCompositor
 - [ ] RWMD parser is basic (missing many syntax features)
 - [ ] No UI system yet

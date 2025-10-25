@@ -145,7 +145,7 @@ JSON format defining slot contents and flag requirements:
 - **`SceneCompositor`**: Tier 1 - Scene geometry builder
 - **`StoryCompositor`**: Tier 2 - Story logic evaluator
 - **`GameCompositor`**: Tier 3 - Rendering compositor
-- **`QuestFlagSystem`**: Boolean flag manager
+- **`QuestManager`**: Quest progression and boolean flag manager
 - **`RWMDParser`**: Scene file parser
 - **`GLBLoader`**: 3D model loader
 
