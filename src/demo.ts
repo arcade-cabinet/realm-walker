@@ -28,8 +28,16 @@ async function runDemo() {
   
   // Load and parse RWMD scene
   const rwmdPath = path.join(__dirname, '../scenes/starting_room.rwmd');
-  const rwmdContent = fs.readFileSync(rwmdPath, 'utf-8');
-  const sceneData = realmWalker.parseRWMD(rwmdContent);
+  let rwmdContent: string;
+  let sceneData: ReturnType<typeof realmWalker.parseRWMD>;
+  
+  try {
+    rwmdContent = fs.readFileSync(rwmdPath, 'utf-8');
+    sceneData = realmWalker.parseRWMD(rwmdContent);
+  } catch (error) {
+    console.error(`  ✗ Failed to load/parse RWMD file: ${error instanceof Error ? error.message : String(error)}`);
+    process.exit(1);
+  }
   
   console.log(`  ✓ Loaded scene: ${sceneData.name} (ID: ${sceneData.id})`);
   console.log(`  ✓ Geometry pieces: ${sceneData.geometry.length}`);
@@ -40,7 +48,15 @@ async function runDemo() {
   
   // Load story data
   const storyPath = path.join(__dirname, '../scenes/tutorial_story.json');
-  const storyData: StoryData = JSON.parse(fs.readFileSync(storyPath, 'utf-8'));
+  let storyData: StoryData;
+  
+  try {
+    const storyContent = fs.readFileSync(storyPath, 'utf-8');
+    storyData = JSON.parse(storyContent);
+  } catch (error) {
+    console.error(`  ✗ Failed to load/parse story file: ${error instanceof Error ? error.message : String(error)}`);
+    process.exit(1);
+  }
   
   console.log(`  ✓ Story ID: ${storyData.id}`);
   console.log(`  ✓ Scene ID: ${storyData.sceneId}`);
