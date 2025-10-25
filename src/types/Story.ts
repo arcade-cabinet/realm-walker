@@ -3,13 +3,15 @@
  * StoryCompositor uses these types (knows nothing about presentation)
  */
 
+import { WorldPosition } from './GridSystem';
+
 export type QuestFlags = Record<string, boolean>;
 
 export interface SlotContent {
   slotId: string;
   modelPath: string;
   requiredFlags?: string[];
-  position?: [number, number, number];
+  position?: WorldPosition;
   rotation?: [number, number, number];
   scale?: [number, number, number];
 }

@@ -55,6 +55,11 @@
 - Connect UI components to game systems
 - Enhance RWMD parser syntax support
 
+### Recently Fixed
+- ✅ Fixed GridPosition type consistency across codebase
+- ✅ Updated type definitions to use proper WorldPosition and GridPosition types
+- ✅ Clarified portal wall default in documentation
+
 ## Technical Debt
 
 - Some legacy code patterns need refactoring

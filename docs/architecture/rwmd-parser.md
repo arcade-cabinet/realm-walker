@@ -170,6 +170,7 @@ interface PortalDefinition {
   target: string;
   requiresFlags?: string[];
   locked?: boolean;
+  wall?: 'north' | 'south' | 'east' | 'west'; // Optional wall specification
 }
 
 interface LightingDefinition {
@@ -226,7 +227,7 @@ const template: SceneTemplate = {
     doors: sceneDef.portals.map(portal => ({
       id: portal.id,
       position: [portal.position[0], portal.position[1]],
-      wall: 'south'
+      wall: portal.wall || 'south' // Default to south wall if not specified
     }))
   }
 };
