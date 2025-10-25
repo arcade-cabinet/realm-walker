@@ -68,7 +68,7 @@ Files to modify:
 
 Tasks:
 - [x] Implement diorama camera framing ✅
-- [ ] Add responsive viewport handling
+- [x] Add responsive viewport handling ✅ (mobile/portrait support)
 - [ ] Integrate UI overlay system
 - [x] Connect InteractionSystem for clicks ✅ (raycasting implemented)
 - [ ] Add scene transition effects
@@ -167,67 +167,79 @@ New directory:
 
 ### 5.1 Click Handling ✅
 
-**Status**: Core functionality complete
+**Status**: Complete with keyboard support
 
 Tasks:
 - [x] Implement raycasting for 3D clicks ✅
 - [x] Add hover effects for interactables ✅
 - [ ] Create interaction feedback (highlights, tooltips)
-- [ ] Handle keyboard shortcuts
+- [x] Handle keyboard shortcuts ✅ (KeyboardManager with bindings)
 - [ ] Add touch support
 
-### 5.2 UI Components
+### 5.2 UI Components ✅
 
-**Status**: Dialogue UI complete
+**Status**: Major components complete
 
 Tasks:
 - [ ] Design HUD layout
 - [x] Create dialogue box component ✅ (HTML/CSS with animations)
-- [ ] Build quest log UI
+- [x] Build quest log UI ✅ (collapsible with active/completed sections)
 - [ ] Add examine text overlay
 - [ ] Implement modal dialogs
 
 New directory:
-- `src/ui/` ✅ (DialogueUI component)
+- `src/ui/` ✅ (DialogueUI, QuestLogUI, KeyboardManager)
 
 ## Phase 6: Content Pipeline 📦
 
-### 6.1 Asset Management
+### 6.1 Asset Management ✅
+
+**Status**: Core system complete
 
 Tasks:
-- [ ] Define GLB naming conventions
-- [ ] Create asset manifest system
-- [ ] Build asset validation tools
+- [ ] Define GLB naming conventions (documentation)
+- [x] Create asset manifest system ✅
+- [x] Build asset validation tools ✅
 - [ ] Add placeholder models
 - [ ] Implement asset hot-reloading
 
+New file:
+- `src/runtime/systems/AssetManifest.ts` ✅
+
 ### 6.2 Scene Authoring Tools
+
+**Status**: Validator complete
 
 Tasks:
 - [ ] Create RWMD syntax guide
-- [ ] Build RWMD validator script
+- [x] Build RWMD validator script ✅ (CLI tool with color output)
 - [ ] Add scene preview tool
 - [ ] Create binding generator
 - [ ] Build quest flag documentation tool
 
+New file:
+- `scripts/validate-rwmd.ts` ✅
+
 ## Phase 7: Testing & Quality 🧪
 
-### 7.1 Unit Tests
+### 7.1 Unit Tests ✅
 
-**Status**: Initial tests created ✅
+**Status**: Core systems tested
 
 Tasks:
-- [ ] Test SceneCompositor in isolation
+- [x] Test SceneCompositor in isolation ✅
 - [ ] Test StoryCompositor with mock flags
 - [ ] Test GameCompositor viewport logic
 - [x] Test QuestManager flag operations ✅
-- [ ] Test DialogueManager tree navigation
+- [x] Test DialogueManager tree navigation ✅
 - [ ] Test InteractionSystem click detection
 - [x] Test GridSystemImpl pathfinding ✅
 
 Test files:
-- `tests/unit/GridSystemImpl.test.ts` ✅
-- `tests/unit/QuestManager.test.ts` ✅
+- `tests/unit/GridSystemImpl.test.ts` ✅ (10 tests)
+- `tests/unit/QuestManager.test.ts` ✅ (19 tests)
+- `tests/unit/DialogueManager.test.ts` ✅ (15 tests)
+- `tests/unit/SceneCompositor.test.ts` ✅ (12 tests)
 - `jest.config.js` ✅
 - `tsconfig.test.json` ✅
 

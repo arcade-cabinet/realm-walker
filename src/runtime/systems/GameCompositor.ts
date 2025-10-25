@@ -229,6 +229,44 @@ export class GameCompositor {
   }
 
   /**
+   * Handle window resize with responsive adjustments
+   */
+  handleResize(width: number, height: number, gridWidth: number, gridHeight: number): void {
+    // Update camera aspect
+    this.updateAspect(width, height);
+
+    // Adjust camera distance for mobile/narrow viewports
+    const aspect = width / height;
+    
+    if (aspect < 1) {
+      // Portrait mode - pull camera back more
+      const distance = Math.max(gridWidth, gridHeight) * 2.0;
+      const height = distance * 0.8;
+      const centerX = gridWidth / 2;
+      const centerZ = gridHeight / 2;
+      
+      this.camera.position.set(
+        centerX + distance * 0.5,
+        height,
+        centerZ + distance * 0.9
+      );
+    } else if (aspect < 1.5) {
+      // Narrow landscape - moderate adjustment
+      const distance = Math.max(gridWidth, gridHeight) * 1.7;
+      const height = distance * 0.75;
+      const centerX = gridWidth / 2;
+      const centerZ = gridHeight / 2;
+      
+      this.camera.position.set(
+        centerX + distance * 0.55,
+        height,
+        centerZ + distance * 0.85
+      );
+    }
+    // For wider viewports, keep default diorama framing
+  }
+
+  /**
    * Set camera position
    */
   setCameraPosition(x: number, y: number, z: number): void {
