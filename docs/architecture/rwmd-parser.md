@@ -226,7 +226,7 @@ const template: SceneTemplate = {
     doors: sceneDef.portals.map(portal => ({
       id: portal.id,
       position: [portal.position[0], portal.position[1]],
-      wall: 'south' // Default wall for portals
+      wall: 'south'
     }))
   }
 };
