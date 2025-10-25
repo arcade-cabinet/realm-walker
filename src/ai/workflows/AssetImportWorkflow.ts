@@ -281,7 +281,7 @@ export class AssetImportWorkflow {
     };
 
     for (const [category, keywords] of Object.entries(categories)) {
-      if (tags.some(tag => keywords.some(kw => tag.toLowerCase().includes(kw)))) {
+      if (tags.some((tag: string) => keywords.some((kw: string) => tag.toLowerCase().includes(kw)))) {
         return category;
       }
     }
@@ -347,7 +347,7 @@ export class AssetImportWorkflow {
 
     for (const asset of importedAssets) {
       // Extract category from tags
-      const categoryTag = asset.tags.find(t => 
+      const categoryTag = asset.tags.find((t: string) => 
         ['character', 'prop', 'architecture', 'environment', 'decoration', 'misc'].includes(t)
       );
       
@@ -356,7 +356,7 @@ export class AssetImportWorkflow {
       }
 
       // Extract confidence
-      const confidenceTag = asset.tags.find(t => t.startsWith('confidence_'));
+      const confidenceTag = asset.tags.find((t: string) => t.startsWith('confidence_'));
       if (confidenceTag) {
         const confidence = parseInt(confidenceTag.split('_')[1]) / 100;
         totalConfidence += confidence;
