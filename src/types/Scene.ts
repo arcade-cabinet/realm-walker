@@ -3,9 +3,11 @@
  * SceneCompositor uses these types (knows nothing about Story)
  */
 
+import { WorldPosition } from './GridSystem';
+
 export interface SceneSlot {
   id: string;
-  position: [number, number, number];
+  position: WorldPosition;
   rotation?: [number, number, number];
   scale?: [number, number, number];
 }
@@ -13,7 +15,7 @@ export interface SceneSlot {
 export interface SceneGeometry {
   type: 'box' | 'plane' | 'sphere' | 'cylinder';
   dimensions: number[];
-  position: [number, number, number];
+  position: WorldPosition;
   color?: string;
 }
 

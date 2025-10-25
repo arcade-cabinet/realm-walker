@@ -4,6 +4,7 @@
  */
 
 import { QuestState } from '../../types/GameState';
+import { GridPosition } from '../../types/GridSystem';
 import { QuestManager } from './QuestManager';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -14,7 +15,7 @@ export interface SaveData {
   currentSceneId: string | null;
   questState: QuestState;
   playerData: {
-    position?: [number, number];
+    position?: GridPosition;
     lastCheckpoint?: string;
   };
   metadata: {

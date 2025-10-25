@@ -1,0 +1,154 @@
+# Cline Rules for Realm Walker Story
+
+## Configuration Hierarchy
+
+**MUST READ FIRST**: Always read `.clinerules` as the primary configuration file. This file extends and aligns with those core principles.
+
+## Documentation-Driven Development (Primary Source of Truth)
+
+### Documentation Authority
+- **docs/** folder is the SINGLE SOURCE OF TRUTH for all project decisions
+- **FROZEN** documents are authoritative and must be followed exactly
+- **Versioned** documents use semantic versioning (major.minor.patch)
+- When making plans or decisions, ALWAYS reference and update relevant docs
+- Only halt autonomous work when docs are missing, conflicting, or clarification needed
+
+### Documentation Standards
+- **Version Headers**: All critical docs must have version at top (e.g., "**Version**: 1.0 **FROZEN**")
+- **Frozen Documents**: Cannot be changed without explicit user approval and version bump
+- **Version Bumping**: Use discretion for major/minor/patch based on scope of changes
+- **Cross-References**: Maintain links between related documents
+- **Status Tracking**: Document current status and last updated dates
+
+### Key Documentation Categories
+- **Architecture**: Technical systems, data schemas, component relationships (docs/architecture/)
+- **Design**: Game vision, world lore, art style, content structure (docs/design/)
+- **Content**: Scene definitions, dialogue systems, quest design (docs/content/)
+- **Development**: Setup, testing, deployment, contributing (docs/development/)
+- **API**: Runtime APIs, content authoring, integrations (docs/api/)
+
+## Memory Bank System
+
+### Active Context Tracking
+- **.memory-bank/** contains active context and progress tracking
+- **Memory bank references docs**, doesn't duplicate information
+- **DRY principle**: Don't repeat yourself - docs are source of truth
+- **WET principle**: Write everything twice - memory bank tracks current state
+
+### Memory Bank Structure
+```
+.memory-bank/
+├── README.md                 # Memory bank system overview
+├── current-state.md         # What's working/broken right now
+├── session-context.md       # Current work focus
+├── decision-log.md          # Key decisions made
+├── progress-tracker.md      # Task completion status
+└── technical-notes.md       # Implementation details and patterns
+```
+
+### Memory Bank Usage
+1. **Always read docs first** before making architectural decisions
+2. **Update memory bank** when making significant changes
+3. **Reference docs** in memory bank entries, don't repeat content
+4. **Keep memory bank current** with actual project state
+
+## Continuous Operation Mode (YOLO Mode)
+
+### Execution Pattern
+- **Default mode**: ACT immediately, implement real functionality  
+- **Large, cohesive changes** preferred over small atomic steps
+- Make independent decisions on refactors, dependency changes, deletions
+- Apply each change immediately and proceed
+- Stop only for true hard blockers
+
+### Continuous Flow Protocol
+1. **Read Memory Bank** for full context
+2. **Read relevant docs** before making any decisions
+3. **Execute immediately** - no planning phases unless explicitly requested
+4. **Update docs** when making significant changes or discoveries
+5. **Document changes** in Memory Bank when significant
+6. **Checkpoint frequently** - every ~10-15 min or at feature boundaries
+7. **Update context** at session end
+
+### Change Management (Per .clinerules)
+- **Deletions**: Checkpoint first, then delete unused code directly
+- **Refactors**: Update all affected files in same change
+- **Dependencies**: Add/remove and update code in one operation
+- **Documentation**: Update relevant docs with version bumps when making changes
+
+### Override Behaviors  
+- "Plan" means execute unless exactly "Plan only" is specified
+- Show progress through code, not explanations
+- Never generate placeholders - implement real functionality
+- Bias toward action over discussion
+- **Always defer to docs** when making decisions about codebase, brand, lore, architecture
+
+## Effective Handoff Strategy
+This configuration ensures seamless continuation across sessions by:
+1. Always reading complete Memory Bank context first
+2. **Always reading relevant documentation** before making decisions
+3. Following established architectural patterns from `.clinerules`  
+4. Maintaining continuous execution momentum
+5. Documenting reality in Memory Bank for next session
+6. Strict adherence to coding standards for consistency
+7. **Updating documentation** when making significant changes
+
+## Architecture Constraints
+
+### Three-Tier Compositor Pattern
+- **Layer 1**: SceneCompositor (geometry only)
+- **Layer 2**: StoryCompositor (content based on flags)
+- **Layer 3**: GameCompositor (presentation and UI)
+- **Strict separation**: No cross-layer dependencies allowed
+
+### Boolean Flag Quest System
+- **No numerical stats**: Everything is boolean flags
+- **No inventory arrays**: Items are flags
+- **No XP or leveling**: Quest progression only
+- **Three story threads**: A/B/C parallel progression
+
+### Type Safety
+- **Strict TypeScript**: No `any` types allowed
+- **Comprehensive interfaces**: All data structures typed
+- **Layer boundary types**: Prevent cross-layer imports
+- **Type guards**: Runtime type checking
+
+### Pure Authored Content
+- **No procedural generation**: Everything is scripted
+- **No random encounters**: All content is authored
+- **Explicit scene transitions**: Not emergent
+- **Quest-driven narrative**: Story progression only
+
+## Development Standards
+
+### Code Quality
+- **TypeScript strict mode**: All code must compile without errors
+- **Comprehensive testing**: Unit tests for all systems
+- **Clean architecture**: Separation of concerns enforced
+- **Documentation**: Code must be well-documented
+
+### Performance
+- **60fps target**: Smooth rendering on modern devices
+- **Asset caching**: LRU cache for GLB models
+- **Memory management**: Cleanup unused assets
+- **Responsive design**: Support different screen sizes
+
+### Testing Strategy
+- **Unit tests**: Individual system testing
+- **Integration tests**: Complete flow testing
+- **Layer isolation tests**: Prevent cross-dependencies
+- **Performance tests**: Asset loading and rendering
+
+## Integration with Cursor IDE
+
+### .cursor/rules Alignment
+- Memory bank system integrates with Cursor's context tracking
+- Docs as source of truth prevents information duplication
+- Clear separation between authoritative docs and active context
+- Continuous operation mode aligns with Cursor's autonomous capabilities
+
+### Context Management
+- Always read memory bank for current state
+- Reference docs for architectural decisions
+- Update memory bank when making changes
+- Maintain clear separation between docs and memory bank
