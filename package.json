@@ -15,11 +15,22 @@
     "test:coverage": "jest --coverage",
     "validate:rwmd": "ts-node scripts/validate-rwmd.ts"
   },
-  "keywords": ["threejs", "game", "adventure", "typescript"],
+  "keywords": [
+    "threejs",
+    "game",
+    "adventure",
+    "typescript"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "three": "^0.180.0"
+    "@ai-sdk/openai": "^2.0.53",
+    "ai": "^5.0.78",
+    "better-sqlite3": "^12.4.1",
+    "canvas": "^3.2.0",
+    "openai": "^6.7.0",
+    "three": "^0.180.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
