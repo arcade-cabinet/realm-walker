@@ -35,39 +35,15 @@ export class GameCompositor {
 
   /**
    * Compose from ComposedStory (new interface)
+   * NOTE: This method is deprecated and violates layer separation.
+   * StoryCompositor should not create Three.js meshes.
+   * Use compose(composedScene, activeContent) instead.
+   * 
+   * @deprecated
    */
   async composeStory(story: ComposedStory): Promise<GameViewport> {
-    // Use the scene from the story
-    this.scene = story.room.scene;
-
-    // Add lighting if not present
-    if (!this.scene.children.some(child => child instanceof THREE.Light)) {
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-      this.scene.add(ambientLight);
-
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-      directionalLight.position.set(5, 10, 5);
-      this.scene.add(directionalLight);
-    }
-
-    // NPCs, props, and doors are already in the story with their meshes
-    // Just add them to the scene
-    for (const [id, npc] of story.npcs) {
-      this.scene.add(npc.mesh);
-    }
-
-    for (const [id, prop] of story.props) {
-      this.scene.add(prop.mesh);
-    }
-
-    for (const [id, door] of story.doors) {
-      this.scene.add(door.mesh);
-    }
-
-    return {
-      camera: this.camera,
-      scene: this.scene
-    };
+    throw new Error('composeStory() is deprecated. Use compose(composedScene, activeContent) instead. ' +
+                    'StoryCompositor should not create Three.js objects - this violates layer separation.');
   }
 
   /**

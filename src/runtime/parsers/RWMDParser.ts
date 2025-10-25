@@ -106,9 +106,26 @@ export class RWMDParser {
 
   private parseGeometryProperty(geometry: Partial<SceneGeometry>, key: string, value: string): void {
     if (key === 'dimensions') {
-      geometry.dimensions = value.split(',').map(v => parseFloat(v.trim()));
+      const dims = value.split(',').map(v => {
+        const num = parseFloat(v.trim());
+        if (isNaN(num)) {
+          throw new Error(`Invalid dimension value: "${v.trim()}" (expected a number)`);
+        }
+        return num;
+      });
+      geometry.dimensions = dims;
     } else if (key === 'position') {
-      geometry.position = value.split(',').map(v => parseFloat(v.trim())) as [number, number, number];
+      const pos = value.split(',').map(v => {
+        const num = parseFloat(v.trim());
+        if (isNaN(num)) {
+          throw new Error(`Invalid position value: "${v.trim()}" (expected a number)`);
+        }
+        return num;
+      });
+      if (pos.length !== 3) {
+        throw new Error(`Position must have exactly 3 values (x, y, z), got ${pos.length}`);
+      }
+      geometry.position = pos as [number, number, number];
     } else if (key === 'color') {
       geometry.color = value;
     }
@@ -116,11 +133,41 @@ export class RWMDParser {
 
   private parseSlotProperty(slot: Partial<SceneSlot>, key: string, value: string): void {
     if (key === 'position') {
-      slot.position = value.split(',').map(v => parseFloat(v.trim())) as [number, number, number];
+      const pos = value.split(',').map(v => {
+        const num = parseFloat(v.trim());
+        if (isNaN(num)) {
+          throw new Error(`Invalid position value: "${v.trim()}" (expected a number)`);
+        }
+        return num;
+      });
+      if (pos.length !== 3) {
+        throw new Error(`Position must have exactly 3 values (x, y, z), got ${pos.length}`);
+      }
+      slot.position = pos as [number, number, number];
     } else if (key === 'rotation') {
-      slot.rotation = value.split(',').map(v => parseFloat(v.trim())) as [number, number, number];
+      const rot = value.split(',').map(v => {
+        const num = parseFloat(v.trim());
+        if (isNaN(num)) {
+          throw new Error(`Invalid rotation value: "${v.trim()}" (expected a number)`);
+        }
+        return num;
+      });
+      if (rot.length !== 3) {
+        throw new Error(`Rotation must have exactly 3 values (x, y, z), got ${rot.length}`);
+      }
+      slot.rotation = rot as [number, number, number];
     } else if (key === 'scale') {
-      slot.scale = value.split(',').map(v => parseFloat(v.trim())) as [number, number, number];
+      const scale = value.split(',').map(v => {
+        const num = parseFloat(v.trim());
+        if (isNaN(num)) {
+          throw new Error(`Invalid scale value: "${v.trim()}" (expected a number)`);
+        }
+        return num;
+      });
+      if (scale.length !== 3) {
+        throw new Error(`Scale must have exactly 3 values (x, y, z), got ${scale.length}`);
+      }
+      slot.scale = scale as [number, number, number];
     }
   }
 
@@ -128,7 +175,11 @@ export class RWMDParser {
    * Parse RWMD file from string content
    */
   static parseString(content: string): ParsedScene {
-    const parser = new RWMDParser();
-    return parser.parse(content);
+    try {
+      const parser = new RWMDParser();
+      return parser.parse(content);
+    } catch (error) {
+      throw new Error(`RWMD parsing failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
   }
 }

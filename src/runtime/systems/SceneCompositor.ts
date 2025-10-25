@@ -67,8 +67,9 @@ export class SceneCompositor {
       template.grid.height
     );
     const floorMaterial = new THREE.MeshStandardMaterial({
-      color: '#' + (template.floor.texture || 'cccccc')
+      color: 0xcccccc  // Default gray color
     });
+    // TODO: Load actual texture from template.floor.texture
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
@@ -178,8 +179,9 @@ export class SceneCompositor {
     }
 
     const material = new THREE.MeshStandardMaterial({
-      color: '#' + (wall.texture || 'aaaaaa')
+      color: 0xaaaaaa  // Default gray color for walls
     });
+    // TODO: Load actual texture from wall.texture
 
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(...position);
