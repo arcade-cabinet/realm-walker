@@ -179,11 +179,6 @@ interface GameViewport {
 All interfaces are strictly typed with no `any`:
 
 ```typescript
-interface GridPosition extends Array<number> {
-  0: number; // x
-  1: number; // y
-  length: 2;
-}
 
 // ❌ Avoid
 function processData(data: any): any { }
