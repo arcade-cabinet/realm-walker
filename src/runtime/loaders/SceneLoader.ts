@@ -7,6 +7,7 @@ import { SceneCompositor } from '../systems/SceneCompositor';
 import { StoryCompositor } from '../systems/StoryCompositor';
 import { GameCompositor } from '../systems/GameCompositor';
 import { RWMDParser } from '../parsers/RWMDParser';
+import { StoryBindingLoader } from './StoryBindingLoader';
 import { SceneData, StoryData, ComposedScene, GameViewport, QuestFlags } from '../../types';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -118,11 +119,22 @@ export class SceneLoader {
 
   /**
    * Load story data from JSON file
+   * Supports both StoryBinding format and legacy StoryData format
    */
   private async loadStoryData(storyPath: string): Promise<StoryData> {
     try {
       const content = fs.readFileSync(storyPath, 'utf-8');
-      return JSON.parse(content);
+      const parsed = JSON.parse(content);
+      
+      // Check if this is a StoryBinding (has scene_id, npc_placements, etc.)
+      if ('scene_id' in parsed && ('npc_placements' in parsed || 'prop_placements' in parsed || 'door_states' in parsed)) {
+        console.log(`Loading StoryBinding format from ${storyPath}`);
+        return StoryBindingLoader.bindingToStoryData(parsed);
+      }
+      
+      // Otherwise treat as legacy StoryData
+      console.log(`Loading legacy StoryData format from ${storyPath}`);
+      return parsed as StoryData;
     } catch (error) {
       throw new Error(`Failed to load story from ${storyPath}: ${error instanceof Error ? error.message : String(error)}`);
     }
