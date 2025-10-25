@@ -67,7 +67,7 @@ export class RealmWalker {
   }
 
   /**
-   * Get compositore instances for direct access
+   * Get compositor instances for direct access
    */
   getCompositors() {
     return {
