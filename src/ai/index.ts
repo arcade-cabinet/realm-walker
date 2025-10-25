@@ -9,4 +9,9 @@ export * from './GPTImageGenerator';
 export * from './AmbientCGProvider';
 export * from './AssetLibrary';
 export * from './SceneOrchestrator';
+export * from './EnhancedSceneOrchestrator';
+export * from './AnthropicClient';
 export * from './AITools';
+
+// Import workflows
+export * from './workflows';

@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "ts-node src/demo.ts",
     "demo": "ts-node src/demo.ts",
+    "demo:import": "ts-node src/demo-import.ts",
     "dev": "ts-node src/demo.ts",
     "clean": "rm -rf dist",
     "test": "jest",
@@ -25,6 +26,7 @@
   "license": "ISC",
   "dependencies": {
     "@ai-sdk/openai": "^2.0.53",
+    "@anthropic-ai/sdk": "^0.67.0",
     "ai": "^5.0.78",
     "better-sqlite3": "^12.4.1",
     "canvas": "^3.2.0",
