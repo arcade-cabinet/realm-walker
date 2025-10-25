@@ -14,7 +14,7 @@ This document outlines the implementation roadmap for completing the Realm Walke
   - [x] InteractionSystem (click handling)
   - [x] GridSystemImpl (A* pathfinding)
   - [x] QuestFlagSystem (legacy, still in use)
-- [x] **Compositore Skeleton**: Basic implementations of all three layers
+- [x] **Compositor Skeleton**: Basic implementations of all three layers
 - [x] **RWMD Parser**: Scene file parsing foundation
 - [x] **GLB Loader**: Three.js model loading with caching
 - [x] **Example Files**: Sample scenes and bindings
