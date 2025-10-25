@@ -167,11 +167,9 @@ QuestManager.startQuest('find_the_guardian');
 ### Type Safety
 ```typescript
 // Strict typing with no any
-interface GridPosition extends Array<number> {
-  0: number; // x
-  1: number; // y
-  length: 2;
-}
+// See docs/architecture/type-system.md lines 181-185 for the authoritative GridPosition definition.
+// Use the tuple type as shown elsewhere:
+type GridPosition = [x: number, y: number];
 
 // Type guards for runtime checking
 function isGridPosition(obj: unknown): obj is GridPosition {
