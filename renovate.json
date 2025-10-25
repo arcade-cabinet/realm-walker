@@ -3,6 +3,11 @@
   "extends": [
     "config:recommended"
   ],
+  "schedule": ["before 6am on Monday"],
+  "timezone": "America/New_York",
+  "vulnerabilityAlerts": {
+    "enabled": true
+  },
   "packageRules": [
     {
       "groupName": "all non-major dependencies",
@@ -14,6 +19,26 @@
       "groupName": "major dependencies",
       "matchUpdateTypes": ["major"],
       "matchPackagePatterns": ["*"]
+    },
+    {
+      "description": "Automerge non-major updates if tests pass",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": false
+    },
+    {
+      "description": "Group Three.js related packages",
+      "groupName": "Three.js dependencies",
+      "matchPackagePatterns": ["three", "@types/three"]
+    },
+    {
+      "description": "Group AI SDK packages",
+      "groupName": "AI SDK dependencies",
+      "matchPackagePatterns": ["@ai-sdk/", "^ai$", "^openai$"]
+    },
+    {
+      "description": "Group test-related packages",
+      "groupName": "test dependencies",
+      "matchPackagePatterns": ["jest", "@types/jest", "ts-jest"]
     }
   ]
 }
