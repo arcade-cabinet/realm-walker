@@ -61,21 +61,21 @@ Tasks:
 Files to modify:
 - `src/runtime/systems/StoryCompositor.ts`
 
-### 1.3 Expand GameCompositor
+### 1.3 Expand GameCompositor ✅
 
-**Current**: Basic Three.js scene setup
-**Needed**: Full viewport management and UI
+**Current**: Enhanced with diorama framing and raycasting
+**Status**: Core features complete
 
 Tasks:
-- [ ] Implement diorama camera framing
+- [x] Implement diorama camera framing ✅
 - [ ] Add responsive viewport handling
 - [ ] Integrate UI overlay system
-- [ ] Connect InteractionSystem for clicks
+- [x] Connect InteractionSystem for clicks ✅ (raycasting implemented)
 - [ ] Add scene transition effects
 - [ ] Implement camera animations
 
-Files to modify:
-- `src/runtime/systems/GameCompositor.ts`
+Files modified:
+- `src/runtime/systems/GameCompositor.ts` ✅
 
 ## Phase 2: RWMD Parser Enhancement 🔧
 
@@ -108,43 +108,47 @@ Tasks:
 
 ## Phase 3: Integration Layer 🔗
 
-### 3.1 Scene Loading Pipeline
+### 3.1 Scene Loading Pipeline ✅
+
+**Status**: Complete
 
 Tasks:
-- [ ] Create SceneLoader orchestrator
-- [ ] Implement scene caching
-- [ ] Add preloading for adjacent scenes
-- [ ] Handle scene transitions
-- [ ] Manage asset lifecycle
+- [x] Create SceneLoader orchestrator ✅
+- [x] Implement scene caching ✅ (LRU cache with configurable size)
+- [ ] Add preloading for adjacent scenes (foundation in place)
+- [ ] Handle scene transitions (fade effects)
+- [ ] Manage asset lifecycle (cleanup unused models)
 
 New file:
-- `src/runtime/loaders/SceneLoader.ts`
+- `src/runtime/loaders/SceneLoader.ts` ✅
 
-### 3.2 Game State Management
+### 3.2 Game State Management ✅
+
+**Status**: Complete
 
 Tasks:
-- [ ] Integrate QuestManager across all systems
-- [ ] Add save/load functionality
-- [ ] Implement state persistence
-- [ ] Create checkpoint system
-- [ ] Add game session management
+- [x] Integrate QuestManager across all systems ✅
+- [x] Add save/load functionality ✅
+- [x] Implement state persistence ✅ (JSON files)
+- [x] Create checkpoint system ✅ (auto-save support)
+- [x] Add game session management ✅
 
 New file:
-- `src/runtime/systems/GameStateManager.ts`
+- `src/runtime/systems/GameStateManager.ts` ✅
 
 ## Phase 4: Dialogue System 💬
 
-### 4.1 Dialogue Integration
+### 4.1 Dialogue Integration ✅
 
-**Status**: DialogueManager exists, needs integration
+**Status**: Mostly complete, needs UI integration
 
 Tasks:
 - [ ] Connect DialogueManager to StoryCompositor
-- [ ] Create dialogue tree loader
-- [ ] Implement choice UI rendering
+- [x] Create dialogue tree loader ✅
+- [x] Implement choice UI rendering ✅ (HTML/CSS component)
 - [ ] Add dialogue history
-- [ ] Support branching conversations
-- [ ] Handle flag-gated dialogue options
+- [x] Support branching conversations ✅
+- [x] Handle flag-gated dialogue options ✅
 
 ### 4.2 Dialogue Content ✅
 
@@ -161,26 +165,30 @@ New directory:
 
 ## Phase 5: Interaction & Input 🖱️
 
-### 5.1 Click Handling
+### 5.1 Click Handling ✅
+
+**Status**: Core functionality complete
 
 Tasks:
-- [ ] Implement raycasting for 3D clicks
-- [ ] Add hover effects for interactables
+- [x] Implement raycasting for 3D clicks ✅
+- [x] Add hover effects for interactables ✅
 - [ ] Create interaction feedback (highlights, tooltips)
 - [ ] Handle keyboard shortcuts
 - [ ] Add touch support
 
 ### 5.2 UI Components
 
+**Status**: Dialogue UI complete
+
 Tasks:
 - [ ] Design HUD layout
-- [ ] Create dialogue box component
+- [x] Create dialogue box component ✅ (HTML/CSS with animations)
 - [ ] Build quest log UI
 - [ ] Add examine text overlay
 - [ ] Implement modal dialogs
 
 New directory:
-- `src/ui/` (if web-based UI)
+- `src/ui/` ✅ (DialogueUI component)
 
 ## Phase 6: Content Pipeline 📦
 
@@ -206,20 +214,22 @@ Tasks:
 
 ### 7.1 Unit Tests
 
+**Status**: Initial tests created ✅
+
 Tasks:
 - [ ] Test SceneCompositor in isolation
 - [ ] Test StoryCompositor with mock flags
 - [ ] Test GameCompositor viewport logic
-- [ ] Test QuestManager flag operations
+- [x] Test QuestManager flag operations ✅
 - [ ] Test DialogueManager tree navigation
 - [ ] Test InteractionSystem click detection
-- [ ] Test GridSystemImpl pathfinding
+- [x] Test GridSystemImpl pathfinding ✅
 
 Test files:
-- `tests/unit/SceneCompositor.test.ts`
-- `tests/unit/StoryCompositor.test.ts`
-- `tests/unit/GameCompositor.test.ts`
-- (etc.)
+- `tests/unit/GridSystemImpl.test.ts` ✅
+- `tests/unit/QuestManager.test.ts` ✅
+- `jest.config.js` ✅
+- `tsconfig.test.json` ✅
 
 ### 7.2 Integration Tests
 

@@ -8,17 +8,28 @@ import * as THREE from 'three';
 import { ComposedScene, ComposedStory, SlotContent, GameViewport } from '../../types';
 import { GLBLoader } from '../loaders/GLBLoader';
 
+export interface RaycastResult {
+  object: THREE.Object3D;
+  point: THREE.Vector3;
+  distance: number;
+  slotId?: string;
+}
+
 export class GameCompositor {
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
   private glbLoader: GLBLoader;
   private loadedModels: Map<string, THREE.Object3D>;
+  private raycaster: THREE.Raycaster;
+  private slotObjects: Map<string, THREE.Object3D>;
 
   constructor() {
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
     this.glbLoader = new GLBLoader();
     this.loadedModels = new Map();
+    this.raycaster = new THREE.Raycaster();
+    this.slotObjects = new Map();
 
     // Setup basic lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -31,6 +42,92 @@ export class GameCompositor {
     // Default camera position (diorama angle)
     this.camera.position.set(12, 15, 20);
     this.camera.lookAt(12, 0, 8);
+  }
+
+  /**
+   * Frame the scene in a diorama-style view
+   */
+  frameDioramaView(gridWidth: number, gridHeight: number): void {
+    // Calculate center of the grid
+    const centerX = gridWidth / 2;
+    const centerZ = gridHeight / 2;
+
+    // Position camera for isometric-style diorama view
+    const distance = Math.max(gridWidth, gridHeight) * 1.5;
+    const height = distance * 0.7;
+
+    this.camera.position.set(
+      centerX + distance * 0.6,
+      height,
+      centerZ + distance * 0.8
+    );
+
+    this.camera.lookAt(centerX, 0, centerZ);
+    this.camera.updateProjectionMatrix();
+  }
+
+  /**
+   * Perform raycasting to detect clicked objects
+   */
+  raycast(normalizedX: number, normalizedY: number): RaycastResult | null {
+    // Update raycaster with camera and mouse position
+    const mouse = new THREE.Vector2(normalizedX, normalizedY);
+    this.raycaster.setFromCamera(mouse, this.camera);
+
+    // Find intersections
+    const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+
+    if (intersects.length > 0) {
+      const intersection = intersects[0];
+      
+      // Try to find slot ID for this object
+      let slotId: string | undefined;
+      for (const [id, obj] of this.slotObjects.entries()) {
+        if (obj === intersection.object || obj.children.includes(intersection.object as any)) {
+          slotId = id;
+          break;
+        }
+      }
+
+      return {
+        object: intersection.object,
+        point: intersection.point,
+        distance: intersection.distance,
+        slotId
+      };
+    }
+
+    return null;
+  }
+
+  /**
+   * Get clickable objects (for hover effects)
+   */
+  getClickableObjects(): THREE.Object3D[] {
+    return Array.from(this.slotObjects.values());
+  }
+
+  /**
+   * Add hover effect to an object
+   */
+  addHoverEffect(object: THREE.Object3D, hovered: boolean): void {
+    object.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        if (hovered) {
+          // Add emissive glow
+          if (child.material instanceof THREE.MeshStandardMaterial) {
+            child.material.emissive.setHex(0x444444);
+            child.material.emissiveIntensity = 0.3;
+          }
+        } else {
+          // Remove glow
+          if (child.material instanceof THREE.MeshStandardMaterial) {
+            child.material.emissive.setHex(0x000000);
+            child.material.emissiveIntensity = 0;
+          }
+        }
+      }
+    });
   }
 
   /**
@@ -64,7 +161,11 @@ export class GameCompositor {
       this.scene.add(directionalLight);
     }
 
+    // Frame the diorama view
+    this.frameDioramaView(composedScene.gridSystem.width, composedScene.gridSystem.height);
+
     this.loadedModels.clear();
+    this.slotObjects.clear();
 
     // Load and add content to slots
     for (const content of activeContent) {
@@ -102,8 +203,12 @@ export class GameCompositor {
           model.scale.set(1, 1, 1);
         }
 
+        // Add user data for identification
+        model.userData.slotId = content.slotId;
+
         this.scene.add(model);
         this.loadedModels.set(content.slotId, model);
+        this.slotObjects.set(content.slotId, model);
       } catch (error) {
         console.error(`Failed to load model for slot ${content.slotId}:`, error);
       }

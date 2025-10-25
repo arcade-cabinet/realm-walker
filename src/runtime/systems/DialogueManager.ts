@@ -2,6 +2,9 @@
  * DialogueManager - Conversation system for NPC interactions
  */
 
+import * as fs from 'fs';
+import * as path from 'path';
+
 export interface DialogueNode {
   id: string;
   text: string;
@@ -32,6 +35,74 @@ export class DialogueManager {
 
   constructor() {
     this.dialogues = new Map();
+  }
+
+  /**
+   * Load dialogue tree from JSON file
+   */
+  loadDialogueTree(filePath: string): DialogueTree {
+    try {
+      const content = fs.readFileSync(filePath, 'utf-8');
+      const data = JSON.parse(content);
+      
+      // Convert array-based format to map-based format
+      const tree: DialogueTree = {
+        id: data.id,
+        startNode: data.nodes?.[0]?.id || 'start',
+        nodes: {}
+      };
+
+      // Convert nodes array to object map
+      if (Array.isArray(data.nodes)) {
+        for (const node of data.nodes) {
+          // Convert choices format
+          const choices = node.choices?.map((choice: any) => ({
+            text: choice.text,
+            next: choice.nextNode || choice.next,
+            requiresFlags: choice.requiresFlags,
+            setsFlags: choice.setFlags || choice.setsFlags
+          }));
+
+          tree.nodes[node.id] = {
+            id: node.id,
+            text: node.text,
+            speaker: node.speaker,
+            choices: choices,
+            setFlags: node.setFlags
+          };
+        }
+      }
+
+      this.registerDialogue(tree);
+      console.log(`Loaded dialogue tree: ${tree.id} (${Object.keys(tree.nodes).length} nodes)`);
+      return tree;
+    } catch (error) {
+      throw new Error(`Failed to load dialogue tree from ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  /**
+   * Load all dialogue trees from a directory
+   */
+  loadDialogueDirectory(dirPath: string): number {
+    try {
+      const files = fs.readdirSync(dirPath);
+      let loadedCount = 0;
+
+      for (const file of files) {
+        if (file.endsWith('.json')) {
+          const fullPath = path.join(dirPath, file);
+          this.loadDialogueTree(fullPath);
+          loadedCount++;
+        }
+      }
+
+      console.log(`Loaded ${loadedCount} dialogue trees from ${dirPath}`);
+      return loadedCount;
+    } catch (error) {
+      console.error(`Failed to load dialogue directory ${dirPath}:`, error);
+      return 0;
+    }
   }
 
   /**
