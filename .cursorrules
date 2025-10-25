@@ -1,0 +1,251 @@
+# Cursor Rules for Realm Walker Story
+
+## Project Overview
+
+Realm Walker Story is a ScummVM-style 3D adventure game built with TypeScript, Node.js, and Three.js. It uses a strict three-tier compositor pattern with complete separation of concerns.
+
+## Documentation System
+
+### Primary Source of Truth
+- **docs/** folder contains FROZEN authoritative documents
+- **.memory-bank/** contains active context and progress tracking
+- **Always read docs first** before making architectural decisions
+- **Reference docs** in memory bank entries, don't duplicate information
+
+### Documentation Structure
+```
+docs/
+├── architecture/          # Technical architecture (FROZEN)
+├── design/               # Game design and vision (FROZEN)  
+├── content/              # Game content specifications (FROZEN)
+├── development/          # Development processes (Versioned)
+└── api/                  # API documentation (Versioned)
+```
+
+### Memory Bank Structure
+```
+.memory-bank/
+├── current-state.md         # What's working/broken right now
+├── session-context.md       # Current work focus
+├── decision-log.md          # Key decisions made
+├── progress-tracker.md      # Task completion status
+└── technical-notes.md       # Implementation details
+```
+
+## Architecture Constraints
+
+### Three-Tier Compositor Pattern
+1. **SceneCompositor** (Layer 1): Builds ONLY room geometry
+2. **StoryCompositor** (Layer 2): Fills slots with quest-based content
+3. **GameCompositor** (Layer 3): Handles presentation and UI
+
+### Strict Layer Separation
+- **SceneCompositor**: NEVER imports QuestManager or story types
+- **StoryCompositor**: NEVER imports GameCompositor or UI types
+- **GameCompositor**: NEVER imports scene building logic
+
+### Boolean Flag Quest System
+- **No numerical stats**: Everything is boolean flags
+- **No inventory arrays**: Items are flags (e.g., "has_palace_key")
+- **No XP or leveling**: Quest progression only
+- **Three story threads**: A/B/C parallel progression
+
+### Type Safety
+- **Strict TypeScript**: No `any` types allowed
+- **Comprehensive interfaces**: All data structures typed
+- **Layer boundary types**: Prevent cross-layer imports
+
+## Development Standards
+
+### Code Quality
+- **TypeScript strict mode**: All code must compile without errors
+- **Comprehensive testing**: Unit tests for all systems
+- **Clean architecture**: Separation of concerns enforced
+- **Documentation**: Code must be well-documented
+
+### Performance
+- **60fps target**: Smooth rendering on modern devices
+- **Asset caching**: LRU cache for GLB models
+- **Memory management**: Cleanup unused assets
+
+### Testing Strategy
+- **Unit tests**: Individual system testing
+- **Integration tests**: Complete flow testing
+- **Layer isolation tests**: Prevent cross-dependencies
+
+## Content System
+
+### RWMD Scene Format
+- **Declarative text format** for scene authoring
+- **Anchor resolution** (@props/fountain → path)
+- **JSON output** for runtime consumption
+
+### Quest System
+- **Boolean flags only**: No numerical stats
+- **Scene access gating**: Based on quest completion
+- **NPC spawning**: Based on quest state
+- **Door unlocking**: Based on flag requirements
+
+### Dialogue System
+- **Branching conversations** with choices
+- **Flag-gated options** based on quest state
+- **Character voice** and personality markers
+
+## Development Workflow
+
+### Memory Bank Integration
+1. **Read memory bank** for current context
+2. **Read relevant docs** before making decisions
+3. **Update memory bank** when making changes
+4. **Reference docs** in memory bank entries
+
+### Documentation Updates
+- **FROZEN docs** require explicit approval to change
+- **Version bump** when making architectural changes
+- **Cross-reference** related documents
+- **Update memory bank** when docs change
+
+### Code Changes
+- **Follow three-tier pattern** strictly
+- **Maintain type safety** throughout
+- **Update tests** when changing functionality
+- **Document changes** in memory bank
+
+## Key Files and Locations
+
+### Core Systems
+- `src/runtime/systems/SceneCompositor.ts` - Layer 1
+- `src/runtime/systems/StoryCompositor.ts` - Layer 2
+- `src/runtime/systems/GameCompositor.ts` - Layer 3
+- `src/runtime/systems/QuestManager.ts` - Quest system
+- `src/runtime/parsers/RWMDParser.ts` - Scene parser
+
+### Type Definitions
+- `src/types/GridSystem.ts` - Grid and navigation types
+- `src/types/SceneDefinition.ts` - Scene data structures
+- `src/types/StoryBinding.ts` - Story content mapping
+- `src/types/GameState.ts` - Player progress types
+- `src/types/Compositor.ts` - Compositor interfaces
+
+### Content Files
+- `scenes/rwmd/` - RWMD scene files
+- `scenes/definitions/` - JSON scene data
+- `scenes/bindings/` - Story bindings
+- `scenes/dialogues/` - Dialogue trees
+
+## Common Patterns
+
+### Scene Loading
+```typescript
+// Parse RWMD file
+const sceneDef = RWMDParser.parseSceneFile(rwmdContent);
+
+// Build scene geometry
+const composedScene = SceneCompositor.build(sceneDef);
+
+// Fill with story content
+const composedStory = StoryCompositor.compose(composedScene, questState);
+
+// Present to player
+const gameViewport = GameCompositor.render(composedStory, viewport);
+```
+
+### Quest Management
+```typescript
+// Set a flag
+QuestManager.setFlag('met_elder', true);
+
+// Check a flag
+if (QuestManager.hasFlag('met_elder')) {
+  // Player has met the elder
+}
+
+// Start a quest
+QuestManager.startQuest('find_the_guardian');
+```
+
+### Type Safety
+```typescript
+// Strict typing with no any
+interface GridPosition extends Array<number> {
+  0: number; // x
+  1: number; // y
+  length: 2;
+}
+
+// Type guards for runtime checking
+function isGridPosition(obj: unknown): obj is GridPosition {
+  return Array.isArray(obj) && obj.length === 2;
+}
+```
+
+## Error Handling
+
+### Validation
+- **Scene structure validation** in RWMDParser
+- **Asset existence checking** before loading
+- **Type validation** at runtime
+
+### Graceful Degradation
+- **Missing assets** don't crash the game
+- **Invalid data** falls back to safe defaults
+- **Errors are logged** but don't stop execution
+
+## Performance Considerations
+
+### Asset Loading
+- **LRU cache** for GLB models
+- **Preloading** for adjacent scenes
+- **Asset cleanup** on scene transitions
+
+### Rendering
+- **Frustum culling** for large scenes
+- **Level-of-detail** for distant objects
+- **Object pooling** for frequent creation/destruction
+
+## Testing Guidelines
+
+### Unit Tests
+- **Test each layer** in isolation
+- **Mock dependencies** to prevent cross-layer imports
+- **Test error conditions** and edge cases
+
+### Integration Tests
+- **Test complete flows** from RWMD to rendered scene
+- **Test quest progression** end-to-end
+- **Test scene transitions** and state updates
+
+### Layer Isolation Tests
+- **Verify no cross-layer dependencies**
+- **Check for circular imports**
+- **Validate type boundaries**
+
+## Memory Bank Usage
+
+### Current State
+- **What's working**: Document functional systems
+- **What's broken**: Track known issues
+- **What's in progress**: Current work focus
+
+### Session Context
+- **Current task**: What you're working on
+- **Blockers**: What's preventing progress
+- **Next steps**: Immediate next actions
+
+### Decision Log
+- **Key decisions**: Important architectural choices
+- **Rationale**: Why decisions were made
+- **Impact**: What the decision affects
+
+### Progress Tracker
+- **Completed tasks**: What's been finished
+- **In progress**: What's currently being worked on
+- **Next priority**: What to work on next
+
+## Integration with Cline Rules
+
+This `.cursorrules` file aligns with `.clinerules` to ensure:
+- **Consistent documentation approach** across tools
+- **Clear separation** between docs and memory bank
+- **Proper workflow** for making changes
+- **Architectural constraints** are enforced
