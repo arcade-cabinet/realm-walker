@@ -58,11 +58,7 @@ import { ComposedStory, GameViewState } from '@types/Game';
 ### Type Safety Patterns
 All interfaces are strictly typed with no `any`:
 ```typescript
-interface GridPosition extends Array<number> {
-  0: number; // x
-  1: number; // y
-  length: 2;
-}
+type GridPosition = [x: number, y: number];
 ```
 
 ### Testing Patterns
