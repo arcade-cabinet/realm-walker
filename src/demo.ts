@@ -53,8 +53,9 @@ async function runDemo() {
 
   console.log('  [Tier 1: SceneCompositor]');
   const composedScene = scene.compose(sceneData);
-  console.log(`    ✓ Built ${composedScene.geometry.length} geometry pieces`);
-  console.log(`    ✓ Created ${composedScene.slots.size} empty slots`);
+  const totalSlots = composedScene.slots.npcs.size + composedScene.slots.props.size + composedScene.slots.doors.size;
+  console.log(`    ✓ Built scene with grid system (${composedScene.gridSystem.width}x${composedScene.gridSystem.height})`);
+  console.log(`    ✓ Created ${totalSlots} empty slots (${composedScene.slots.npcs.size} NPCs, ${composedScene.slots.props.size} props, ${composedScene.slots.doors.size} doors)`);
   console.log('    ℹ Scene knows NOTHING about story or flags\n');
 
   console.log('  [Tier 2: StoryCompositor]');

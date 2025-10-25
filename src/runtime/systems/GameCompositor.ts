@@ -5,7 +5,7 @@
  */
 
 import * as THREE from 'three';
-import { ComposedScene, SlotContent, GameViewport } from '../../types';
+import { ComposedScene, ComposedStory, SlotContent, GameViewport } from '../../types';
 import { GLBLoader } from '../loaders/GLBLoader';
 
 export class GameCompositor {
@@ -28,37 +28,76 @@ export class GameCompositor {
     directionalLight.position.set(5, 10, 5);
     this.scene.add(directionalLight);
 
-    // Default camera position
-    this.camera.position.set(0, 5, 10);
-    this.camera.lookAt(0, 0, 0);
+    // Default camera position (diorama angle)
+    this.camera.position.set(12, 15, 20);
+    this.camera.lookAt(12, 0, 8);
   }
 
   /**
-   * Compose the final game viewport
+   * Compose from ComposedStory (new interface)
+   */
+  async composeStory(story: ComposedStory): Promise<GameViewport> {
+    // Use the scene from the story
+    this.scene = story.room.scene;
+
+    // Add lighting if not present
+    if (!this.scene.children.some(child => child instanceof THREE.Light)) {
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      this.scene.add(ambientLight);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(5, 10, 5);
+      this.scene.add(directionalLight);
+    }
+
+    // NPCs, props, and doors are already in the story with their meshes
+    // Just add them to the scene
+    for (const [id, npc] of story.npcs) {
+      this.scene.add(npc.mesh);
+    }
+
+    for (const [id, prop] of story.props) {
+      this.scene.add(prop.mesh);
+    }
+
+    for (const [id, door] of story.doors) {
+      this.scene.add(door.mesh);
+    }
+
+    return {
+      camera: this.camera,
+      scene: this.scene
+    };
+  }
+
+  /**
+   * Compose the final game viewport (legacy interface)
    * Combines scene geometry and story content
    */
   async compose(composedScene: ComposedScene, activeContent: SlotContent[]): Promise<GameViewport> {
-    // Clear previous scene content (keep lights)
-    const objectsToRemove = this.scene.children.filter(
-      child => !(child instanceof THREE.Light)
-    );
-    objectsToRemove.forEach(obj => this.scene.remove(obj));
+    // Use the scene from composedScene
+    this.scene = composedScene.scene;
+
+    // Add lighting if not present
+    if (!this.scene.children.some(child => child instanceof THREE.Light)) {
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      this.scene.add(ambientLight);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(5, 10, 5);
+      this.scene.add(directionalLight);
+    }
+
     this.loadedModels.clear();
-
-    // Add scene geometry
-    for (const geo of composedScene.geometry) {
-      this.scene.add(geo);
-    }
-
-    // Add slot markers to scene for reference
-    for (const [slotId, slotMarker] of composedScene.slots) {
-      this.scene.add(slotMarker);
-    }
 
     // Load and add content to slots
     for (const content of activeContent) {
-      const slot = composedScene.slots.get(content.slotId);
-      if (!slot) {
+      // Find the slot in the appropriate category
+      const gridPos = composedScene.slots.npcs.get(content.slotId) ||
+                      composedScene.slots.props.get(content.slotId) ||
+                      composedScene.slots.doors.get(content.slotId);
+
+      if (!gridPos) {
         console.warn(`Slot ${content.slotId} not found in scene`);
         continue;
       }
@@ -66,23 +105,22 @@ export class GameCompositor {
       try {
         const model = await this.glbLoader.load(content.modelPath);
         
-        // Apply content-specific transforms or use slot transforms
+        // Convert grid position to world position
+        const worldPos = composedScene.gridSystem.gridToWorld(gridPos);
+        
+        // Apply content-specific transforms or use calculated position
         if (content.position) {
           model.position.set(...content.position);
         } else {
-          model.position.copy(slot.position);
+          model.position.set(...worldPos);
         }
 
         if (content.rotation) {
           model.rotation.set(...content.rotation);
-        } else {
-          model.rotation.copy(slot.rotation);
         }
 
         if (content.scale) {
           model.scale.set(...content.scale);
-        } else {
-          model.scale.copy(slot.scale);
         }
 
         this.scene.add(model);
