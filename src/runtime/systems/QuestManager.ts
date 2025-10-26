@@ -135,4 +135,18 @@ export class QuestManager {
     const parsed = JSON.parse(json);
     this.loadState(parsed);
   }
+
+  /**
+   * Reset all quest state to initial values
+   */
+  reset(): void {
+    this.state = {
+      storyFlags: {},
+      activeQuests: [],
+      completedQuests: [],
+      aStoryProgress: 0,
+      bStoryProgress: 0,
+      cStoryProgress: 0
+    };
+  }
 }
