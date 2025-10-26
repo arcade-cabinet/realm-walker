@@ -10,8 +10,9 @@
 import { test, expect, Page } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
+import { pathToFileURL } from 'url';
 
-const TEST_HARNESS_PATH = 'file://' + path.resolve(__dirname, 'test-harness.html');
+const TEST_HARNESS_PATH = pathToFileURL(path.resolve(__dirname, 'test-harness.html')).toString();
 
 test.describe('Realm Walker Story - E2E Tests', () => {
   
