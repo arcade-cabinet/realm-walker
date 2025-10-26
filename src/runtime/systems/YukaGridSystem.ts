@@ -3,7 +3,7 @@
  * Provides superior pathfinding performance using Yuka's AStar and NavMesh
  */
 
-// @ts-ignore - Yuka doesn't have official types
+// @ts-expect-error - Yuka doesn't have official types
 import { AStar, Graph, Node, Edge, NavMesh } from 'yuka';
 import { GridSystem, GridPosition, WorldPosition } from '../../types/GridSystem';
 
