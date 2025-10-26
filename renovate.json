@@ -14,16 +14,6 @@
   "regexManagers": [
     {
       "fileMatch": ["^\\.cursor/Dockerfile$"],
-      "matchStrings": [
-        "ENV ANDROID_CMDLINE_TOOLS_VERSION=(?<currentValue>\\d+)",
-        "pnpm@(?<currentValue>[0-9.]+)"
-      ],
-      "depNameTemplate": "android-commandline-tools",
-      "datasourceTemplate": "github-releases",
-      "packageNameTemplate": "android/android-tools"
-    },
-    {
-      "fileMatch": ["^\\.cursor/Dockerfile$"],
       "matchStrings": ["corepack prepare pnpm@(?<currentValue>[0-9.]+)"],
       "depNameTemplate": "pnpm",
       "datasourceTemplate": "npm"
