@@ -30,32 +30,41 @@ declare module 'yuka' {
     constructor(x?: number, y?: number, z?: number, w?: number);
   }
 
-  export class GraphNode {
+  export class Node {
     index: number;
     constructor(index: number);
   }
 
-  export class GraphEdge {
+  export class Edge {
     from: number;
     to: number;
     cost: number;
     
     constructor(from: number, to: number, cost: number);
+    clone(): Edge;
   }
 
   export class Graph {
     constructor();
-    addNode(nodeIndex: number): this;
-    addEdge(from: number, to: number, cost: number): this;
-    getNode(nodeIndex: number): GraphNode | null;
+    addNode(node: Node): this;
+    addEdge(edge: Edge): this;
+    getNode(nodeIndex: number): Node | null;
     getNodeCount(): number;
     getEdgeCount(): number;
     clear(): this;
   }
 
   export class AStar {
-    constructor();
-    search(graph: Graph, from: GraphNode, to: GraphNode): GraphNode[];
+    graph: Graph | null;
+    source: number;
+    target: number;
+    found: boolean;
+    heuristic: { calculate(graph: Graph, source: number, target: number): number };
+    
+    constructor(graph?: Graph | null, source?: number, target?: number);
+    search(): this;
+    getPath(): number[];
+    clear(): this;
   }
 
   export class NavMesh {

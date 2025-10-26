@@ -4,7 +4,7 @@
  */
 
 // @ts-ignore - Yuka doesn't have official types
-import { AStar, Graph, NavNode, Edge, NavMesh } from 'yuka';
+import { AStar, Graph, Node, Edge, NavMesh } from 'yuka';
 import { GridSystem, GridPosition, WorldPosition } from '../../types/GridSystem';
 
 // Type definitions for Yuka components we use
@@ -115,17 +115,33 @@ export class YukaGridSystem implements GridSystem {
     }
 
     // Find path using Yuka's optimized A*
-    this.astar = new (AStar as any)(this.graph, startNodeId, endNodeId);
+    // Set up the pathfinding with source and target node indices
+    this.astar.graph = this.graph;
+    this.astar.source = startNodeId;
+    this.astar.target = endNodeId;
+    // Use a custom Manhattan distance heuristic for grid-based pathfinding
+    this.astar.heuristic = {
+      calculate: (graph: any, source: number, target: number) => {
+        const sourcePos = this.nodeIdToPos(source);
+        const targetPos = this.nodeIdToPos(target);
+        return Math.abs(sourcePos[0] - targetPos[0]) + Math.abs(sourcePos[1] - targetPos[1]);
+      }
+    };
+    this.astar.clear(); // Clear any previous search state
     this.astar.search();
 
     if (!this.astar.found) {
       return null;
     }
 
-    // Get the path (array of node IDs)
+    // Get the path as an array of node indices
     const path = this.astar.getPath();
+    
+    if (!path || path.length === 0) {
+      return null;
+    }
 
-    // Convert node IDs back to grid positions
+    // Convert node indices to grid positions
     return path.map((nodeId: number) => this.nodeIdToPos(nodeId));
   }
 
@@ -169,7 +185,7 @@ export class YukaGridSystem implements GridSystem {
       for (let x = 0; x < this.width; x++) {
         if (this.walkable[y][x]) {
           const nodeId = this.posToNodeId([x, y]);
-          const node = new (NavNode as any)(nodeId);
+          const node = new Node(nodeId);
           this.graph.addNode(node);
         }
       }
@@ -194,7 +210,7 @@ export class YukaGridSystem implements GridSystem {
           if (this.isWalkable([nx, ny])) {
             const neighborId = this.posToNodeId([nx, ny]);
             // Cost of 1 for cardinal movement
-            const edge = new (Edge as any)(nodeId, neighborId, 1);
+            const edge = new Edge(nodeId, neighborId, 1);
             this.graph.addEdge(edge);
           }
         }
@@ -214,7 +230,7 @@ export class YukaGridSystem implements GridSystem {
             const dy = ny - y;
             if (this.isWalkable([x + dx, y]) && this.isWalkable([x, y + dy])) {
               const neighborId = this.posToNodeId([nx, ny]);
-              const edge = new (Edge as any)(nodeId, neighborId, 1.414);
+              const edge = new Edge(nodeId, neighborId, 1.414);
               this.graph.addEdge(edge);
             }
           }
