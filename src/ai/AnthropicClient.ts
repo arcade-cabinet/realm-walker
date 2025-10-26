@@ -93,31 +93,27 @@ export class AnthropicClient {
     locations: any[];
     metadata: any;
   }> {
-    const systemPrompt = `You are a narrative content analyzer for Realm Walker Story, a Gothic fantasy adventure game.
+    const systemPrompt = `You are a narrative content analyzer for REALM WALKER, extracting structured game elements using CANONICAL WORLD LORE.
 
-Your task is to analyze provided narrative content and extract structured game elements following our established world lore and architecture.
+## CRITICAL: CANONICAL WORLD LORE
 
-## World Context (from Story Bible)
 ${storyBible}
 
-## Extraction Guidelines
+## Your Task
 
-1. **Quests**: Identify quest opportunities that fit our boolean flag system (no XP, no stats)
-2. **Dialogues**: Extract NPC dialogue that fits our three story threads (A/B/C)
-3. **NPCs**: Identify character descriptions suitable for 3D model generation
-4. **Lore**: Extract world-building elements consistent with Gothic fantasy setting
-5. **Locations**: Identify scenes that could become game locations
+${instructions}
 
-## Output Format
-Return a JSON object with these fields:
-- quests: Array of quest objects with boolean flags
-- dialogues: Array of dialogue trees
-- npcs: Array of NPC definitions with appearance descriptions
-- lore: Array of lore entries
-- locations: Array of scene/location definitions
-- metadata: Any additional context or notes
+Extract game elements in this JSON structure:
+{
+  "quests": [...],
+  "dialogues": [...],
+  "npcs": [...],
+  "lore": [...],
+  "locations": [...],
+  "metadata": { "storyBeats": [...], "notes": "..." }
+}
 
-Be creative but stay true to the Gothic fantasy atmosphere and three-tier compositor architecture.`;
+IMPORTANT: All extracted content MUST align with the canonical mythology above. Reject anything that contradicts the Creator/Destroyer story, Guardian lore, or faction history.`;
 
     const userPrompt = `${instructions}
 
