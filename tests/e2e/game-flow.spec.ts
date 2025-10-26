@@ -277,7 +277,7 @@ test.describe('Realm Walker Story - E2E Tests', () => {
     });
   });
 
-  test.describe('Accessibility', () => {
+  test.describe('Testability', () => {
     test('should have proper test IDs for automation', async ({ page }) => {
       // Verify all key elements have test IDs
       const elements = [
