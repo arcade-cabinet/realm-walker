@@ -220,7 +220,9 @@ describe('SceneCompositor', () => {
       const sceneData: SceneData = {
         id: 'test',
         name: 'Test',
-        geometry: [],
+        geometry: [
+          { type: 'box', dimensions: [1, 1, 1], position: [0, 0, 0] }
+        ],
         slots: []
       };
 

@@ -81,6 +81,7 @@ export class GridSystemImpl implements GridSystem {
 
     const openSet: PathNode[] = [];
     const closedSet = new Set<string>();
+    const gScore = new Map<string, number>();
     
     const startNode: PathNode = {
       pos: start,
@@ -90,7 +91,9 @@ export class GridSystemImpl implements GridSystem {
       parent: null
     };
     
+    const startKey = `${start[0]},${start[1]}`;
     openSet.push(startNode);
+    gScore.set(startKey, 0);
 
     while (openSet.length > 0) {
       // Find node with lowest f score
@@ -98,6 +101,7 @@ export class GridSystemImpl implements GridSystem {
       const current = openSet.shift()!;
       
       const posKey = `${current.pos[0]},${current.pos[1]}`;
+      
       if (closedSet.has(posKey)) {
         continue;
       }
@@ -117,18 +121,26 @@ export class GridSystemImpl implements GridSystem {
           continue;
         }
 
-        const g = current.g + 1;
+        const tentativeG = current.g + 1;
+        
+        // Check if we've found a better path to this neighbor
+        const existingG = gScore.get(neighborKey);
+        if (existingG !== undefined && tentativeG >= existingG) {
+          continue;
+        }
+
         const h = this.heuristic(neighborPos, end);
-        const f = g + h;
+        const f = tentativeG + h;
 
         const neighbor: PathNode = {
           pos: neighborPos,
-          g,
+          g: tentativeG,
           h,
           f,
           parent: current
         };
 
+        gScore.set(neighborKey, tentativeG);
         openSet.push(neighbor);
       }
     }

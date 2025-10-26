@@ -80,7 +80,7 @@ describe('GridSystemImpl', () => {
     });
 
     test('finds path around obstacles', () => {
-      // Create a wall
+      // Create a wall at x=5, from y=1 to y=8 (excluding y=0 and y=9)
       for (let y = 1; y < 9; y++) {
         gridSystem.setWalkable([5, y], false);
       }
@@ -93,9 +93,12 @@ describe('GridSystemImpl', () => {
       expect(path).not.toBeNull();
       expect(path!.length).toBeGreaterThan(4); // Should go around wall
       
-      // Verify path doesn't go through wall
+      // Verify path doesn't go through the blocked part of the wall (y=1 to y=8)
       for (const pos of path!) {
-        expect(pos[0]).not.toBe(5);
+        if (pos[0] === 5) {
+          // If x=5, y must be 0 or 9 (not blocked)
+          expect(pos[1] === 0 || pos[1] === 9).toBe(true);
+        }
       }
     });
 
