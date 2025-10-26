@@ -294,7 +294,7 @@ test.describe('Realm Walker Story - E2E Tests', () => {
       ];
       
       for (const testId of elements) {
-        await expect(page.locator(`[data-testid="${testId}"]`)).toBeTruthy();
+        await expect(page.locator(`[data-testid="${testId}"]`)).toBeVisible();
       }
     });
   });
