@@ -124,7 +124,10 @@ export class YukaGridSystem implements GridSystem {
       calculate: (graph: any, source: number, target: number) => {
         const sourcePos = this.nodeIdToPos(source);
         const targetPos = this.nodeIdToPos(target);
-        return Math.abs(sourcePos[0] - targetPos[0]) + Math.abs(sourcePos[1] - targetPos[1]);
+        const dx = Math.abs(sourcePos[0] - targetPos[0]);
+        const dy = Math.abs(sourcePos[1] - targetPos[1]);
+        // Using Chebyshev distance for grids allowing diagonal movement.
+        return Math.max(dx, dy);
       }
     };
     this.astar.clear(); // Clear any previous search state
