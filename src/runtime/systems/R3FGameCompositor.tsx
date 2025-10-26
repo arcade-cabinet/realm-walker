@@ -11,6 +11,12 @@ import { ComposedScene, ComposedStory, SlotContent, GameViewport } from '../../t
 import { GLBLoader } from '../loaders/GLBLoader';
 
 /**
+ * Placeholder constants for loading state
+ */
+const PLACEHOLDER_BOX_SIZE = 1;
+const PLACEHOLDER_BOX_COLOR = 'gray';
+
+/**
  * Props for R3F Game Scene
  */
 export interface R3FGameSceneProps {
@@ -87,8 +93,8 @@ function SlotModel({
     // Show placeholder while loading
     return (
       <mesh position={position}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="gray" wireframe />
+        <boxGeometry args={[PLACEHOLDER_BOX_SIZE, PLACEHOLDER_BOX_SIZE, PLACEHOLDER_BOX_SIZE]} />
+        <meshStandardMaterial color={PLACEHOLDER_BOX_COLOR} wireframe />
       </mesh>
     );
   }

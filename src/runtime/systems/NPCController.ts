@@ -3,7 +3,7 @@
  * Provides intelligent NPC movement and behavior based on quest state
  */
 
-// @ts-nocheck - Yuka doesn't have official types  
+// @ts-expect-error - Yuka doesn't have official types
 import { 
   Vehicle, 
   EntityManager,
