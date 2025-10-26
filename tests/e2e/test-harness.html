@@ -284,10 +284,11 @@
         });
         
         // Dialogue choice handlers
-        document.querySelectorAll('.dialogue-choice').forEach((choice, index) => {
+        document.querySelectorAll('.dialogue-choice').forEach(choice => {
             choice.addEventListener('click', () => {
-                if (index === 1) {
-                    gameState.flags.talked_to_guide = true;
+                const flagToSet = choice.dataset.setFlag;
+                if (flagToSet) {
+                    gameState.flags[flagToSet] = true;
                 }
                 document.getElementById('dialogue-box').classList.remove('active');
                 gameState.dialogueActive = false;
