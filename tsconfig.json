@@ -14,8 +14,9 @@
     "declarationMap": true,
     "sourceMap": true,
     "moduleResolution": "node",
+    "jsx": "react",
     "types": ["node"]
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "yuka.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
