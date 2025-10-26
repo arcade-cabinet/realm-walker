@@ -121,15 +121,30 @@ async function demoNPCAI() {
   for (const sim of simulations) {
     console.log(`\n--- ${sim.name} ---`);
     
-    // Set quest flags - create fresh state for each simulation
-    const freshQuestManager = new QuestManager();
+    // Reset quest flags for each simulation
+    if (typeof questManager.reset === 'function') {
+      questManager.reset();
+    } else if (typeof questManager.clearFlags === 'function') {
+      questManager.clearFlags();
+    } else {
+      // Fallback: try to clear known internal state
+      if (questManager.flags) {
+        if (typeof questManager.flags.clear === 'function') {
+          questManager.flags.clear();
+        } else if (typeof questManager.flags === 'object') {
+          for (const key of Object.keys(questManager.flags)) {
+            delete questManager.flags[key];
+          }
+        }
+      }
+    }
     for (const [flag, value] of Object.entries(sim.flags)) {
-      freshQuestManager.setFlag(flag, value);
+      questManager.setFlag(flag, value);
     }
 
     // Update NPCs for a few frames
     for (let i = 0; i < 5; i++) {
-      npcManager.update(0.016, freshQuestManager.getState(), sim.playerPos);
+      npcManager.update(0.016, questManager.getState(), sim.playerPos);
       
       if (i === 4) {
         console.log(`Guard position: [${guard.getPosition().map(v => v.toFixed(1)).join(', ')}]`);
