@@ -107,10 +107,11 @@ The Playwright configuration (`playwright.config.ts`) is set up to work seamless
 
 ```typescript
 // playwright.config.ts
+// NOTE: Replace 'http://localhost:3000' with the actual server URL as needed.
 export default defineConfig({
   testDir: './tests/e2e',
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:3000', // Example placeholder
     // ... other settings
   }
 });
