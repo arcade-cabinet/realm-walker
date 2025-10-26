@@ -143,5 +143,6 @@ vite.config.ts.timestamp-*
 /playwright-report/
 /playwright/.cache/
 
-# Test screenshots (keep in repo for documentation)
-# tests/screenshots/
+# Test screenshots (keep README but exclude images)
+tests/screenshots/*.png
+!tests/screenshots/README.md
