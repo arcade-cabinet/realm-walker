@@ -108,6 +108,7 @@ RUN pnpm dlx playwright install chromium
 # Android SDK (for Capacitor Android tasks)
 # Use a variable for the command line tools version for easier updates.
 # Last tested/compatible version as of 2024-06. Update as needed.
+# NOTE: Android SDK versions are not auto-tracked by Renovate (no reliable datasource).
 ENV ANDROID_CMDLINE_TOOLS_VERSION=11076708
 ENV ANDROID_SDK_ROOT=/opt/android-sdk ANDROID_HOME=/opt/android-sdk
 ENV PATH="$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools"
