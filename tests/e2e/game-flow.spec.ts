@@ -9,7 +9,6 @@
 
 import { test, expect, Page } from '@playwright/test';
 import * as path from 'path';
-import * as fs from 'fs';
 import { pathToFileURL } from 'url';
 
 const TEST_HARNESS_PATH = pathToFileURL(path.resolve(__dirname, 'test-harness.html')).toString();
@@ -298,12 +297,4 @@ test.describe('Realm Walker Story - E2E Tests', () => {
       }
     });
   });
-});
-
-// Helper function to ensure screenshots directory exists
-test.beforeAll(async () => {
-  const screenshotsDir = path.resolve(__dirname, '../screenshots');
-  if (!fs.existsSync(screenshotsDir)) {
-    fs.mkdirSync(screenshotsDir, { recursive: true });
-  }
 });
