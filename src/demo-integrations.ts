@@ -195,7 +195,7 @@ async function demoPerformanceComparison() {
 async function main() {
   console.log('╔════════════════════════════════════════════════════╗');
   console.log('║  Third-Party Library Integration Demo             ║');
-  console.log('║  React Three Fiber + Yuka.js + PathFinding         ║');
+  console.log('║  React Three Fiber + Yuka.js + PathFinding        ║');
   console.log('╚════════════════════════════════════════════════════╝');
 
   try {
