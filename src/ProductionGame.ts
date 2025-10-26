@@ -11,6 +11,8 @@ import { DialogueManager } from './runtime/systems/DialogueManager';
 import { SceneCompositor } from './runtime/systems/SceneCompositor';
 import { StoryCompositor } from './runtime/systems/StoryCompositor';
 import { GameCompositor } from './runtime/systems/GameCompositor';
+import { SceneLoader } from './runtime/loaders/SceneLoader';
+import { SceneTransitionManager } from './runtime/systems/SceneTransitionManager';
 
 export interface ProductionGameConfig {
   container: HTMLElement;
@@ -29,6 +31,8 @@ export class ProductionGame {
   private sceneCompositor!: SceneCompositor;
   private storyCompositor!: StoryCompositor;
   private gameCompositor!: GameCompositor;
+  private sceneLoader!: SceneLoader;
+  private transitionManager!: SceneTransitionManager;
   
   private isInitialized = false;
 
@@ -384,8 +388,8 @@ export class ProductionGame {
           {
             text: 'Continue',
             onClick: () => {
-              console.log('Chapter 1 gameplay begins...');
-              // Load Chapter 1 scene
+              // Load Chapter 1 scene with transition
+              this.transitionToChapter1();
             }
           }
         ]
@@ -403,6 +407,44 @@ export class ProductionGame {
     for (const quest of activeQuests) {
       this.questManager.updateQuest(quest.id);
     }
+  }
+
+  /**
+   * Transition to Chapter 1 scene
+   */
+  private async transitionToChapter1(): Promise<void> {
+    await this.transitionManager.transitionToScene({
+      targetSceneId: 'village_square',
+      targetScenePath: './scenes/rwmd/village_square.rwmd',
+      targetStoryPath: './scenes/bindings/village_square.json',
+      requiredFlags: ['awakening_complete'],
+      config: {
+        effect: 'fade',
+        duration: 1000,
+        showLoadingIndicator: true
+      },
+      onProgress: (progress, status) => {
+        console.log(`Scene transition: ${progress}% - ${status}`);
+      },
+      onComplete: () => {
+        console.log('Chapter 1 scene loaded successfully');
+        this.gameState.setCurrentScene('village_square');
+        this.gameState.setCurrentChapter(1);
+      },
+      onError: (error) => {
+        console.error('Failed to transition to Chapter 1:', error);
+        this.hud.showDialogue(
+          'Error',
+          `Failed to load Chapter 1: ${error.message}`,
+          [
+            {
+              text: 'OK',
+              onClick: () => console.log('Acknowledged error')
+            }
+          ]
+        );
+      }
+    });
   }
 
   /**
