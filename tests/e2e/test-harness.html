@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realm Walker Story - Test Harness</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #game-canvas {
+            flex: 1;
+            background: #2a2a2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .placeholder {
+            font-size: 2em;
+            color: #666;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        #ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+        
+        #dialogue-box {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+            pointer-events: auto;
+            display: none;
+        }
+        
+        #dialogue-box.active {
+            display: block;
+        }
+        
+        .dialogue-text {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .dialogue-speaker {
+            font-weight: bold;
+            color: #4a9eff;
+            margin-bottom: 5px;
+        }
+        
+        .dialogue-choices {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .dialogue-choice {
+            background: #333;
+            border: 1px solid #555;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .dialogue-choice:hover {
+            background: #444;
+        }
+        
+        #quest-log {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            max-width: 300px;
+            pointer-events: auto;
+        }
+        
+        .quest-item {
+            margin: 8px 0;
+            padding: 8px;
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+        
+        .quest-completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+        
+        #controls {
+            padding: 20px;
+            background: #222;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: #333;
+            border: 1px solid #555;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        button:hover {
+            background: #444;
+        }
+        
+        button:active {
+            background: #555;
+        }
+        
+        #status {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        
+        .status-item {
+            margin: 4px 0;
+        }
+        
+        .flag-true {
+            color: #4a9eff;
+        }
+        
+        .flag-false {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="game-canvas">
+            <div class="placeholder" data-testid="game-screen">
+                🎮 Realm Walker Story<br>
+                <small>Game Scene Placeholder</small>
+            </div>
+            
+            <div id="ui-overlay">
+                <div id="status">
+                    <div class="status-item">Scene: <span id="current-scene" data-testid="current-scene">Starting Room</span></div>
+                    <div class="status-item">Quest Flags:</div>
+                    <div class="status-item flag-false" data-testid="flag-game-started">• game_started: <span>false</span></div>
+                    <div class="status-item flag-false" data-testid="flag-chest-opened">• chest_opened: <span>false</span></div>
+                    <div class="status-item flag-false" data-testid="flag-talked-to-guide">• talked_to_guide: <span>false</span></div>
+                </div>
+                
+                <div id="quest-log" data-testid="quest-log">
+                    <h3 style="margin-top: 0;">Quest Log</h3>
+                    <div class="quest-item" data-testid="quest-tutorial">
+                        📜 Tutorial Quest
+                        <div style="font-size: 0.8em; color: #888; margin-top: 4px;">
+                            Talk to the guide
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="dialogue-box" data-testid="dialogue-box">
+                    <div class="dialogue-speaker" data-testid="dialogue-speaker">Guide</div>
+                    <div class="dialogue-text" data-testid="dialogue-text">
+                        Welcome to Realm Walker! I'm here to help you on your journey.
+                    </div>
+                    <div class="dialogue-choices" data-testid="dialogue-choices">
+                        <button class="dialogue-choice" data-testid="dialogue-choice-0">Tell me more</button>
+                        <button class="dialogue-choice" data-testid="dialogue-choice-1">I'm ready to start</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="controls">
+            <button id="btn-start-game" data-testid="btn-start-game">Start Game</button>
+            <button id="btn-talk-to-guide" data-testid="btn-talk-to-guide">Talk to Guide</button>
+            <button id="btn-open-chest" data-testid="btn-open-chest">Open Chest</button>
+            <button id="btn-move-player" data-testid="btn-move-player">Move Player</button>
+            <button id="btn-change-scene" data-testid="btn-change-scene">Change Scene</button>
+        </div>
+    </div>
+    
+    <script>
+        // Simple game state management for testing
+        const gameState = {
+            flags: {
+                game_started: false,
+                chest_opened: false,
+                talked_to_guide: false
+            },
+            currentScene: 'Starting Room',
+            dialogueActive: false
+        };
+        
+        function updateUI() {
+            // Update flag display
+            document.querySelector('[data-testid="flag-game-started"] span').textContent = gameState.flags.game_started;
+            document.querySelector('[data-testid="flag-game-started"]').className = 
+                'status-item ' + (gameState.flags.game_started ? 'flag-true' : 'flag-false');
+            
+            document.querySelector('[data-testid="flag-chest-opened"] span').textContent = gameState.flags.chest_opened;
+            document.querySelector('[data-testid="flag-chest-opened"]').className = 
+                'status-item ' + (gameState.flags.chest_opened ? 'flag-true' : 'flag-false');
+            
+            document.querySelector('[data-testid="flag-talked-to-guide"] span').textContent = gameState.flags.talked_to_guide;
+            document.querySelector('[data-testid="flag-talked-to-guide"]').className = 
+                'status-item ' + (gameState.flags.talked_to_guide ? 'flag-true' : 'flag-false');
+            
+            // Update scene
+            document.querySelector('[data-testid="current-scene"]').textContent = gameState.currentScene;
+            
+            // Update quest log
+            if (gameState.flags.talked_to_guide) {
+                document.querySelector('[data-testid="quest-tutorial"]').classList.add('quest-completed');
+            }
+        }
+        
+        // Button handlers
+        document.getElementById('btn-start-game').addEventListener('click', () => {
+            gameState.flags.game_started = true;
+            updateUI();
+        });
+        
+        document.getElementById('btn-talk-to-guide').addEventListener('click', () => {
+            const dialogueBox = document.getElementById('dialogue-box');
+            dialogueBox.classList.add('active');
+            gameState.dialogueActive = true;
+        });
+        
+        document.getElementById('btn-open-chest').addEventListener('click', () => {
+            gameState.flags.chest_opened = true;
+            updateUI();
+        });
+        
+        document.getElementById('btn-move-player').addEventListener('click', () => {
+            // Simulate player movement
+            console.log('Player moved');
+        });
+        
+        document.getElementById('btn-change-scene').addEventListener('click', () => {
+            gameState.currentScene = gameState.currentScene === 'Starting Room' 
+                ? 'Village Square' 
+                : 'Starting Room';
+            updateUI();
+        });
+        
+        // Dialogue choice handlers
+        document.querySelectorAll('.dialogue-choice').forEach(choice => {
+            choice.addEventListener('click', () => {
+                const flagToSet = choice.dataset.setFlag;
+                if (flagToSet) {
+                    gameState.flags[flagToSet] = true;
+                }
+                document.getElementById('dialogue-box').classList.remove('active');
+                gameState.dialogueActive = false;
+                updateUI();
+            });
+        });
+        
+        // Initialize
+        updateUI();
+    </script>
+</body>
+</html>
