@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { AnthropicClient } from '../AnthropicClient';
 import { AssetLibrary } from '../AssetLibrary';
+import { LoreLoader, CanonicalLore } from '../LoreLoader';
 
 export interface NarrativeImportConfig {
   sourceDirectory: string;
@@ -112,9 +113,12 @@ export interface ImportProgress {
 export class NarrativeImportWorkflow {
   private config: NarrativeImportConfig;
   private storyBible: string = '';
+  private canonicalLore: CanonicalLore;
 
   constructor(config: NarrativeImportConfig) {
     this.config = config;
+    // Load canonical lore on initialization
+    this.canonicalLore = LoreLoader.loadCanonicalLore();
   }
 
   /**
@@ -184,14 +188,9 @@ export class NarrativeImportWorkflow {
    * Load story bible
    */
   private async loadStoryBible(): Promise<string> {
-    try {
-      const bible = fs.readFileSync(this.config.storyBiblePath, 'utf-8');
-      console.log(`Loaded story bible: ${bible.length} characters`);
-      return bible;
-    } catch (error) {
-      console.warn('Story bible not found, using default lore');
-      return 'Gothic fantasy world with three story threads (A/B/C)';
-    }
+    // Use canonical lore loaded in constructor
+    console.log(`Using canonical lore: ${this.canonicalLore.worldSummary.length} characters`);
+    return this.canonicalLore.worldSummary;
   }
 
   /**
@@ -246,17 +245,49 @@ export class NarrativeImportWorkflow {
       .map(f => `## File: ${f.path} (${f.format})\n\n${f.content}`)
       .join('\n\n---\n\n');
 
-    const instructions = `Analyze this narrative content and extract structured game elements.
+    const instructions = `Analyze this narrative content and extract structured game elements following CANONICAL WORLD LORE.
+
+## CRITICAL CONTEXT - REALM WALKER MYTHOLOGY
+
+${LoreLoader.getCompactSummary(this.canonicalLore)}
+
+## EXTRACTION REQUIREMENTS
 
 Focus on:
-1. Quest opportunities using boolean flag system
-2. NPC dialogue trees that support our three story threads
-3. Character descriptions detailed enough for 3D model generation
-4. Lore that enriches our Gothic fantasy world
-5. Location descriptions that could become game scenes
-6. Story beats organized by thread and chapter
+1. **Quests** using boolean flag system (NO stats/XP/levels)
+   - Must align with A/B/C story threads
+   - Flag-gated progression only
+   - Thread A: Guardian boon collection (0-8 progression)
+   - Thread B: Time travel through 7 Ages, faction politics
+   - Thread C: Ravens mystery encounters
 
-Be thorough - extract everything useful while maintaining consistency with our world lore.`;
+2. **NPC Dialogue Trees** that support the three story threads
+   - Must reference appropriate Age/faction context
+   - Dialogue should reflect time period (Age of Gods to Age of Sundering)
+   - Include faction-specific vocabulary and concerns
+
+3. **Character Descriptions** detailed enough for 3D model generation
+   - Specify age period visual style (elven/dwarven/human eras)
+   - Include faction affiliations (6 Cults or 6 Orders)
+   - Physical appearance suited to their age period
+
+4. **Lore Entries** that enrich the canonical mythology
+   - Must not contradict Creator/Destroyer primordial story
+   - Should reference appropriate Age and factions
+   - Connect to Guardian lore or time travel mechanics
+
+5. **Location Descriptions** that could become game scenes
+   - Specify which Age (Sundering/Invention/Kings/Stone/Song/Gods)
+   - Visual atmosphere matching age theme
+   - Faction presence (Cults vs Orders)
+
+6. **Story Beats** organized by thread (A/B/C) and chapter
+   - Thread A: Guardian encounters and boon collection
+   - Thread B: Age exploration and faction interactions  
+   - Thread C: Ravens mystery revelations
+
+Be thorough - extract everything useful while maintaining STRICT consistency with canonical world lore.
+REJECT any content that contradicts the primordial mythology or established faction lore.`;
 
     const result = await this.config.anthropicClient.analyzeNarrativeContent(
       combinedContent,

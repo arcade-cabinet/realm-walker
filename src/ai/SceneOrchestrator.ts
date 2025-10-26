@@ -10,6 +10,7 @@ import { RWMDSceneSchema, AssetGenerationRequestSchema } from '../schemas/RWMDSc
 import { AssetLibrary } from './AssetLibrary';
 import { MeshyClient } from './MeshyClient';
 import { GPTImageGenerator } from './GPTImageGenerator';
+import { LoreLoader, CanonicalLore } from './LoreLoader';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -38,6 +39,7 @@ export class AISceneOrchestrator {
   private assetLibrary: AssetLibrary;
   private meshyClient: MeshyClient;
   private imageGenerator: GPTImageGenerator;
+  private canonicalLore: CanonicalLore;
   private model = openai('gpt-4o');
   private outputDirectory: string;
 
@@ -51,6 +53,8 @@ export class AISceneOrchestrator {
     this.meshyClient = new MeshyClient({ apiKey: config.meshyApiKey });
     this.imageGenerator = new GPTImageGenerator();
     this.outputDirectory = config.outputDirectory || './generated/scenes';
+    // Load canonical lore on initialization
+    this.canonicalLore = LoreLoader.loadCanonicalLore();
 
     this.ensureDirectory();
   }
@@ -130,14 +134,23 @@ export class AISceneOrchestrator {
    * Build system prompt with context
    */
   private buildSystemPrompt(context: SceneGenerationContext): string {
-    const threadDescriptions = {
-      A: 'Guardian Quest - Ancient powers, mythical locations, legendary encounters',
-      B: 'Faction Politics - Social dynamics, age-appropriate content, character relationships',
-      C: 'Ravens Mystery - Dark secrets, revelations, recurring antagonists'
-    };
+    // Use canonical lore thread descriptions
+    const threadInfo = this.canonicalLore.threadDescriptions[context.thread.type];
 
-    let prompt = `You are generating a scene for the ${threadDescriptions[context.thread.type]} storyline.\n`;
-    prompt += `This is Chapter ${context.chapterIndex}.\n\n`;
+    let prompt = `You are generating a scene for REALM WALKER using canonical world lore.
+
+## WORLD CONTEXT
+
+${LoreLoader.getCompactSummary(this.canonicalLore)}
+
+## CURRENT THREAD: ${context.thread.type} STORY
+
+${threadInfo}
+
+## SCENE REQUIREMENTS
+
+Chapter: ${context.chapterIndex}
+`;
 
     if (context.thread.ageRange) {
       prompt += `Age Range: ${context.thread.ageRange}-appropriate content\n`;
@@ -155,7 +168,16 @@ export class AISceneOrchestrator {
       prompt += '\n\nReuse existing assets when appropriate to maintain visual consistency.\n';
     }
 
-    prompt += '\nGenerate a complete RWMD scene following the schema constraints.';
+    prompt += `
+## CONSTRAINTS
+
+- Boolean flag quest system ONLY (no stats/XP/levels)
+- Pure authored content (no procedural generation)
+- Must align with canonical mythology (Creator/Destroyer, Guardians, 7 Ages)
+- If time period specified, match visual style to Age
+- Faction presence must be historically accurate
+
+Generate a complete RWMD scene following the schema constraints.`;
 
     return prompt;
   }
