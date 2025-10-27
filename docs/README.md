@@ -69,18 +69,12 @@ Complete lore bible with:
 
 **Use for**: Lore consistency, character details, faction information
 
-### Archived Documentation
-**Location**: `/docs/archive/`
-
-Contains:
-- Old architecture docs (superseded by architecture.md)
-- Old design docs (superseded by design.md)
-- Godot system docs (legacy, not applicable)
-- Status/tracking documents (historical reference)
-
-**Status**: ARCHIVED - Do not use for implementation decisions
-
-**Use for**: Historical context only, understanding evolution of design
+### Git History
+All previous documentation versions are preserved in git history. The archive directory has been removed since:
+- All architectural content is consolidated in `architecture.md`
+- All design content is consolidated in `design.md`
+- All detailed lore is in `CANONICAL_STORY_BIBLE.md`
+- Git provides full historical context when needed
 
 ---
 

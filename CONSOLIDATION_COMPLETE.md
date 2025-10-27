@@ -87,12 +87,8 @@
 │   ├── architecture.md               # NORTH STAR - Technical (NEW)
 │   ├── design.md                     # NORTH STAR - Game Design (NEW)
 │   │
-│   ├── design/
-│   │   └── CANONICAL_STORY_BIBLE.md  # Lore reference (KEPT)
-│   │
-│   └── archive/                      # 29 archived files (MOVED)
-│       ├── *.md                      # Old architecture/design docs
-│       └── systems/                  # Old Godot system docs
+│   └── design/
+│       └── CANONICAL_STORY_BIBLE.md  # Lore reference (KEPT)
 │
 └── .cursor/projects/workspace/agent-notes/shared/
     ├── projectbrief.md               # Memory bank (NEW)
@@ -101,12 +97,16 @@
     ├── techContext.md                # Memory bank (NEW)
     ├── activeContext.md              # Memory bank (NEW)
     └── progress.md                   # Memory bank (NEW)
-
-**Note**: Path shown relative to project root for portability
 ```
 
+**Note**: Paths shown relative to project root for portability
+
+**Archive Removed**: All 29 legacy docs deleted - content fully consolidated into north star docs. Git history preserves everything for historical reference.
+
+---
+
 **Before**: 43+ fragmented docs, no single source of truth  
-**After**: 2 north star docs + 6-file memory bank + 1 index + 29 archived
+**After**: 3 north star docs + 1 lore reference + 6-file memory bank
 
 ---
 
