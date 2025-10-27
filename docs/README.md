@@ -38,7 +38,7 @@ Complete game design including:
 
 ## Memory Bank (Context for Next Agent)
 
-Located at: `/root/.cursor/projects/workspace/agent-notes/shared/`
+Located at: `.cursor/projects/workspace/agent-notes/shared/`
 
 **Read ALL of these files in order**:
 
