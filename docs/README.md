@@ -95,7 +95,7 @@ cat docs/design.md          # Game design specification
 
 ### 2. Get Context (30 minutes)
 ```bash
-# Read memory bank in order
+# Read memory bank in order (from project root)
 cd .cursor/projects/workspace/agent-notes/shared/
 cat projectbrief.md         # Overview
 cat productContext.md       # Product vision
@@ -171,10 +171,16 @@ src/types/
 
 ### Maintenance Rules
 
-1. **North star docs are FROZEN** - Only update with explicit approval
-2. **Memory bank is LIVING** - Update activeContext.md and progress.md as work proceeds
-3. **Code is truth** - If code contradicts docs, docs are probably out of date
-4. **Design over docs** - If unsure, follow architecture.md and design.md
+**Authority Hierarchy** (highest to lowest):
+1. **North star docs** (architecture.md + design.md) - FROZEN, design vision and source of truth
+2. **Code** - Implementation reality, but should align to north star docs  
+3. **Memory bank** - LIVING context, tracks current progress and decisions
+4. **Archive docs** - Historical reference only
+
+**Resolution Rules**:
+- If code contradicts north star docs → Code needs refactoring (docs are authoritative design)
+- If memory bank contradicts code → Memory bank needs updating (code reflects current state)
+- If uncertain about implementation → Follow architecture.md and design.md (they define the vision)
 
 ---
 

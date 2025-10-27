@@ -476,8 +476,10 @@ These are **fully implemented** but not yet wired into ProductionGame:
 |--------|------|-------|-------------------|
 | YukaGridSystem | `YukaGridSystem.ts` | ✅ | ❌ NOT INTEGRATED |
 | NPCController | `NPCController.ts` | ⚠️ | ❌ NOT INTEGRATED |
-| NPCManager | `NPCController.ts` | ⚠️ | ❌ NOT INTEGRATED |
+| NPCManager | `NPCController.ts` (same file) | ⚠️ | ❌ NOT INTEGRATED |
 | R3FGameCompositor | `R3FGameCompositor.tsx` | ❌ | ❌ NOT INTEGRATED |
+
+**Note**: NPCManager and NPCController are both in `NPCController.ts` for cohesion.
 
 **Action Required**:
 - Wire NPCManager into ProductionGame.initializeCoreSystems()
@@ -593,10 +595,10 @@ const gridSystem = new YukaGridSystem(width, height, 1.0);
 
 | File | Priority |
 |------|----------|
-| `GameUIManager.ts` | 🔴 HIGH |
-| `AIClient.ts` | 🔴 HIGH |
-| `GPTImageGenerator.ts` | 🟡 MEDIUM |
-| `ProductionGame.ts` | 🟡 MEDIUM |
+| `GameUIManager.ts` | 🔴 CRITICAL |
+| `AIClient.ts` | 🟡 HIGH |
+| `GPTImageGenerator.ts` | 🟡 HIGH |
+| `ProductionGame.ts` | 🟢 LOW |
 | `demo-integrations.ts` | 🟢 LOW (demo only) |
 
 **Solution Required**: Fix type errors, remove @ts-nocheck

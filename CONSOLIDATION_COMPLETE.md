@@ -94,13 +94,15 @@
 │       ├── *.md                      # Old architecture/design docs
 │       └── systems/                  # Old Godot system docs
 │
-└── /root/.cursor/projects/workspace/agent-notes/shared/
+└── .cursor/projects/workspace/agent-notes/shared/
     ├── projectbrief.md               # Memory bank (NEW)
     ├── productContext.md             # Memory bank (NEW)
     ├── systemPatterns.md             # Memory bank (NEW)
     ├── techContext.md                # Memory bank (NEW)
     ├── activeContext.md              # Memory bank (NEW)
     └── progress.md                   # Memory bank (NEW)
+
+**Note**: Path shown relative to project root for portability
 ```
 
 **Before**: 43+ fragmented docs, no single source of truth  
@@ -150,6 +152,12 @@
 
 **Impact**: Medium - Missing advanced NPC behaviors, slower pathfinding
 
+**Priority Reasoning**: HIGH priority despite medium impact because:
+- Quick win (3 days effort)
+- Unblocks future NPC work
+- Validates Yuka integration pattern
+- Performance improvement (1.5x faster)
+
 **Integration Required**:
 ```typescript
 // Add to ProductionGame.initializeCoreSystems()
@@ -164,7 +172,7 @@ const gridSystem = new YukaGridSystem(width, height, 1.0);
 
 **Estimated Effort**: 3 days
 
-**Priority**: 🟡 HIGH
+**Priority**: 🟡 HIGH (quick win, validates integration pattern)
 
 ---
 

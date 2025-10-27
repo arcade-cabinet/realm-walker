@@ -453,10 +453,12 @@ Player visits 8 distinct eras across 50,000 years:
 #### 1. Scripted Battles (A Story)
 
 **Used For**:
-- Guardian boss fights (major story beats)
 - Cult leader confrontations (Chapters 13-14)
 - THE DESTROYER final battle (Chapters 17-18)
 - Major faction battles (optional B story)
+
+**NOT Used For**:
+- ❌ Guardian encounters (those are ritual sequences, see Guardian Unmaking System)
 
 **Combat Flow**:
 ```
