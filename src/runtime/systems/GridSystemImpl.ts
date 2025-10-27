@@ -101,7 +101,6 @@ export class GridSystemImpl implements GridSystem {
       const current = openSet.shift()!;
       
       const posKey = `${current.pos[0]},${current.pos[1]}`;
-      
       if (closedSet.has(posKey)) {
         continue;
       }
