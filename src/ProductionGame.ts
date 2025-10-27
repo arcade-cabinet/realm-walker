@@ -155,6 +155,24 @@ export class ProductionGame {
       }
     });
 
+    // Scene loader and transition manager
+    this.sceneLoader = new SceneLoader({
+      sceneCompositor: this.sceneCompositor,
+      storyCompositor: this.storyCompositor,
+      gameCompositor: this.gameCompositor
+    });
+
+    this.transitionManager = new SceneTransitionManager({
+      sceneLoader: this.sceneLoader,
+      gameState: this.gameState,
+      onTransitionStart: () => {
+        console.log('Scene transition starting...');
+      },
+      onTransitionComplete: () => {
+        console.log('Scene transition complete');
+      }
+    });
+
     console.log('✓ Core systems initialized');
   }
 
