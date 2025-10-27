@@ -462,7 +462,7 @@ export class RWMDParser {
       });
       if (rot.length !== 3) {
         throw new Error(`Rotation must have exactly 3 values (x, y, z), got ${rot.length}`);
-        }
+      }
       slot.rotation = rot as [number, number, number];
     } else if (key === 'scale') {
       const scale = value.split(',').map(v => {
