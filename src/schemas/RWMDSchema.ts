@@ -23,7 +23,7 @@ export const TextureRefSchema = z.object({
   source: z.enum(['ambientCG', 'gpt-image-1', 'meshy', 'custom']).describe('Texture source'),
   id: z.string().describe('Texture identifier or prompt'),
   scale: z.number().positive().optional().describe('UV scale factor'),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 // NPC slot definition

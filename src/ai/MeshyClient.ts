@@ -277,7 +277,7 @@ export class MeshyClient {
       const retextureTask = await this.createRetexture({
         model_url: completedModel.model_urls.glb,
         prompt: retexturePrompt,
-        art_style: artStyle,
+        art_style: (artStyle === 'sculpture' || artStyle === 'pbr') ? 'realistic' : artStyle,
         ai_model: 'meshy-4',
         enable_pbr: true,
         resolution: '2048'

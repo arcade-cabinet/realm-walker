@@ -14,4 +14,8 @@ export * from './YukaGridSystem';
 export * from './NPCController';
 export * from './R3FGameCompositor';
 
+// Scene transition system
+export { SceneTransitionManager } from './SceneTransitionManager';
+export type { TransitionConfig, SceneTransitionOptions, TransitionState } from './SceneTransitionManager';
+
 // Note: QuestFlagSystem is deprecated - use QuestManager instead

@@ -3,9 +3,8 @@
  * Provides intelligent NPC movement and behavior based on quest state
  */
 
-// @ts-expect-error - Yuka doesn't have official types
-import { 
-  Vehicle, 
+import {
+  Vehicle,
   EntityManager,
   SteeringBehavior,
   SeekBehavior,
