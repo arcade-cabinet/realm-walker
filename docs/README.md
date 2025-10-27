@@ -1,7 +1,7 @@
 # Realm Walker Story Documentation
 
 **Last Updated**: 2025-10-27  
-**Status**: Documentation consolidated to north star principals
+**Status**: Documentation consolidated to north star principles
 
 ---
 
