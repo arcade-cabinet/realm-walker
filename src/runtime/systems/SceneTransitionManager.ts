@@ -202,8 +202,8 @@ export class SceneTransitionManager {
     this.transitionElement.style.display = 'block';
     this.transitionElement.style.opacity = '0';
 
-    // Force reflow
-    this.transitionElement.offsetHeight;
+    // Force reflow to ensure CSS transition triggers
+    void this.transitionElement.offsetHeight;
 
     return new Promise((resolve) => {
       if (!this.transitionElement) {
