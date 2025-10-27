@@ -484,7 +484,7 @@ export class RWMDParser {
    */
   private parseVector3(value: string): [number, number, number] {
     const parts = value.split(',').map(v => parseFloat(v.trim()));
-    if (parts.length !== 3 || parts.some(isNaN)) {
+    if (parts.length !== 3 || parts.some(n => isNaN(n))) {
       throw new Error(`Invalid vector3: "${value}" (expected 3 numbers separated by commas)`);
     }
     return parts as [number, number, number];
