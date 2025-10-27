@@ -96,7 +96,7 @@ cat docs/design.md          # Game design specification
 ### 2. Get Context (30 minutes)
 ```bash
 # Read memory bank in order
-cd /root/.cursor/projects/workspace/agent-notes/shared/
+cd .cursor/projects/workspace/agent-notes/shared/
 cat projectbrief.md         # Overview
 cat productContext.md       # Product vision
 cat systemPatterns.md       # Architecture patterns
