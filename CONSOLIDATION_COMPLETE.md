@@ -45,7 +45,7 @@
 
 ### 3. Created Clean Memory Bank ✅
 
-**Located at**: `/root/.cursor/projects/workspace/agent-notes/shared/`
+**Located at**: `.cursor/projects/workspace/agent-notes/shared/`
 
 **6 comprehensive files**:
 1. `projectbrief.md` - Project overview, requirements, success criteria
