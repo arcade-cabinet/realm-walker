@@ -99,7 +99,7 @@ RUN apt-get update && apt-get install -y redis-server supervisor && rm -rf /var/
 # pnpm via Corepack (MANDATORY package manager)
 ENV PNPM_HOME=/root/.local/share/pnpm
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@9.15.9 --activate && pnpm --version
+RUN corepack enable && corepack prepare pnpm@10.25.0 --activate && pnpm --version
 
 # Playwright: install required OS deps and cache Chromium browser
 RUN pnpm dlx playwright install-deps
