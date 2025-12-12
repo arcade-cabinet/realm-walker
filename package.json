@@ -35,7 +35,7 @@
   "license": "ISC",
   "dependencies": {
     "@ai-sdk/openai": "^2.0.53",
-    "@anthropic-ai/sdk": "^0.67.0",
+    "@anthropic-ai/sdk": "^0.71.0",
     "@react-three/drei": "^10.7.6",
     "@react-three/fiber": "^9.4.0",
     "ai": "^5.0.78",
