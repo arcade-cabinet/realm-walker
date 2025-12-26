@@ -5,10 +5,11 @@
 
 import React, { useRef, useEffect, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, Environment, PerspectiveCamera, Html } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { ComposedScene, ComposedStory, SlotContent, GameViewport } from '../../types';
 import { GLBLoader } from '../loaders/GLBLoader';
+import { ProceduralSky, VolumetricEffects } from '@jbcom/strata';
 
 /**
  * Placeholder constants for loading state
@@ -23,7 +24,6 @@ export interface R3FGameSceneProps {
   composedScene: ComposedScene;
   activeContent: SlotContent[];
   enableOrbitControls?: boolean;
-  environmentPreset?: 'city' | 'studio' | 'sunset' | 'dawn' | 'night' | 'warehouse' | 'forest' | 'apartment' | 'park';
   onObjectClick?: (slotId: string) => void;
 }
 
@@ -169,7 +169,6 @@ export function R3FGameScene({
   composedScene,
   activeContent,
   enableOrbitControls = false,
-  environmentPreset = 'city',
   onObjectClick
 }: R3FGameSceneProps) {
   
@@ -178,10 +177,9 @@ export function R3FGameScene({
       {/* Camera */}
       <DioramaCamera composedScene={composedScene} />
       
-      {/* Lighting - Use Drei environment for better quality */}
-      <Environment preset={environmentPreset} />
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[5, 10, 5]} intensity={0.8} castShadow />
+      {/* Lighting and Sky */}
+      <ProceduralSky />
+      <VolumetricEffects />
       
       {/* Scene Geometry */}
       <SceneGeometry composedScene={composedScene} />
@@ -231,7 +229,6 @@ export class R3FGameCompositor {
     activeContent: SlotContent[],
     options?: {
       enableOrbitControls?: boolean;
-      environmentPreset?: 'city' | 'studio' | 'sunset' | 'dawn' | 'night' | 'warehouse' | 'forest' | 'apartment' | 'park';
       onObjectClick?: (slotId: string) => void;
     }
   ): React.ReactElement {
@@ -250,7 +247,6 @@ export class R3FGameCompositor {
           composedScene={composedScene}
           activeContent={activeContent}
           enableOrbitControls={options?.enableOrbitControls}
-          environmentPreset={options?.environmentPreset}
           onObjectClick={options?.onObjectClick}
         />
       </Canvas>
