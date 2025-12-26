@@ -21,7 +21,7 @@ import {
   LightingDefinition,
   ValidationError
 } from '../../types';
-import * as path from 'path-browserify';
+import * as path from 'path';
 
 export interface AnchorMap {
   [key: string]: string;

@@ -32,9 +32,13 @@ export class DialogueManager {
   private currentNode: string | null = null;
   private dialogues: Map<string, DialogueTree>;
   private onFlagSet?: (flag: string) => void;
+  private flagsSet: Set<string>;
+  private history: string[];
 
   constructor() {
     this.dialogues = new Map();
+    this.flagsSet = new Set();
+    this.history = [];
   }
 
   /**
@@ -124,11 +128,15 @@ export class DialogueManager {
 
     this.currentTree = tree;
     this.currentNode = tree.startNode;
+    this.history = [tree.startNode];
     const node = tree.nodes[tree.startNode];
 
     // Set any flags
     if (node.setFlags) {
-      node.setFlags.forEach(flag => this.onFlagSet?.(flag));
+      node.setFlags.forEach(flag => {
+        this.flagsSet.add(flag);
+        this.onFlagSet?.(flag);
+      });
     }
 
     return node;
@@ -137,7 +145,7 @@ export class DialogueManager {
   /**
    * Make a choice and advance dialogue
    */
-  makeChoice(choiceIndex: number): DialogueNode | null {
+  makeChoice(choiceIndex: number, currentFlags: Record<string, boolean> = {}): DialogueNode | null {
     if (!this.currentTree || !this.currentNode) {
       return null;
     }
@@ -149,18 +157,40 @@ export class DialogueManager {
 
     const choice = currentNodeData.choices[choiceIndex];
     
+    // Check if choice requires flags (only check passed flags, not internal tracking)
+    if (choice.requiresFlags && choice.requiresFlags.length > 0) {
+      const hasRequiredFlags = choice.requiresFlags.every(flag => 
+        currentFlags[flag] === true
+      );
+      if (!hasRequiredFlags) {
+        return null;
+      }
+    }
+    
     // Set flags from choice
     if (choice.setsFlags) {
-      choice.setsFlags.forEach(flag => this.onFlagSet?.(flag));
+      choice.setsFlags.forEach(flag => {
+        this.flagsSet.add(flag);
+        this.onFlagSet?.(flag);
+      });
     }
 
     // Move to next node
     this.currentNode = choice.next;
+    this.history.push(choice.next);
     const nextNode = this.currentTree.nodes[choice.next];
 
     // Set flags from new node
     if (nextNode?.setFlags) {
-      nextNode.setFlags.forEach(flag => this.onFlagSet?.(flag));
+      nextNode.setFlags.forEach(flag => {
+        this.flagsSet.add(flag);
+        this.onFlagSet?.(flag);
+      });
+    }
+
+    // Auto-end dialogue if we reach a node with no choices
+    if (!nextNode || !nextNode.choices || nextNode.choices.length === 0) {
+      this.endDialogue();
     }
 
     return nextNode;
@@ -205,6 +235,7 @@ export class DialogueManager {
   endDialogue(): void {
     this.currentTree = null;
     this.currentNode = null;
+    this.history = [];
   }
 
   /**
@@ -219,5 +250,33 @@ export class DialogueManager {
    */
   setFlagCallback(callback: (flag: string) => void): void {
     this.onFlagSet = callback;
+  }
+
+  /**
+   * Check if a dialogue tree is loaded
+   */
+  hasTree(dialogueId: string): boolean {
+    return this.dialogues.has(dialogueId);
+  }
+
+  /**
+   * Get all flags that have been set during dialogue
+   */
+  getFlagsSet(): string[] {
+    return Array.from(this.flagsSet);
+  }
+
+  /**
+   * Get dialogue history (node IDs visited)
+   */
+  getHistory(): string[] {
+    return [...this.history];
+  }
+
+  /**
+   * Get all loaded dialogue tree IDs
+   */
+  getLoadedTrees(): string[] {
+    return Array.from(this.dialogues.keys());
   }
 }
