@@ -15,8 +15,12 @@
     "sourceMap": true,
     "moduleResolution": "node",
     "jsx": "react",
-    "types": ["node"]
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["src/**/*", "yuka.d.ts"],
+  "include": ["src/**/*", "yuka.d.ts", "web/**/*"],
   "exclude": ["node_modules", "dist"]
 }
