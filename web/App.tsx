@@ -3,7 +3,8 @@ import { R3FGameCompositor } from '../src/runtime/systems/R3FGameCompositor';
 import { ComposedScene, SlotContent } from '../src/types';
 import * as THREE from 'three';
 import { GridSystemImpl } from '../src/runtime/systems/GridSystemImpl';
-import { KeyboardControls, VirtualJoystick } from '@jbcom/strata';
+import { KeyboardControls } from '@react-three/drei';
+import { Joystick3D as VirtualJoystick } from '@jbcom/strata';
 
 const keyMap = [
     { name: 'forward', keys: ['ArrowUp', 'w', 'W'] },
@@ -49,9 +50,7 @@ const App: React.FC = () => {
         <KeyboardControls map={keyMap}>
             <div style={{ width: '100vw', height: '100vh' }}>
                 {gameCompositor.compose(mockScene, activeContent, { enableOrbitControls: true })}
-                <VirtualJoystick
-                    onMove={(state) => console.log('Joystick:', state)}
-                />
+                <VirtualJoystick />
             </div>
         </KeyboardControls>
     );
