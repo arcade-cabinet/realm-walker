@@ -300,4 +300,22 @@ export class GameCompositor {
   getLoadedModels(): Map<string, THREE.Object3D> {
     return this.loadedModels;
   }
+
+  /**
+   * Dispose of resources
+   */
+  dispose(): void {
+    this.scene.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.geometry.dispose();
+        if (Array.isArray(child.material)) {
+          child.material.forEach(m => m.dispose());
+        } else {
+          child.material.dispose();
+        }
+      }
+    });
+    this.loadedModels.clear();
+    this.slotObjects.clear();
+  }
 }

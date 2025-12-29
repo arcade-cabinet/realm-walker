@@ -108,20 +108,19 @@ export class ProductionGame {
    * Initialize core game systems
    */
   private async initializeCoreSystems(): Promise<void> {
-    // Game state with initial Chapter 0 setup
-    this.gameState = new GameStateManager({
-      currentChapter: 0,
-      currentScene: 'dead_world_opening',
-      storyFlags: {
-        game_started: true,
-        player_awakened: false,
-        met_elder_ottermere: false
-      }
-    });
-
     // Quest manager with A/B/C story threads
     this.questManager = new QuestManager();
     
+    // Game state with initial Chapter 0 setup
+    this.gameState = new GameStateManager(this.questManager);
+    this.gameState.setCurrentChapter(0);
+    this.gameState.setCurrentScene('dead_world_opening');
+    
+    // Set initial flags in quest manager
+    this.questManager.setFlag('game_started', true);
+    this.questManager.setFlag('player_awakened', false);
+    this.questManager.setFlag('met_elder_ottermere', false);
+
     // Initialize with Chapter 0 quest
     this.questManager.addQuest({
       id: 'chapter_0_awakening',
@@ -147,32 +146,12 @@ export class ProductionGame {
     // Compositor pipeline
     this.sceneCompositor = new SceneCompositor();
     this.storyCompositor = new StoryCompositor(this.questManager.getState().storyFlags);
-    this.gameCompositor = new GameCompositor({
-      container: this.config.container,
-      cameraConfig: {
-        type: 'diorama',
-        fov: 60,
-        position: [0, 10, 15]
-      }
-    });
+    this.gameCompositor = new GameCompositor();
 
     // Scene loader and transition manager
-    this.sceneLoader = new SceneLoader({
-      sceneCompositor: this.sceneCompositor,
-      storyCompositor: this.storyCompositor,
-      gameCompositor: this.gameCompositor
-    });
+    this.sceneLoader = new SceneLoader(this.questManager.getState().storyFlags);
 
-    this.transitionManager = new SceneTransitionManager({
-      sceneLoader: this.sceneLoader,
-      gameState: this.gameState,
-      onTransitionStart: () => {
-        console.log('Scene transition starting...');
-      },
-      onTransitionComplete: () => {
-        console.log('Scene transition complete');
-      }
-    });
+    this.transitionManager = new SceneTransitionManager(this.sceneLoader);
 
     console.log('✓ Core systems initialized');
   }
@@ -212,22 +191,17 @@ export class ProductionGame {
   private async loadInitialScene(): Promise<void> {
     // For now, use placeholder scene data
     // In production, this would load from RWMD files
-    const sceneTemplate = {
+    const sceneTemplate: any = {
       id: 'dead_world_opening',
-      grid: { width: 16, height: 12 },
-      floor: { texture: 'cracked_stone' },
-      walls: [],
-      ceiling: { texture: 'twilight_sky', height: 5 },
-      slots: {
-        npcs: [
-          { id: 'elder_ottermere', position: [8, 6] as [number, number] }
-        ],
-        props: [
-          { id: 'ancient_pillar', position: [4, 4] as [number, number] },
-          { id: 'time_rift', position: [12, 8] as [number, number] }
-        ],
-        doors: []
-      }
+      name: 'Dead World Opening',
+      geometry: [
+        { type: 'plane', dimensions: [16, 12], position: [0, 0, 0], color: '#333' }
+      ],
+      slots: [
+        { id: 'elder_ottermere', position: [8, 0, 6] },
+        { id: 'ancient_pillar', position: [4, 0, 4] },
+        { id: 'time_rift', position: [12, 0, 8] }
+      ]
     };
 
     // Compose scene through three-tier pipeline

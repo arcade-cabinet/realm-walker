@@ -24,7 +24,7 @@ export function createAssetGenerationTools(config: AIToolsConfig) {
   return {
     search_existing_assets: tool({
       description: 'Search the asset library for existing reusable assets using semantic similarity',
-      parameters: z.object({
+      inputSchema: z.object({
         query: z.string().describe('Description of the asset needed'),
         type: z.enum(['model', 'texture', 'audio']).optional(),
         threshold: z.number().min(0).max(1).default(0.85).describe('Similarity threshold')
@@ -61,7 +61,7 @@ export function createAssetGenerationTools(config: AIToolsConfig) {
 
     generate_3d_model: tool({
       description: 'Generate a new 3D model using Meshy AI with optional animation',
-      parameters: z.object({
+      inputSchema: z.object({
         prompt: z.string().describe('Detailed description of the 3D model'),
         artStyle: z.enum(['realistic', 'cartoon', 'low-poly', 'sculpture', 'pbr']),
         animated: z.boolean().default(false),
@@ -116,7 +116,7 @@ export function createAssetGenerationTools(config: AIToolsConfig) {
 
     generate_texture: tool({
       description: 'Generate a texture/image using GPT-4.5 with transparency support',
-      parameters: z.object({
+      inputSchema: z.object({
         prompt: z.string().describe('Description of the texture or UI element'),
         transparent: z.boolean().default(false),
         size: z.enum(['1024x1024', '1792x1024', '1024x1792']).default('1024x1024'),
@@ -166,7 +166,7 @@ export function createAssetGenerationTools(config: AIToolsConfig) {
 
     search_pbr_textures: tool({
       description: 'Search ambientCG for physically-based textures (stone, wood, metal, etc.)',
-      parameters: z.object({
+      inputSchema: z.object({
         surfaceType: z.string().describe('Surface type (stone, wood, brick, metal, grass, etc.)'),
         tags: z.array(z.string()).optional(),
         resolution: z.enum(['1K', '2K', '4K', '8K']).default('2K')
@@ -218,7 +218,7 @@ export function createAssetGenerationTools(config: AIToolsConfig) {
 
     get_animation_library: tool({
       description: 'Get available animations from Meshy animation library',
-      parameters: z.object({}),
+      inputSchema: z.object({}),
       execute: async () => {
         try {
           const animations = await config.meshyClient.getAnimationLibrary();
@@ -245,7 +245,7 @@ export function createAssetGenerationTools(config: AIToolsConfig) {
 
     register_asset: tool({
       description: 'Register a generated asset in the library for future reuse',
-      parameters: z.object({
+      inputSchema: z.object({
         id: z.string(),
         type: z.enum(['model', 'texture', 'audio']),
         prompt: z.string(),

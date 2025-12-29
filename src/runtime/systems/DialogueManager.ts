@@ -34,7 +34,7 @@ export class DialogueManager {
   private onFlagSet?: (flag: string) => void;
   private flagsSet: Set<string>;
   private history: string[];
-  private listeners: Map<string, Array<(data: any) => void>> = new Map();
+  private listeners: Record<string, ((data: any) => void)[]> = {};
 
   constructor() {
     this.dialogues = new Map();
@@ -43,20 +43,22 @@ export class DialogueManager {
   }
 
   /**
-   * Simple event listener
+   * Register event listener
    */
-  on(event: string, callback: (data: any) => void): void {
-    if (!this.listeners.has(event)) {
-      this.listeners.set(event, []);
+  on(event: string, listener: (data: any) => void): void {
+    if (!this.listeners[event]) {
+      this.listeners[event] = [];
     }
-    this.listeners.get(event)?.push(callback);
+    this.listeners[event].push(listener);
   }
 
   /**
-   * Emit an event
+   * Emit event
    */
   private emit(event: string, data: any): void {
-    this.listeners.get(event)?.forEach(callback => callback(data));
+    if (this.listeners[event]) {
+      this.listeners[event].forEach(l => l(data));
+    }
   }
 
   /**
