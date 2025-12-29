@@ -34,11 +34,31 @@ export class DialogueManager {
   private onFlagSet?: (flag: string) => void;
   private flagsSet: Set<string>;
   private history: string[];
+  private listeners: Record<string, ((data: any) => void)[]> = {};
 
   constructor() {
     this.dialogues = new Map();
     this.flagsSet = new Set();
     this.history = [];
+  }
+
+  /**
+   * Register event listener
+   */
+  on(event: string, listener: (data: any) => void): void {
+    if (!this.listeners[event]) {
+      this.listeners[event] = [];
+    }
+    this.listeners[event].push(listener);
+  }
+
+  /**
+   * Emit event
+   */
+  private emit(event: string, data: any): void {
+    if (this.listeners[event]) {
+      this.listeners[event].forEach(l => l(data));
+    }
   }
 
   /**
@@ -130,6 +150,8 @@ export class DialogueManager {
     this.currentNode = tree.startNode;
     this.history = [tree.startNode];
     const node = tree.nodes[tree.startNode];
+
+    this.emit('dialogue-started', tree);
 
     // Set any flags
     if (node.setFlags) {
@@ -233,6 +255,9 @@ export class DialogueManager {
    * End current dialogue
    */
   endDialogue(): void {
+    if (this.currentTree) {
+      this.emit('dialogue-completed', this.currentTree);
+    }
     this.currentTree = null;
     this.currentNode = null;
     this.history = [];
