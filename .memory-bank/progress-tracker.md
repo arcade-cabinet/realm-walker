@@ -34,6 +34,17 @@
 - [x] Update `game-flow.spec.ts` to use `toBeAttached()` for hidden elements
 - [x] Regenerate screenshots for consistent visual baselines
 
+#### Phase 5: Type Safety & Issue #14 ✅ ✨ NEW
+- [x] Remove `@ts-nocheck` from `GPTImageGenerator.ts`
+- [x] Update `GPTImageGenerator` to match AI SDK version 5 APIs
+- [x] Remove `@ts-nocheck` from `AIClient.ts`
+- [x] Update AI SDK `tool()` calls to use `inputSchema` instead of `parameters`
+- [x] Remove `@ts-nocheck` from `ProductionGame.ts`
+- [x] Refactor `ProductionGame` to align with current system signatures
+- [x] Enhance `QuestManager` and `DialogueManager` with missing production methods
+- [x] Fix type errors in `demo-integrations.ts` and `GameUIManager.ts`
+- [x] Verify zero build errors across all production files
+
 ## Next Priority Tasks
 
 ### Immediate (Ready to Start)

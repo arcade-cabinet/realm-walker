@@ -110,10 +110,12 @@ export class ProductionGame {
     // Quest manager with A/B/C story threads
     this.questManager = new QuestManager();
     
-    // Game state
+    // Game state with initial Chapter 0 setup
     this.gameState = new GameStateManager(this.questManager);
     this.gameState.setCurrentChapter(0);
     this.gameState.setCurrentScene('dead_world_opening');
+    
+    // Set initial flags in quest manager
     this.questManager.setFlag('game_started', true);
     this.questManager.setFlag('player_awakened', false);
     this.questManager.setFlag('met_elder_ottermere', false);

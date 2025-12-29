@@ -44,6 +44,18 @@
 ### Known Issues
 - None. All major regressions and type issues have been resolved.
 
+### Resolved Issues ✨ NEW
+- **Issue #13, #14, #15, #16**: Removed all `@ts-nocheck` directives from production code
+  - Refactored `GPTImageGenerator` to match latest AI SDK `experimental_generateImage` signature
+  - Updated `AIClient` tools to use `inputSchema` instead of `parameters`
+  - Aligned `ProductionGame` entry point with current system APIs
+  - Enhanced `QuestManager` and `DialogueManager` with missing methods and event emitting support
+  - Fixed type errors in `demo-integrations.ts` and `GameUIManager.ts`
+
+### Missing Integrations
+- Asset validation tools not yet added
+- Hot-reloading support not yet implemented
+
 ## What's In Progress 🚧
 
 ### Current Focus
