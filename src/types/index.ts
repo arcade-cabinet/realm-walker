@@ -9,3 +9,4 @@ export * from './GridSystem';
 export * from './SceneDefinition';
 export * from './StoryBinding';
 export * from './GameState';
+export * from './Quest';
