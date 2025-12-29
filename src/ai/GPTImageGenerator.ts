@@ -1,4 +1,3 @@
-// @ts-nocheck - experimental_generateImage API needs updating
 /**
  * GPT Image Generator
  * Uses gpt-image-1 (GPT-4.5) for transparent PNG generation
@@ -64,27 +63,20 @@ export class GPTImageGenerator {
       const { image } = await generateImage({
         model: this.model,
         prompt: enhancedPrompt,
-        size,
-        quality,
-        style
+        size: size as `${number}x${number}`,
       });
 
       // Save image
       const filename = `${Date.now()}_${this.sanitizeFilename(prompt)}.png`;
       const filepath = path.join(this.outputDirectory, filename);
 
-      // Image is a base64 string or URL
-      if (typeof image === 'string') {
-        if (image.startsWith('data:')) {
-          // Base64
-          const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
-          fs.writeFileSync(filepath, Buffer.from(base64Data, 'base64'));
-        } else {
-          // URL - download it
-          const response = await fetch(image);
-          const buffer = await response.arrayBuffer();
-          fs.writeFileSync(filepath, Buffer.from(buffer));
-        }
+      // Save base64 or uint8Array
+      if (image.base64) {
+        fs.writeFileSync(filepath, Buffer.from(image.base64, 'base64'));
+      } else if (image.uint8Array) {
+        fs.writeFileSync(filepath, Buffer.from(image.uint8Array));
+      } else {
+        throw new Error('No image data in generated result');
       }
 
       console.log(`Generated image: ${filepath}`);

@@ -1,4 +1,3 @@
-// @ts-nocheck - Quest system API needs alignment
 /**
  * GameUIManager - Integration layer between UI components and game systems
  * Connects DialogueUI to DialogueManager and QuestLogUI to QuestManager
