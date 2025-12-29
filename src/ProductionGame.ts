@@ -127,7 +127,8 @@ export class ProductionGame {
     this.gameCompositor = new GameCompositor();
 
     // Scene loader and transition manager
-    this.sceneLoader = new SceneLoader(this.questManager.getState().storyFlags, {
+    this.sceneLoader = new SceneLoader({
+      initialFlags: this.questManager.getState().storyFlags,
       sceneCompositor: this.sceneCompositor,
       storyCompositor: this.storyCompositor,
       gameCompositor: this.gameCompositor
@@ -406,7 +407,7 @@ export class ProductionGame {
         id: quest.id,
         title: quest.title,
         description: quest.description,
-        completed: quest.completed
+        completed: !!quest.completed
       }))
     );
   }

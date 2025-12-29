@@ -7,6 +7,8 @@ import { QuestState } from '../../types/GameState';
 import { EventEmitter } from 'events';
 import { Quest, QuestObjective } from '../../types/Quest';
 
+export { Quest, QuestObjective };
+
 export class QuestManager extends EventEmitter {
   private state: QuestState;
   private quests: Map<string, Quest> = new Map();

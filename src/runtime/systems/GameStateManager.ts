@@ -121,6 +121,7 @@ export class GameStateManager {
    */
   setCurrentChapter(chapter: number): void {
     this.currentChapter = chapter;
+    console.log(`Setting current chapter to: ${chapter}`);
   }
 
   /**
@@ -135,14 +136,6 @@ export class GameStateManager {
    */
   setCurrentScene(sceneId: string): void {
     this.currentSceneId = sceneId;
-  }
-
-  /**
-   * Set current chapter
-   */
-  setCurrentChapter(chapter: number): void {
-    // We could store this in quest state or metadata
-    console.log(`Setting current chapter to: ${chapter}`);
   }
 
   /**
