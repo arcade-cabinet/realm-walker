@@ -1,4 +1,3 @@
-// @ts-nocheck - ProductionGame needs refactoring to match updated API signatures
 /**
  * Production Game Entry Point
  * Full production experience with AI-generated assets and real gameplay
@@ -107,20 +106,29 @@ export class ProductionGame {
    * Initialize core game systems
    */
   private async initializeCoreSystems(): Promise<void> {
-    // Game state with initial Chapter 0 setup
-    this.gameState = new GameStateManager({
-      currentChapter: 0,
-      currentScene: 'dead_world_opening',
-      storyFlags: {
-        game_started: true,
-        player_awakened: false,
-        met_elder_ottermere: false
-      }
-    });
-
     // Quest manager with A/B/C story threads
     this.questManager = new QuestManager();
-    
+
+    // Game state
+    this.gameState = new GameStateManager(this.questManager);
+
+    // Dialogue manager
+    this.dialogueManager = new DialogueManager();
+
+    // Compositor pipeline
+    this.sceneCompositor = new SceneCompositor();
+    this.storyCompositor = new StoryCompositor(this.questManager.getState().storyFlags);
+    this.gameCompositor = new GameCompositor();
+
+    // Scene loader and transition manager
+    this.sceneLoader = new SceneLoader(this.questManager.getState().storyFlags, {
+      sceneCompositor: this.sceneCompositor,
+      storyCompositor: this.storyCompositor,
+      gameCompositor: this.gameCompositor
+    });
+
+    this.transitionManager = new SceneTransitionManager(this.sceneLoader);
+
     // Initialize with Chapter 0 quest
     this.questManager.addQuest({
       id: 'chapter_0_awakening',
@@ -138,39 +146,6 @@ export class ProductionGame {
       completedFlags: ['awakening_complete'],
       thread: 'A',
       completed: false
-    });
-
-    // Dialogue manager
-    this.dialogueManager = new DialogueManager();
-
-    // Compositor pipeline
-    this.sceneCompositor = new SceneCompositor();
-    this.storyCompositor = new StoryCompositor(this.questManager.getState());
-    this.gameCompositor = new GameCompositor({
-      container: this.config.container,
-      cameraConfig: {
-        type: 'diorama',
-        fov: 60,
-        position: [0, 10, 15]
-      }
-    });
-
-    // Scene loader and transition manager
-    this.sceneLoader = new SceneLoader({
-      sceneCompositor: this.sceneCompositor,
-      storyCompositor: this.storyCompositor,
-      gameCompositor: this.gameCompositor
-    });
-
-    this.transitionManager = new SceneTransitionManager({
-      sceneLoader: this.sceneLoader,
-      gameState: this.gameState,
-      onTransitionStart: () => {
-        console.log('Scene transition starting...');
-      },
-      onTransitionComplete: () => {
-        console.log('Scene transition complete');
-      }
     });
 
     console.log('✓ Core systems initialized');
@@ -230,7 +205,7 @@ export class ProductionGame {
     };
 
     // Compose scene through three-tier pipeline
-    const composedScene = this.sceneCompositor.compose(sceneTemplate);
+    const composedScene = this.sceneCompositor.composeFromTemplate(sceneTemplate);
     console.log('✓ Scene composed:', composedScene);
 
     // Story layer would fill slots based on flags
@@ -448,7 +423,6 @@ export class ProductionGame {
       onComplete: () => {
         console.log('Chapter 1 scene loaded successfully');
         this.gameState.setCurrentScene('village_square');
-        this.gameState.setCurrentChapter(1);
       },
       onError: (error) => {
         console.error('Failed to transition to Chapter 1:', error);

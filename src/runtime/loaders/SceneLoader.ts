@@ -40,10 +40,14 @@ export class SceneLoader {
   private currentSceneId: string | null = null;
   private adjacentScenes: Set<string> = new Set();
 
-  constructor(initialFlags: QuestFlags = {}) {
-    this.sceneCompositor = new SceneCompositor();
-    this.storyCompositor = new StoryCompositor(initialFlags);
-    this.gameCompositor = new GameCompositor();
+  constructor(initialFlags: QuestFlags = {}, compositors?: {
+    sceneCompositor?: SceneCompositor;
+    storyCompositor?: StoryCompositor;
+    gameCompositor?: GameCompositor;
+  }) {
+    this.sceneCompositor = compositors?.sceneCompositor || new SceneCompositor();
+    this.storyCompositor = compositors?.storyCompositor || new StoryCompositor(initialFlags);
+    this.gameCompositor = compositors?.gameCompositor || new GameCompositor();
   }
 
   /**

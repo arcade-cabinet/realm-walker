@@ -4,6 +4,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { EventEmitter } from 'events';
 
 export interface DialogueNode {
   id: string;
@@ -27,7 +28,7 @@ export interface DialogueTree {
   nodes: Record<string, DialogueNode>;
 }
 
-export class DialogueManager {
+export class DialogueManager extends EventEmitter {
   private currentTree: DialogueTree | null = null;
   private currentNode: string | null = null;
   private dialogues: Map<string, DialogueTree>;
@@ -36,6 +37,7 @@ export class DialogueManager {
   private history: string[];
 
   constructor() {
+    super();
     this.dialogues = new Map();
     this.flagsSet = new Set();
     this.history = [];
@@ -130,6 +132,8 @@ export class DialogueManager {
     this.currentNode = tree.startNode;
     this.history = [tree.startNode];
     const node = tree.nodes[tree.startNode];
+
+    this.emit('dialogue-started', tree);
 
     // Set any flags
     if (node.setFlags) {
@@ -233,6 +237,9 @@ export class DialogueManager {
    * End current dialogue
    */
   endDialogue(): void {
+    if (this.currentTree) {
+      this.emit('dialogue-completed', this.currentTree);
+    }
     this.currentTree = null;
     this.currentNode = null;
     this.history = [];

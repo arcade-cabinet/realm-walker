@@ -1,4 +1,3 @@
-// @ts-nocheck - Demo file with example API usage
 /**
  * Demo: Third-Party Library Integration
  * Demonstrates React Three Fiber, Yuka.js pathfinding, and NPC AI
@@ -123,22 +122,8 @@ async function demoNPCAI() {
     console.log(`\n--- ${sim.name} ---`);
     
     // Reset quest flags for each simulation
-    if (typeof questManager.reset === 'function') {
-      questManager.reset();
-    } else if (typeof questManager.clearFlags === 'function') {
-      questManager.clearFlags();
-    } else {
-      // Fallback: try to clear known internal state
-      if (questManager.flags) {
-        if (typeof questManager.flags.clear === 'function') {
-          questManager.flags.clear();
-        } else if (typeof questManager.flags === 'object') {
-          for (const key of Object.keys(questManager.flags)) {
-            delete questManager.flags[key];
-          }
-        }
-      }
-    }
+    questManager.reset();
+    
     for (const [flag, value] of Object.entries(sim.flags)) {
       questManager.setFlag(flag, value);
     }
