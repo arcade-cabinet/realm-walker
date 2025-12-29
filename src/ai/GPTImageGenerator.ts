@@ -64,36 +64,25 @@ export class GPTImageGenerator {
         model: this.model as any,
         prompt: enhancedPrompt,
         size: size as `${number}x${number}`,
-<<<<<<< HEAD
         providerOptions: {
           openai: {
             quality,
             style
           }
         }
-=======
->>>>>>> fix/issue-16
       });
 
       // Save image
       const filename = `${Date.now()}_${this.sanitizeFilename(prompt)}.png`;
       const filepath = path.join(this.outputDirectory, filename);
 
-<<<<<<< HEAD
-      // Image is a GeneratedFile object with base64 data
+      // Save base64 or uint8Array
       if (image && image.base64) {
         fs.writeFileSync(filepath, Buffer.from(image.base64, 'base64'));
-      } else {
-        throw new Error('No image data received from the API');
-=======
-      // Save base64 or uint8Array
-      if (image.base64) {
-        fs.writeFileSync(filepath, Buffer.from(image.base64, 'base64'));
-      } else if (image.uint8Array) {
+      } else if (image && image.uint8Array) {
         fs.writeFileSync(filepath, Buffer.from(image.uint8Array));
       } else {
-        throw new Error('No image data in generated result');
->>>>>>> fix/issue-16
+        throw new Error('No image data received from the API');
       }
 
       console.log(`Generated image: ${filepath}`);
