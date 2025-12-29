@@ -194,7 +194,7 @@ export class GameUIManager {
       // Add objectives if available
       if (quest.objectives && quest.objectives.length > 0) {
         questInfo.objectives = quest.objectives.map(
-          (obj) => `${obj.description} ${this.questManager.isObjectiveComplete(quest.id, obj.flagToSet) ? '✓' : ''}`
+          (obj) => `${obj.description} ${this.questManager.isObjectiveComplete(quest.id, obj.flagToSet || obj.id) ? '✓' : ''}`
         );
       }
 
