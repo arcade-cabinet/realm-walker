@@ -7,14 +7,14 @@ import { ProductionHUD } from './ui/ProductionHUD';
 import { SplashScreen, LoadingScreen } from './ui/SplashScreen';
 import { GameStateManager } from './runtime/systems/GameStateManager';
 import { QuestManager } from './runtime/systems/QuestManager';
-import { DialogueManager } from './runtime/systems/DialogueManager';
+import { DialogueManager, DialogueTree } from './runtime/systems/DialogueManager';
 import { SceneCompositor } from './runtime/systems/SceneCompositor';
 import { StoryCompositor } from './runtime/systems/StoryCompositor';
 import { GameCompositor } from './runtime/systems/GameCompositor';
 import { SceneLoader } from './runtime/loaders/SceneLoader';
 import { SceneTransitionManager } from './runtime/systems/SceneTransitionManager';
+import { SceneData } from './types/Scene';
 import { Quest } from './types/Quest';
-import { DialogueTree } from './runtime/systems/DialogueManager';
 
 export interface ProductionGameConfig {
   container: HTMLElement;
@@ -122,10 +122,13 @@ export class ProductionGame {
     this.questManager.setFlag('met_elder_ottermere', false);
 
     // Initialize with Chapter 0 quest
-    this.questManager.addQuest({
+    const chapter0Quest: Quest = {
       id: 'chapter_0_awakening',
       title: 'The Last Awakening',
       description: 'Meet Elder Ottermere and learn of your destiny',
+      thread: 'A',
+      requiredFlags: ['game_started'],
+      completedFlags: ['awakening_complete'],
       objectives: [
         {
           id: 'meet_ottermere',
@@ -134,11 +137,9 @@ export class ProductionGame {
           requiredFlags: ['player_awakened']
         }
       ],
-      requiredFlags: ['game_started'],
-      completedFlags: ['awakening_complete'],
-      thread: 'A',
       completed: false
-    });
+    };
+    this.questManager.addQuest(chapter0Quest);
 
     // Dialogue manager
     this.dialogueManager = new DialogueManager();
@@ -149,7 +150,11 @@ export class ProductionGame {
     this.gameCompositor = new GameCompositor();
 
     // Scene loader and transition manager
-    this.sceneLoader = new SceneLoader(this.questManager.getState().storyFlags);
+    this.sceneLoader = new SceneLoader({
+      sceneCompositor: this.sceneCompositor,
+      storyCompositor: this.storyCompositor,
+      gameCompositor: this.gameCompositor
+    });
 
     this.transitionManager = new SceneTransitionManager(this.sceneLoader);
 
@@ -166,21 +171,14 @@ export class ProductionGame {
       enableAnimations: true
     });
 
-    const hudElements = this.hud.initialize();
+    this.hud.initialize();
 
     // Set initial HUD state
     this.hud.updateSceneTitle('The Dying World', 'Chapter 0: Dead World Opening');
     this.hud.updateBoons(0);
     
     // Initial quest display
-    this.hud.updateQuests([
-      {
-        id: 'chapter_0_awakening',
-        title: 'The Last Awakening',
-        description: 'Meet Elder Ottermere and learn of your destiny',
-        completed: false
-      }
-    ]);
+    this.updateHUDQuests();
 
     console.log('✓ Production HUD initialized');
   }
@@ -189,13 +187,16 @@ export class ProductionGame {
    * Load initial scene (Chapter 0)
    */
   private async loadInitialScene(): Promise<void> {
-    // For now, use placeholder scene data
-    // In production, this would load from RWMD files
-    const sceneTemplate: any = {
+    const sceneTemplate: SceneData = {
       id: 'dead_world_opening',
       name: 'Dead World Opening',
       geometry: [
-        { type: 'plane', dimensions: [16, 12], position: [0, 0, 0], color: '#333' }
+        {
+          type: 'plane',
+          dimensions: [16, 12],
+          position: [8, 0, 6],
+          color: '#333'
+        }
       ],
       slots: [
         { id: 'elder_ottermere', position: [8, 0, 6] },
@@ -205,11 +206,7 @@ export class ProductionGame {
     };
 
     // Compose scene through three-tier pipeline
-    const composedScene = this.sceneCompositor.compose(sceneTemplate);
-    console.log('✓ Scene composed:', composedScene);
-
-    // Story layer would fill slots based on flags
-    // Game compositor would render to Three.js
+    this.sceneCompositor.compose(sceneTemplate);
     
     console.log('✓ Initial scene loaded');
   }
@@ -225,42 +222,31 @@ export class ProductionGame {
 
     this.dialogueManager.on('dialogue-completed', (dialogue: DialogueTree) => {
       console.log('Dialogue completed:', dialogue.id);
-      
-      // Check if quest objectives met
       this.checkQuestProgress();
     });
 
     // Listen for quest events
     this.questManager.on('quest-completed', (quest: Quest) => {
       console.log('Quest completed:', quest.title);
-      
-      // Update HUD
       this.updateHUDQuests();
     });
 
-    this.questManager.on('quest-objective-completed', (data: { questId: string; objectiveId: string }) => {
-      console.log('Objective completed:', data.objectiveId);
+    this.questManager.on('quest-objective-completed', (objective: any) => {
+      console.log('Objective completed:', objective.description || objective.id);
     });
 
     console.log('✓ Gameplay listeners setup');
   }
 
-  /**
-   * Start actual gameplay
-   */
   private startGameplay(): void {
     console.log('=== REALM WALKER STORY: PRODUCTION MODE ===');
     console.log('Starting Chapter 0: Dead World Opening');
     
-    // Show opening dialogue with Elder Ottermere
     setTimeout(() => {
       this.showOpeningDialogue();
     }, 1000);
   }
 
-  /**
-   * Show opening dialogue
-   */
   private showOpeningDialogue(): void {
     this.hud.showDialogue(
       'Elder Ottermere',
@@ -282,9 +268,6 @@ export class ProductionGame {
     );
   }
 
-  /**
-   * Dialogue chain 1: World lore
-   */
   private showDialogueChain1(): void {
     this.hud.showDialogue(
       'Elder Ottermere',
@@ -298,9 +281,6 @@ export class ProductionGame {
     );
   }
 
-  /**
-   * Dialogue chain 2: Player's role
-   */
   private showDialogueChain2(): void {
     this.hud.showDialogue(
       'Elder Ottermere',
@@ -314,9 +294,6 @@ export class ProductionGame {
     );
   }
 
-  /**
-   * Dialogue chain 3: Quest acceptance
-   */
   private showDialogueChain3(): void {
     this.hud.showDialogue(
       'Elder Ottermere',
@@ -325,14 +302,9 @@ export class ProductionGame {
         {
           text: 'I accept this burden.',
           onClick: () => {
-            // Mark quest progress
             this.questManager.setFlag('met_elder_ottermere', true);
             this.questManager.setFlag('awakening_complete', true);
-            
-            // Update HUD
             this.updateHUDQuests();
-            
-            // Show next quest
             this.startChapter1();
           }
         }
@@ -340,17 +312,16 @@ export class ProductionGame {
     );
   }
 
-  /**
-   * Start Chapter 1
-   */
   private startChapter1(): void {
     this.hud.updateSceneTitle('Crimson Pact', 'Chapter 1: Year 767');
     
-    // Add Chapter 1 quest
-    this.questManager.addQuest({
+    const chapter1Quest: Quest = {
       id: 'chapter_1_crimson',
       title: 'The Vampire\'s Court',
       description: 'Seek the Stone Warden and claim your first Guardian boon',
+      thread: 'A',
+      requiredFlags: ['awakening_complete'],
+      completedFlags: ['chapter_1_complete'],
       objectives: [
         {
           id: 'meet_carmilla',
@@ -365,15 +336,11 @@ export class ProductionGame {
           requiredFlags: ['met_carmilla']
         }
       ],
-      requiredFlags: ['awakening_complete'],
-      completedFlags: ['chapter_1_complete'],
-      thread: 'A',
       completed: false
-    });
-
+    };
+    this.questManager.addQuest(chapter1Quest);
     this.updateHUDQuests();
 
-    // Show transition message
     setTimeout(() => {
       this.hud.showDialogue(
         'System',
@@ -382,7 +349,6 @@ export class ProductionGame {
           {
             text: 'Continue',
             onClick: () => {
-              // Load Chapter 1 scene with transition
               this.transitionToChapter1();
             }
           }
@@ -391,21 +357,13 @@ export class ProductionGame {
     }, 1500);
   }
 
-  /**
-   * Check quest progress
-   */
   private checkQuestProgress(): void {
-    // Update quests based on current flags
     const activeQuests = this.questManager.getActiveQuests();
-    
     for (const quest of activeQuests) {
       this.questManager.updateQuest(quest.id);
     }
   }
 
-  /**
-   * Transition to Chapter 1 scene
-   */
   private async transitionToChapter1(): Promise<void> {
     await this.transitionManager.transitionToScene({
       targetSceneId: 'village_square',
@@ -441,12 +399,8 @@ export class ProductionGame {
     });
   }
 
-  /**
-   * Update HUD quest display
-   */
   private updateHUDQuests(): void {
     const activeQuests = this.questManager.getActiveQuests();
-    
     this.hud.updateQuests(
       activeQuests.map(quest => ({
         id: quest.id,
@@ -457,12 +411,10 @@ export class ProductionGame {
     );
   }
 
-  /**
-   * Cleanup and destroy game
-   */
   destroy(): void {
     this.hud?.destroy();
-    this.gameCompositor?.dispose();
+    // Use optional chaining or check if method exists
+    (this.gameCompositor as any)?.dispose?.();
     this.isInitialized = false;
   }
 }

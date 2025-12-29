@@ -76,11 +76,13 @@ export class GPTImageGenerator {
       const filename = `${Date.now()}_${this.sanitizeFilename(prompt)}.png`;
       const filepath = path.join(this.outputDirectory, filename);
 
-      // Image is a GeneratedFile object with base64 data
-      if (image && image.base64) {
+      // Save base64 or uint8Array
+      if (image.base64) {
         fs.writeFileSync(filepath, Buffer.from(image.base64, 'base64'));
+      } else if (image.uint8Array) {
+        fs.writeFileSync(filepath, Buffer.from(image.uint8Array));
       } else {
-        throw new Error('No image data received from the API');
+        throw new Error('No image data in generated result');
       }
 
       console.log(`Generated image: ${filepath}`);
