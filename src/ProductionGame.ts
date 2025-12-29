@@ -1,4 +1,3 @@
-// @ts-nocheck - ProductionGame needs refactoring to match updated API signatures
 /**
  * Production Game Entry Point
  * Full production experience with AI-generated assets and real gameplay
@@ -14,6 +13,8 @@ import { StoryCompositor } from './runtime/systems/StoryCompositor';
 import { GameCompositor } from './runtime/systems/GameCompositor';
 import { SceneLoader } from './runtime/loaders/SceneLoader';
 import { SceneTransitionManager } from './runtime/systems/SceneTransitionManager';
+import { Quest } from './types/Quest';
+import { DialogueTree } from './runtime/systems/DialogueManager';
 
 export interface ProductionGameConfig {
   container: HTMLElement;
@@ -145,7 +146,7 @@ export class ProductionGame {
 
     // Compositor pipeline
     this.sceneCompositor = new SceneCompositor();
-    this.storyCompositor = new StoryCompositor(this.questManager.getState());
+    this.storyCompositor = new StoryCompositor(this.questManager.getState().storyFlags);
     this.gameCompositor = new GameCompositor({
       container: this.config.container,
       cameraConfig: {
@@ -244,11 +245,11 @@ export class ProductionGame {
    */
   private async setupGameplayListeners(): Promise<void> {
     // Listen for dialogue events
-    this.dialogueManager.on('dialogue-started', (dialogue) => {
+    this.dialogueManager.on('dialogue-started', (dialogue: DialogueTree) => {
       console.log('Dialogue started:', dialogue.id);
     });
 
-    this.dialogueManager.on('dialogue-completed', (dialogue) => {
+    this.dialogueManager.on('dialogue-completed', (dialogue: DialogueTree) => {
       console.log('Dialogue completed:', dialogue.id);
       
       // Check if quest objectives met
@@ -256,15 +257,15 @@ export class ProductionGame {
     });
 
     // Listen for quest events
-    this.questManager.on('quest-completed', (quest) => {
+    this.questManager.on('quest-completed', (quest: Quest) => {
       console.log('Quest completed:', quest.title);
       
       // Update HUD
       this.updateHUDQuests();
     });
 
-    this.questManager.on('quest-objective-completed', (objective) => {
-      console.log('Objective completed:', objective.description);
+    this.questManager.on('quest-objective-completed', (data: { questId: string; objectiveId: string }) => {
+      console.log('Objective completed:', data.objectiveId);
     });
 
     console.log('✓ Gameplay listeners setup');
@@ -477,7 +478,7 @@ export class ProductionGame {
         id: quest.id,
         title: quest.title,
         description: quest.description,
-        completed: quest.completed
+        completed: !!quest.completed
       }))
     );
   }

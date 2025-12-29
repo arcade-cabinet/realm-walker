@@ -1,4 +1,3 @@
-// @ts-nocheck - AI SDK tool() function types need updating
 /**
  * AI Tools for Scene Generation
  * Provides AI with structured tools to generate assets

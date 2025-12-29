@@ -1,4 +1,3 @@
-// @ts-nocheck - Demo file with example API usage
 /**
  * Demo: Third-Party Library Integration
  * Demonstrates React Three Fiber, Yuka.js pathfinding, and NPC AI

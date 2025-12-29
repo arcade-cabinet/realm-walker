@@ -1,4 +1,3 @@
-// @ts-nocheck - experimental_generateImage API needs updating
 /**
  * GPT Image Generator
  * Uses gpt-image-1 (GPT-4.5) for transparent PNG generation
