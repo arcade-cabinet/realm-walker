@@ -3,31 +3,19 @@
  * Connects DialogueUI to DialogueManager and QuestLogUI to QuestManager
  */
 
-import { DialogueUI, DialogueUIOptions } from '../../ui/DialogueUI';
-import { QuestLogUI, QuestLogUIOptions, QuestInfo } from '../../ui/QuestLogUI';
+import { DialogueUI } from '../../ui/DialogueUI';
+import { QuestLogUI, QuestInfo } from '../../ui/QuestLogUI';
 import { DialogueManager, DialogueNode } from './DialogueManager';
 import { QuestManager } from './QuestManager';
 import { StoryCompositor } from './StoryCompositor';
-
-// Define Quest interface inline since it's not exported from QuestManager
-interface Quest {
-  id: string;
-  title: string;
-  description: string;
-  objectives?: Record<string, QuestObjective>;
-  rewards?: string[];
-}
-
-interface QuestObjective {
-  description: string;
-  requiredFlags?: string[];
-}
+import { Quest } from '../../types/Quest';
 
 export interface GameUIManagerOptions {
   container: HTMLElement;
   dialogueManager: DialogueManager;
   questManager: QuestManager;
   storyCompositor: StoryCompositor;
+  quests?: Quest[]; // Known quest definitions
   theme?: 'default' | 'dark' | 'fantasy';
 }
 
@@ -37,11 +25,13 @@ export class GameUIManager {
   private dialogueManager: DialogueManager;
   private questManager: QuestManager;
   private storyCompositor: StoryCompositor;
+  private quests: Quest[];
 
   constructor(options: GameUIManagerOptions) {
     this.dialogueManager = options.dialogueManager;
     this.questManager = options.questManager;
     this.storyCompositor = options.storyCompositor;
+    this.quests = options.quests || [];
 
     // Initialize DialogueUI
     this.dialogueUI = new DialogueUI({
@@ -185,30 +175,31 @@ export class GameUIManager {
    * Update quest log with current quest data
    */
   private updateQuestLog(): void {
-    // Get all registered quests (not implemented yet, so use empty array)
-    const allQuests: Quest[] = [];
-    
     const activeQuests: QuestInfo[] = [];
     const completedQuests: QuestInfo[] = [];
 
+    // Combine registered quests with any active/completed quests from manager
+    const allQuests = this.quests;
+
     for (const quest of allQuests) {
+      const isCompleted = this.questManager.isQuestCompleted(quest.id);
+      const isActive = this.questManager.isQuestActive(quest.id);
+
+      if (!isCompleted && !isActive) continue;
+
       const questInfo: QuestInfo = {
         id: quest.id,
         title: quest.title,
         description: quest.description,
-        completed: this.questManager.isQuestCompleted(quest.id)
+        completed: isCompleted,
+        objectives: quest.objectives.map(obj => 
+          `${obj.description} ${this.questManager.isObjectiveComplete(quest.id, obj.id) ? '✓' : ''}`
+        )
       };
 
-      // Add objectives if available
-      if (quest.objectives) {
-        questInfo.objectives = Object.entries(quest.objectives).map(
-          ([key, obj]) => `${obj.description} ${this.questManager.isObjectiveComplete(quest.id, key) ? '✓' : ''}`
-        );
-      }
-
-      if (questInfo.completed) {
+      if (isCompleted) {
         completedQuests.push(questInfo);
-      } else if (this.questManager.isQuestActive(quest.id)) {
+      } else {
         activeQuests.push(questInfo);
       }
     }
@@ -245,8 +236,8 @@ export class GameUIManager {
   /**
    * Complete an objective and update UI
    */
-  completeObjective(questId: string, objectiveKey: string): boolean {
-    const success = this.questManager.completeObjective(questId, objectiveKey);
+  completeObjective(questId: string, objectiveId: string): boolean {
+    const success = this.questManager.completeObjective(questId, objectiveId);
     if (success) {
       this.updateQuestLog();
       
@@ -271,6 +262,14 @@ export class GameUIManager {
    */
   getQuestLogUI(): QuestLogUI {
     return this.questLogUI;
+  }
+
+  /**
+   * Set the list of known quests
+   */
+  setQuests(quests: Quest[]): void {
+    this.quests = quests;
+    this.updateQuestLog();
   }
 
   /**

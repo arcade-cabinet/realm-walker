@@ -123,7 +123,7 @@ async function demoNPCAI() {
     
     // Reset quest flags for each simulation
     questManager.reset();
-    
+
     for (const [flag, value] of Object.entries(sim.flags)) {
       questManager.setFlag(flag, value);
     }

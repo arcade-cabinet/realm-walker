@@ -111,6 +111,11 @@ export class ProductionGame {
 
     // Game state
     this.gameState = new GameStateManager(this.questManager);
+    
+    // Set initial flags in quest manager
+    this.questManager.setFlag('game_started', true);
+    this.questManager.setFlag('player_awakened', false);
+    this.questManager.setFlag('met_elder_ottermere', false);
 
     // Dialogue manager
     this.dialogueManager = new DialogueManager();

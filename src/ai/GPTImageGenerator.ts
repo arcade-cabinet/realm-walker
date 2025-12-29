@@ -61,13 +61,13 @@ export class GPTImageGenerator {
 
     try {
       const { image } = await generateImage({
-        model: this.model,
+        model: this.model as any,
         prompt: enhancedPrompt,
         size: size as `${number}x${number}`,
         providerOptions: {
           openai: {
             quality,
-            style,
+            style
           }
         }
       });
@@ -77,7 +77,11 @@ export class GPTImageGenerator {
       const filepath = path.join(this.outputDirectory, filename);
 
       // Image is a GeneratedFile object with base64 data
-      fs.writeFileSync(filepath, Buffer.from(image.base64, 'base64'));
+      if (image && image.base64) {
+        fs.writeFileSync(filepath, Buffer.from(image.base64, 'base64'));
+      } else {
+        throw new Error('No image data received from the API');
+      }
 
       console.log(`Generated image: ${filepath}`);
       return filepath;

@@ -140,6 +140,7 @@ export class DialogueManager extends EventEmitter {
       node.setFlags.forEach(flag => {
         this.flagsSet.add(flag);
         this.onFlagSet?.(flag);
+        this.emit('flag-set', flag);
       });
     }
 
@@ -176,6 +177,7 @@ export class DialogueManager extends EventEmitter {
       choice.setsFlags.forEach(flag => {
         this.flagsSet.add(flag);
         this.onFlagSet?.(flag);
+        this.emit('flag-set', flag);
       });
     }
 
@@ -189,6 +191,7 @@ export class DialogueManager extends EventEmitter {
       nextNode.setFlags.forEach(flag => {
         this.flagsSet.add(flag);
         this.onFlagSet?.(flag);
+        this.emit('flag-set', flag);
       });
     }
 
@@ -217,7 +220,10 @@ export class DialogueManager extends EventEmitter {
     const nextNode = this.currentTree.nodes[currentNodeData.next];
 
     if (nextNode?.setFlags) {
-      nextNode.setFlags.forEach(flag => this.onFlagSet?.(flag));
+      nextNode.setFlags.forEach(flag => {
+        this.onFlagSet?.(flag);
+        this.emit('flag-set', flag);
+      });
     }
 
     return nextNode;

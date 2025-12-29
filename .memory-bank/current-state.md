@@ -64,8 +64,16 @@
 ## What's Broken ❌
 
 ### Known Issues
-- E2E tests: Playwright TransformStream error (environment issue, not code issue)
+  - E2E tests: Playwright TransformStream error (environment issue, not code issue)
 - Jest configuration: ts-jest deprecation warning (cosmetic, tests work fine)
+
+### Resolved Issues ✨ NEW
+- **Issue #14**: Removed all `@ts-nocheck` directives from production code
+  - Refactored `GPTImageGenerator` to match latest AI SDK `experimental_generateImage` signature
+  - Updated `AIClient` tools to use `inputSchema` instead of `parameters`
+  - Aligned `ProductionGame` entry point with current system APIs
+  - Enhanced `QuestManager` and `DialogueManager` with missing methods and event emitting support
+  - Fixed type errors in `demo-integrations.ts` and `GameUIManager.ts`
 
 ### Missing Integrations
 - Asset validation tools not yet added
