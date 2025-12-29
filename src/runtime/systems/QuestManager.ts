@@ -7,9 +7,36 @@ import { QuestState } from '../../types/GameState';
 import { EventEmitter } from 'events';
 import { Quest, QuestObjective } from '../../types/Quest';
 
+<<<<<<< HEAD
 export class QuestManager extends EventEmitter {
   private state: QuestState;
   private quests: Map<string, Quest> = new Map();
+=======
+export interface QuestObjective {
+  id: string;
+  description: string;
+  completed: boolean;
+  requiredFlags?: string[];
+}
+
+export interface Quest {
+  id: string;
+  title: string;
+  description: string;
+  objectives: QuestObjective[];
+  requiredFlags?: string[];
+  completedFlags?: string[];
+  thread?: 'A' | 'B' | 'C';
+  completed: boolean;
+}
+
+type Listener = (...args: any[]) => void;
+
+export class QuestManager {
+  private state: QuestState;
+  private quests: Map<string, Quest> = new Map();
+  private listeners: Map<string, Listener[]> = new Map();
+>>>>>>> fix/issue-16
 
   constructor(initialState?: Partial<QuestState>) {
     super();
@@ -24,6 +51,7 @@ export class QuestManager extends EventEmitter {
   }
 
   /**
+<<<<<<< HEAD
    * Add a quest definition
    */
   addQuest(quest: Quest): void {
@@ -92,13 +120,33 @@ export class QuestManager extends EventEmitter {
     
     // Check all active quests for updates
     this.state.activeQuests.forEach(id => this.updateQuest(id));
+=======
+   * Event listener support
+   */
+  on(event: string, listener: Listener): void {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, []);
+    }
+    this.listeners.get(event)!.push(listener);
+  }
+
+  private emit(event: string, ...args: any[]): void {
+    const eventListeners = this.listeners.get(event);
+    if (eventListeners) {
+      eventListeners.forEach(l => l(...args));
+    }
+>>>>>>> fix/issue-16
   }
 
   /**
-   * Check if a flag is set
+   * Add a quest definition
    */
-  hasFlag(flag: string): boolean {
-    return this.state.storyFlags[flag] === true;
+  addQuest(quest: Quest): void {
+    this.quests.set(quest.id, quest);
+    // If it should be active based on flags, start it
+    if (quest.requiredFlags && quest.requiredFlags.every(f => this.hasFlag(f))) {
+      this.startQuest(quest.id);
+    }
   }
 
   /**
@@ -130,10 +178,95 @@ export class QuestManager extends EventEmitter {
       if (quest) {
         quest.completed = true;
         this.emit('quest-completed', quest);
+<<<<<<< HEAD
+      }
+      return true;
+=======
+        
+        // Set completion flags if any
+        if (quest.completedFlags) {
+          quest.completedFlags.forEach(f => this.setFlag(f, true));
+        }
+      }
+>>>>>>> fix/issue-16
+    }
+    return false;
+  }
+
+  /**
+   * Update quest progress based on flags
+   */
+  updateQuest(questId: string): void {
+    const quest = this.quests.get(questId);
+    if (!quest || quest.completed) return;
+
+    let changed = false;
+    for (const obj of quest.objectives) {
+      if (!obj.completed && obj.requiredFlags && obj.requiredFlags.every(f => this.hasFlag(f))) {
+        obj.completed = true;
+        changed = true;
+        this.emit('quest-objective-completed', obj);
+      }
+    }
+
+    if (changed) {
+      // Check if all objectives complete
+      if (quest.objectives.every(o => o.completed)) {
+        this.completeQuest(questId);
+      }
+    }
+  }
+
+  /**
+   * Complete an objective directly
+   */
+  completeObjective(questId: string, objectiveId: string): boolean {
+    const quest = this.quests.get(questId);
+    if (!quest) return false;
+
+    const objective = quest.objectives.find(o => o.id === objectiveId);
+    if (objective && !objective.completed) {
+      objective.completed = true;
+      this.emit('quest-objective-completed', objective);
+      
+      if (quest.objectives.every(o => o.completed)) {
+        this.completeQuest(questId);
       }
       return true;
     }
     return false;
+  }
+
+  /**
+   * Set a story flag
+   */
+  setFlag(flag: string, value: boolean = true): void {
+    this.state.storyFlags[flag] = value;
+    // Check all active quests for progress
+    this.state.activeQuests.forEach(id => this.updateQuest(id));
+  }
+
+  /**
+   * Check if a flag is set
+   */
+  hasFlag(flag: string): boolean {
+    return this.state.storyFlags[flag] === true;
+  }
+
+  /**
+   * Get quest by ID
+   */
+  getQuest(questId: string): Quest | undefined {
+    return this.quests.get(questId);
+  }
+
+  /**
+   * Get all active quests
+   */
+  getActiveQuests(): Quest[] {
+    return this.state.activeQuests
+      .map(id => this.quests.get(id))
+      .filter((q): q is Quest => q !== undefined);
   }
 
   /**
@@ -145,6 +278,7 @@ export class QuestManager extends EventEmitter {
 
   /**
    * Check if quest is completed
+<<<<<<< HEAD
    */
   isQuestCompleted(questId: string): boolean {
     return this.state.completedQuests.includes(questId);
@@ -191,12 +325,19 @@ export class QuestManager extends EventEmitter {
 
   /**
    * Check if scene can be accessed based on required flags
+=======
+>>>>>>> fix/issue-16
    */
-  canAccessScene(sceneId: string, requiredFlags?: string[]): boolean {
-    if (!requiredFlags || requiredFlags.length === 0) {
-      return true;
-    }
-    return requiredFlags.every(flag => this.hasFlag(flag));
+  isQuestCompleted(questId: string): boolean {
+    return this.state.completedQuests.includes(questId);
+  }
+
+  /**
+   * Check if objective is complete
+   */
+  isObjectiveComplete(questId: string, objectiveId: string): boolean {
+    const quest = this.quests.get(questId);
+    return quest?.objectives.find(o => o.id === objectiveId)?.completed === true;
   }
 
   /**
@@ -228,43 +369,7 @@ export class QuestManager extends EventEmitter {
   }
 
   /**
-   * Increment A story progress (Guardian boons)
-   */
-  incrementAStory(): void {
-    this.state.aStoryProgress++;
-  }
-
-  /**
-   * Increment B story progress (Faction allies)
-   */
-  incrementBStory(): void {
-    this.state.bStoryProgress++;
-  }
-
-  /**
-   * Increment C story progress (Ravens encounters)
-   */
-  incrementCStory(): void {
-    this.state.cStoryProgress++;
-  }
-
-  /**
-   * Export state as JSON
-   */
-  exportToJSON(): string {
-    return JSON.stringify(this.state, null, 2);
-  }
-
-  /**
-   * Import state from JSON
-   */
-  importFromJSON(json: string): void {
-    const parsed = JSON.parse(json);
-    this.loadState(parsed);
-  }
-
-  /**
-   * Reset all quest state to initial values
+   * Reset all quest state
    */
   reset(): void {
     this.state = {
@@ -275,5 +380,30 @@ export class QuestManager extends EventEmitter {
       bStoryProgress: 0,
       cStoryProgress: 0
     };
+  }
+
+  // Other progression methods
+  incrementAStory(): void { this.state.aStoryProgress++; }
+  incrementBStory(): void { this.state.bStoryProgress++; }
+  incrementCStory(): void { this.state.cStoryProgress++; }
+
+  canAccessScene(sceneId: string, requiredFlags?: string[]): boolean {
+    if (!requiredFlags || requiredFlags.length === 0) return true;
+    return requiredFlags.every(flag => this.hasFlag(flag));
+  }
+
+  /**
+   * Export state as JSON (Required for tests)
+   */
+  exportToJSON(): string {
+    return JSON.stringify(this.state, null, 2);
+  }
+
+  /**
+   * Import state from JSON (Required for tests)
+   */
+  importFromJSON(json: string): void {
+    const parsed = JSON.parse(json);
+    this.loadState(parsed);
   }
 }

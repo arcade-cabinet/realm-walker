@@ -3,7 +3,7 @@
  * Provides AI with structured tools to generate assets
  */
 
-import { tool, zodSchema } from 'ai';
+import { tool } from 'ai';
 import { z } from 'zod';
 import { AssetLibrary } from './AssetLibrary';
 import { MeshyClient } from './MeshyClient';
