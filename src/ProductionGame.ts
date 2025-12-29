@@ -6,14 +6,15 @@
 import { ProductionHUD } from './ui/ProductionHUD';
 import { SplashScreen, LoadingScreen } from './ui/SplashScreen';
 import { GameStateManager } from './runtime/systems/GameStateManager';
-import { QuestManager, Quest } from './runtime/systems/QuestManager';
-import { DialogueManager } from './runtime/systems/DialogueManager';
+import { QuestManager } from './runtime/systems/QuestManager';
+import { DialogueManager, DialogueTree } from './runtime/systems/DialogueManager';
 import { SceneCompositor } from './runtime/systems/SceneCompositor';
 import { StoryCompositor } from './runtime/systems/StoryCompositor';
 import { GameCompositor } from './runtime/systems/GameCompositor';
 import { SceneLoader } from './runtime/loaders/SceneLoader';
 import { SceneTransitionManager } from './runtime/systems/SceneTransitionManager';
 import { SceneData } from './types/Scene';
+import { Quest } from './types/Quest';
 
 export interface ProductionGameConfig {
   container: HTMLElement;
@@ -125,6 +126,9 @@ export class ProductionGame {
       id: 'chapter_0_awakening',
       title: 'The Last Awakening',
       description: 'Meet Elder Ottermere and learn of your destiny',
+      thread: 'A',
+      requiredFlags: ['game_started'],
+      completedFlags: ['awakening_complete'],
       objectives: [
         {
           id: 'meet_ottermere',
@@ -133,9 +137,6 @@ export class ProductionGame {
           requiredFlags: ['player_awakened']
         }
       ],
-      requiredFlags: ['game_started'],
-      completedFlags: ['awakening_complete'],
-      thread: 'A',
       completed: false
     };
     this.questManager.addQuest(chapter0Quest);
@@ -215,23 +216,23 @@ export class ProductionGame {
    */
   private async setupGameplayListeners(): Promise<void> {
     // Listen for dialogue events
-    this.dialogueManager.on('dialogue-started', (tree: any) => {
-      console.log('Dialogue started:', tree.id);
+    this.dialogueManager.on('dialogue-started', (dialogue: DialogueTree) => {
+      console.log('Dialogue started:', dialogue.id);
     });
 
-    this.dialogueManager.on('dialogue-completed', (tree: any) => {
-      console.log('Dialogue completed:', tree.id);
+    this.dialogueManager.on('dialogue-completed', (dialogue: DialogueTree) => {
+      console.log('Dialogue completed:', dialogue.id);
       this.checkQuestProgress();
     });
 
     // Listen for quest events
-    this.questManager.on('quest-completed', (quest: any) => {
+    this.questManager.on('quest-completed', (quest: Quest) => {
       console.log('Quest completed:', quest.title);
       this.updateHUDQuests();
     });
 
     this.questManager.on('quest-objective-completed', (objective: any) => {
-      console.log('Objective completed:', objective.description);
+      console.log('Objective completed:', objective.description || objective.id);
     });
 
     console.log('✓ Gameplay listeners setup');
@@ -318,6 +319,9 @@ export class ProductionGame {
       id: 'chapter_1_crimson',
       title: 'The Vampire\'s Court',
       description: 'Seek the Stone Warden and claim your first Guardian boon',
+      thread: 'A',
+      requiredFlags: ['awakening_complete'],
+      completedFlags: ['chapter_1_complete'],
       objectives: [
         {
           id: 'meet_carmilla',
@@ -332,9 +336,6 @@ export class ProductionGame {
           requiredFlags: ['met_carmilla']
         }
       ],
-      requiredFlags: ['awakening_complete'],
-      completedFlags: ['chapter_1_complete'],
-      thread: 'A',
       completed: false
     };
     this.questManager.addQuest(chapter1Quest);
@@ -405,7 +406,7 @@ export class ProductionGame {
         id: quest.id,
         title: quest.title,
         description: quest.description,
-        completed: quest.completed
+        completed: !!quest.completed
       }))
     );
   }

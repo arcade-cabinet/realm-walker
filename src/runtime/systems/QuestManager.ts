@@ -4,24 +4,7 @@
  */
 
 import { QuestState } from '../../types/GameState';
-
-export interface QuestObjective {
-  id: string;
-  description: string;
-  completed: boolean;
-  requiredFlags?: string[];
-}
-
-export interface Quest {
-  id: string;
-  title: string;
-  description: string;
-  objectives: QuestObjective[];
-  requiredFlags?: string[];
-  completedFlags?: string[];
-  thread?: 'A' | 'B' | 'C';
-  completed: boolean;
-}
+import { Quest, QuestObjective } from '../../types/Quest';
 
 type Listener = (...args: any[]) => void;
 
