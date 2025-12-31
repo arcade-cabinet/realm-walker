@@ -20,7 +20,7 @@ export interface AIToolsConfig {
 /**
  * Create AI tools for asset generation
  */
-export function createAssetGenerationTools(config: AIToolsConfig): Record<string, CoreTool<any, any>> {
+export function createAssetGenerationTools(config: AIToolsConfig): Record<string, CoreTool> {
   return {
     search_existing_assets: tool({
       description: 'Search the asset library for existing reusable assets using semantic similarity',
