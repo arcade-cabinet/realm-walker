@@ -61,7 +61,7 @@ export class GPTImageGenerator {
 
     try {
       const { image } = await generateImage({
-        model: this.model as any,
+        model: this.model,
         prompt: enhancedPrompt,
         size: size as `${number}x${number}`,
         providerOptions: {
