@@ -3,9 +3,9 @@
  * Orchestrates AI-driven asset and scene generation
  */
 
-// export * from './AIClient';  // Skipping due to AI SDK type issues
+export * from './AIClient';
 export * from './MeshyClient';
-// export * from './GPTImageGenerator';  // Skipping due to AI SDK changes
+export * from './GPTImageGenerator';
 export * from './AmbientCGProvider';
 export * from './AssetLibrary';
 export * from './SceneOrchestrator';
