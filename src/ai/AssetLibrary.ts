@@ -6,6 +6,7 @@
 import { openai } from '@ai-sdk/openai';
 import { embed, embedMany } from 'ai';
 import Database from 'better-sqlite3';
+import * as fs from 'fs';
 import * as path from 'path';
 
 export interface AssetRecord {
@@ -33,7 +34,6 @@ export class AssetLibrary {
   constructor(dbPath: string = './data/asset-library.db') {
     // Ensure directory exists
     const dir = path.dirname(dbPath);
-    const fs = require('fs');
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }

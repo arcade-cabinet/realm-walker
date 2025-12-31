@@ -21,6 +21,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "yuka.d.ts", "web/**/*"],
+  "include": ["src/**/*", "yuka.d.ts", "web/**/*", "tests/**/*", "scripts/**/*", "playwright.config.ts"],
   "exclude": ["node_modules", "dist"]
 }
