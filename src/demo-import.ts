@@ -6,7 +6,7 @@
 import { AnthropicClient } from './ai/AnthropicClient';
 import { AssetLibrary } from './ai/AssetLibrary';
 import { ImportOrchestrator } from './ai/workflows/ImportOrchestrator';
-import { EnhancedSceneOrchestrator } from './ai/EnhancedSceneOrchestrator';
+import { EnhancedSceneOrchestrator, EnhancedSceneContext } from './ai/EnhancedSceneOrchestrator';
 import * as path from 'path';
 
 // Configuration
@@ -145,10 +145,10 @@ async function demonstrateEnhancedSceneGeneration() {
 
   sceneOrchestrator.setImportOrchestrator(importOrchestrator);
 
-  // Generate a scene with imported content
-  const sceneContext = {
+  // Define scene context
+  const sceneContext: EnhancedSceneContext = {
     thread: {
-      type: 'A' as const,
+      type: 'A',
       description: 'Guardian Quest - Ancient powers and legendary encounters',
       chapters: [1]
     },
@@ -165,7 +165,7 @@ async function demonstrateEnhancedSceneGeneration() {
 
   const result = await sceneOrchestrator.generateEnhancedScene(
     sceneContext,
-    (progress) => {
+    (progress: { stage: string; message: string; progress: number }) => {
       console.log(`[${progress.stage}] ${progress.message} - ${progress.progress}%`);
     }
   );

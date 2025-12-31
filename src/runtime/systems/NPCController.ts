@@ -195,7 +195,7 @@ class PatrolState extends State {
 export class NPCController {
   id: string;
   vehicle: Vehicle;
-  stateMachine: StateMachine;
+  stateMachine: StateMachine<NPCController>;
   behaviorState: NPCBehaviorState;
   
   maxSpeed: number;
