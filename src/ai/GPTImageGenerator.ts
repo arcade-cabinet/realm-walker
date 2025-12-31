@@ -4,7 +4,7 @@
  */
 
 import { openai } from '@ai-sdk/openai';
-import { experimental_generateImage as generateImage } from 'ai';
+import { generateImage } from 'ai';
 import * as fs from 'fs';
 import * as path from 'path';
 import { createCanvas, loadImage } from 'canvas';
@@ -63,7 +63,7 @@ export class GPTImageGenerator {
       const { image } = await generateImage({
         model: this.model,
         prompt: enhancedPrompt,
-        size: size as `${number}x${number}`,
+        size: size,
         providerOptions: {
           openai: {
             quality,
