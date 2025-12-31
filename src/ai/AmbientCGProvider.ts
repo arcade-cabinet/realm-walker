@@ -108,7 +108,7 @@ export class AmbientCGProvider {
   /**
    * Extract texture maps from download info
    */
-  private extractMaps(downloadInfo: any): TextureSet['maps'] {
+  private extractMaps(downloadInfo: { downloadFiletypeCategories?: Record<string, { downloadLink: string }> }): TextureSet['maps'] {
     const maps: TextureSet['maps'] = {};
 
     // Map file types to our structure

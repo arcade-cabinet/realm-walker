@@ -86,12 +86,12 @@ export class AnthropicClient {
     storyBible: string,
     instructions: string
   ): Promise<{
-    quests: any[];
-    dialogues: any[];
-    npcs: any[];
-    lore: any[];
-    locations: any[];
-    metadata: any;
+    quests: Record<string, unknown>[];
+    dialogues: Record<string, unknown>[];
+    npcs: Record<string, unknown>[];
+    lore: Record<string, unknown>[];
+    locations: Record<string, unknown>[];
+    metadata: Record<string, unknown>;
   }> {
     const systemPrompt = `You are a narrative content analyzer for REALM WALKER, extracting structured game elements using CANONICAL WORLD LORE.
 
