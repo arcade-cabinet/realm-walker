@@ -3,6 +3,9 @@
  * Interfaces with ambientCG.com for PBR texture sets
  */
 
+import * as fs from 'fs';
+import * as path from 'path';
+
 export interface TextureSet {
   id: string;
   name: string;
@@ -147,9 +150,6 @@ export class AmbientCGProvider {
    * Download texture set to local directory
    */
   async downloadTextureSet(textureSet: TextureSet, outputDir: string): Promise<string[]> {
-    const fs = require('fs');
-    const path = require('path');
-
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
     }

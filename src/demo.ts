@@ -10,7 +10,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { RealmWalker } from './index';
-import { StoryData } from './types';
+import { StoryData, SceneData } from './types';
 
 async function runDemo() {
   console.log('=== Realm Walker Story Demo ===\n');
@@ -29,7 +29,7 @@ async function runDemo() {
   // Load and parse RWMD scene
   const rwmdPath = path.join(__dirname, '../scenes/starting_room.rwmd');
   let rwmdContent: string;
-  let sceneData: ReturnType<typeof realmWalker.parseRWMD>;
+  let sceneData: SceneData;
   
   try {
     rwmdContent = fs.readFileSync(rwmdPath, 'utf-8');

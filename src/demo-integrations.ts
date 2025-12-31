@@ -8,6 +8,7 @@ import { YukaGridSystem } from './runtime/systems/YukaGridSystem';
 import { NPCManager } from './runtime/systems/NPCController';
 import { QuestManager } from './runtime/systems/QuestManager';
 import { SceneTemplate } from './types/SceneDefinition';
+import { GridPosition, WorldPosition } from './types/GridSystem';
 
 async function demoYukaPathfinding() {
   console.log('\n=== Yuka.js Pathfinding Demo ===\n');
@@ -46,8 +47,8 @@ async function demoYukaPathfinding() {
 
   // Test pathfinding
   console.log('\nFinding path from [2, 2] to [14, 10]...');
-  const start = [2, 2] as [number, number];
-  const end = [14, 10] as [number, number];
+  const start: GridPosition = [2, 2];
+  const end: GridPosition = [14, 10];
   
   const pathStart = performance.now();
   const path = yukaGrid.findPath(start, end);
@@ -92,29 +93,36 @@ async function demoNPCAI() {
 
   console.log(`✅ Created ${npcManager.getAllNPCs().length} NPCs`);
 
+  // Define simulation interface
+  interface Simulation {
+    name: string;
+    flags: Record<string, boolean>;
+    playerPos: WorldPosition;
+  }
+
   // Simulate game loop
   console.log('\nSimulating NPC behaviors...');
   
-  const simulations = [
+  const simulations: Simulation[] = [
     {
       name: 'Idle state',
       flags: {},
-      playerPos: [8, 0, 6] as [number, number, number]
+      playerPos: [8, 0, 6]
     },
     {
       name: 'Guard wanders',
       flags: { 'npc_guard_active': true },
-      playerPos: [8, 0, 6] as [number, number, number]
+      playerPos: [8, 0, 6]
     },
     {
       name: 'Guard seeks player',
       flags: { 'npc_guard_hostile': true },
-      playerPos: [8, 0, 6] as [number, number, number]
+      playerPos: [8, 0, 6]
     },
     {
       name: 'Merchant flees',
       flags: { 'npc_merchant_afraid': true },
-      playerPos: [14, 0, 10] as [number, number, number]
+      playerPos: [14, 0, 10]
     }
   ];
 
@@ -160,29 +168,29 @@ async function demoPerformanceComparison() {
 
   // Test pathfinding performance
   const tests = 100;
-  const testCases: [number, number, number, number][] = [
-    [0, 0, 31, 31],
-    [0, 31, 31, 0],
-    [16, 0, 16, 31],
-    [5, 5, 25, 25]
+  const testCases: { start: GridPosition, end: GridPosition }[] = [
+    { start: [0, 0], end: [31, 31] },
+    { start: [0, 31], end: [31, 0] },
+    { start: [16, 0], end: [16, 31] },
+    { start: [5, 5], end: [25, 25] }
   ];
 
   console.log(`Running ${tests} iterations per test case...`);
 
-  for (const [sx, sy, ex, ey] of testCases) {
-    console.log(`\nPath: [${sx}, ${sy}] → [${ex}, ${ey}]`);
+  for (const { start, end } of testCases) {
+    console.log(`\nPath: [${start[0]}, ${start[1]}] → [${end[0]}, ${end[1]}]`);
     
     // Custom A*
     const customStart = performance.now();
     for (let i = 0; i < tests; i++) {
-      customGrid.findPath([sx, sy], [ex, ey]);
+      customGrid.findPath(start, end);
     }
     const customTime = performance.now() - customStart;
 
     // Yuka A*
     const yukaStart = performance.now();
     for (let i = 0; i < tests; i++) {
-      yukaGrid.findPath([sx, sy], [ex, ey]);
+      yukaGrid.findPath(start, end);
     }
     const yukaTime = performance.now() - yukaStart;
 

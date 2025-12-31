@@ -120,7 +120,7 @@ export class YukaGridSystem implements GridSystem {
     this.astar.target = endNodeId;
     // Use a custom Manhattan distance heuristic for grid-based pathfinding
     this.astar.heuristic = {
-      calculate: (graph: any, source: number, target: number) => {
+      calculate: (graph: Graph, source: number, target: number) => {
         const sourcePos = this.nodeIdToPos(source);
         const targetPos = this.nodeIdToPos(target);
         const dx = Math.abs(sourcePos[0] - targetPos[0]);

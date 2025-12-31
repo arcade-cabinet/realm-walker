@@ -30,17 +30,20 @@ export interface R3FGameSceneProps {
 /**
  * Slot Model Component - Loads and displays a single slot's content
  */
+interface SlotModelProps {
+  content: SlotContent;
+  gridPosition: [number, number];
+  composedScene: ComposedScene;
+  onObjectClick?: (slotId: string) => void;
+  // key is handled by React automatically
+}
+
 function SlotModel({ 
   content, 
   gridPosition, 
   composedScene,
   onObjectClick 
-}: { 
-  content: SlotContent; 
-  gridPosition: [number, number];
-  composedScene: ComposedScene;
-  onObjectClick?: (slotId: string) => void;
-}) {
+}: SlotModelProps) {
   const meshRef = useRef<THREE.Group>(null);
   const [model, setModel] = React.useState<THREE.Object3D | null>(null);
   const [hovered, setHovered] = React.useState(false);
