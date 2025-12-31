@@ -6,6 +6,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { Quest, QuestObjective } from '../../types/Quest';
 import { AnthropicClient } from '../AnthropicClient';
 import { AssetLibrary } from '../AssetLibrary';
 import { LoreLoader, CanonicalLore } from '../LoreLoader';
@@ -26,19 +27,6 @@ export interface ExtractedContent {
   lore: LoreEntry[];
   locations: Location[];
   storyBeats: StoryBeat[];
-}
-
-export interface Quest {
-  id: string;
-  name: string;
-  description: string;
-  thread: 'A' | 'B' | 'C';
-  requiredFlags: string[];
-  setsFlags: string[];
-  objectives: Array<{
-    description: string;
-    flagToSet: string;
-  }>;
 }
 
 export interface Dialogue {
@@ -330,7 +318,7 @@ REJECT any content that contradicts the primordial mythology or established fact
         id: quest.id,
         type: 'model', // Use 'model' type as proxy for now
         prompt: quest.description,
-        description: `Quest: ${quest.name} (Thread ${quest.thread})`,
+        description: `Quest: ${quest.title} (Thread ${quest.thread})`,
         filePath: '', // No file for quests
         tags: ['quest', `thread_${quest.thread}`, 'imported', ...quest.requiredFlags],
         metadata: {
@@ -344,7 +332,7 @@ REJECT any content that contradicts the primordial mythology or established fact
         stage: 'embedding',
         processed,
         total,
-        message: `Embedding quest: ${quest.name}`
+        message: `Embedding quest: ${quest.title}`
       });
     }
 
@@ -510,12 +498,19 @@ REJECT any content that contradicts the primordial mythology or established fact
   private normalizeQuests(quests: any[]): Quest[] {
     return quests.map((q, i) => ({
       id: q.id || `quest_${i}`,
-      name: q.name || `Quest ${i}`,
+      title: q.title || q.name || `Quest ${i}`,
       description: q.description || '',
       thread: q.thread || 'A',
       requiredFlags: q.requiredFlags || [],
       setsFlags: q.setsFlags || [],
-      objectives: q.objectives || []
+      completedFlags: q.completedFlags || [],
+      objectives: (q.objectives || []).map((obj: any, j: number) => ({
+        id: obj.id || `obj_${j}`,
+        description: obj.description || '',
+        flagToSet: obj.flagToSet || obj.id || `flag_${j}`,
+        completed: !!obj.completed
+      })),
+      completed: !!q.completed
     }));
   }
 

@@ -4,7 +4,7 @@
  */
 
 import { AssetImportWorkflow } from './AssetImportWorkflow';
-import { NarrativeImportWorkflow } from './NarrativeImportWorkflow';
+import { NarrativeImportWorkflow, Quest, Dialogue, NPC, LoreEntry, Location } from './NarrativeImportWorkflow';
 import { AssetLibrary } from '../AssetLibrary';
 import { AnthropicClient } from '../AnthropicClient';
 
@@ -206,11 +206,11 @@ export class ImportOrchestrator {
       limit?: number;
     } = {}
   ): Promise<{
-    quests: any[];
-    dialogues: any[];
-    npcs: any[];
-    lore: any[];
-    locations: any[];
+    quests: Quest[];
+    dialogues: Dialogue[];
+    npcs: NPC[];
+    lore: LoreEntry[];
+    locations: Location[];
   }> {
     const { contentTypes, limit = 10 } = options;
     
@@ -232,11 +232,11 @@ export class ImportOrchestrator {
 
     // Organize by content type
     const organized: {
-      quests: any[];
-      dialogues: any[];
-      npcs: any[];
-      lore: any[];
-      locations: any[];
+      quests: Quest[];
+      dialogues: Dialogue[];
+      npcs: NPC[];
+      lore: LoreEntry[];
+      locations: Location[];
     } = {
       quests: [],
       dialogues: [],

@@ -75,7 +75,7 @@ export class QuestManager extends EventEmitter {
       }
 
       // Check if all objectives complete
-      if (quest.objectives.every((obj: any) => obj.completed)) {
+      if (quest.objectives.every((obj: QuestObjective) => obj.completed)) {
         // Also check if any quest-level completion flags are met
         const completedFlagsMet = quest.completedFlags ? quest.completedFlags.every(f => this.hasFlag(f)) : true;
         if (completedFlagsMet) {

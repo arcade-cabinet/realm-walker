@@ -62,9 +62,16 @@ export class DialogueManager extends EventEmitter {
       if (Array.isArray(data.nodes)) {
         for (const node of data.nodes) {
           // Convert choices format
-          const choices = node.choices?.map((choice: any) => ({
+          const choices = node.choices?.map((choice: {
+            text: string;
+            nextNode?: string;
+            next?: string;
+            requiresFlags?: string[];
+            setFlags?: string[];
+            setsFlags?: string[];
+          }) => ({
             text: choice.text,
-            next: choice.nextNode || choice.next,
+            next: choice.nextNode || choice.next || '',
             requiresFlags: choice.requiresFlags,
             setsFlags: choice.setFlags || choice.setsFlags
           }));

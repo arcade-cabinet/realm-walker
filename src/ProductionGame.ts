@@ -6,7 +6,7 @@
 import { ProductionHUD } from './ui/ProductionHUD';
 import { SplashScreen, LoadingScreen } from './ui/SplashScreen';
 import { GameStateManager } from './runtime/systems/GameStateManager';
-import { QuestManager, Quest } from './runtime/systems/QuestManager';
+import { QuestManager, Quest, QuestObjective } from './runtime/systems/QuestManager';
 import { DialogueManager } from './runtime/systems/DialogueManager';
 import { SceneCompositor } from './runtime/systems/SceneCompositor';
 import { StoryCompositor } from './runtime/systems/StoryCompositor';
@@ -228,12 +228,12 @@ export class ProductionGame {
     });
 
     // Listen for quest events
-    this.questManager.on('quest-completed', (quest: any) => {
+    this.questManager.on('quest-completed', (quest: Quest) => {
       console.log('Quest completed:', quest.title);
       this.updateHUDQuests();
     });
 
-    this.questManager.on('quest-objective-completed', (objective: any) => {
+    this.questManager.on('quest-objective-completed', (objective: QuestObjective) => {
       console.log('Objective completed:', objective.description);
     });
 
