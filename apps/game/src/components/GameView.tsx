@@ -35,7 +35,9 @@ export const GameView: React.FC<GameViewProps> = ({ realm }) => {
         <button
           type="button"
           onClick={() => {
-            const url = `https://github.com/arcade-center/realm-walker/issues/new?title=Realm+Contribution:+${realm.age.name}&body=Please+review+my+generated+realm:%0A%0A\`\`\`json%0A${JSON.stringify(realm, null, 2)}%0A\`\`\``;
+            const title = encodeURIComponent(`Realm Contribution: ${realm.age.name}`);
+            const body = encodeURIComponent(`Please review my generated realm:\n\n\`\`\`json\n${JSON.stringify(realm, null, 2)}\n\`\`\``);
+            const url = `https://github.com/arcade-center/realm-walker/issues/new?title=${title}&body=${body}`;
             window.open(url, '_blank');
           }}
           className="bg-[#27ae60] text-white px-6 py-3 rounded border-2 border-[#1e8449] shadow-lg pointer-events-auto fantasy-title hover:brightness-110 active:translate-y-1"
