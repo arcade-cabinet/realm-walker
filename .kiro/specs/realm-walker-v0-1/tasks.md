@@ -48,7 +48,7 @@ This implementation plan focuses on stabilizing the existing RealmWalker archite
 - [ ] 3. Checkpoint - Core Systems Functional
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 4. Implement Missing Framework Components
+- [x] 4. Implement Missing Framework Components
   - Add missing Fabric.js file referenced in Framework.live.test.ts
   - Implement proper error handling for API rate limiting
   - Add support for both API and mock generation modes
@@ -64,7 +64,7 @@ This implementation plan focuses on stabilizing the existing RealmWalker archite
   - Add graceful fallback to mock data when API fails
   - _Requirements: 2.2_
 
-- [ ] 4.3 Write property test for generation mode consistency
+- [x] 4.3 Write property test for generation mode consistency
   - **Property 7: Generation Mode Consistency**
   - **Validates: Requirements 2.6**
 
