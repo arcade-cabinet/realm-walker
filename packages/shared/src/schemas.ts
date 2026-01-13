@@ -75,6 +75,29 @@ export const RpgBestiarySchema = z.object({
   })
 });
 
+export const LoomNodeSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  biome: z.enum(['forest', 'cave', 'sky', 'tech', 'city', 'ruin']),
+  difficulty: z.number().min(1).max(11),
+  encounters: z.array(z.string()).optional() // IDs from Bestiary
+});
+
+export const LoomEdgeSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  description: z.string(),
+  travelTime: z.number().default(1)
+});
+
+export const RpgLoomSchema = z.object({
+  title: z.string(),
+  summary: z.string(),
+  nodes: z.array(LoomNodeSchema),
+  edges: z.array(LoomEdgeSchema)
+});
+
 export const RealmSchema = z.object({
   age: z.object({
     id: z.string(),
@@ -85,14 +108,15 @@ export const RealmSchema = z.object({
   }),
   classes: z.array(RpgClassSchema),
   items: z.array(RpgItemSchema),
-  bestiary: z.array(RpgBestiarySchema).optional() // The Monster Slot
+  bestiary: z.array(RpgBestiarySchema).optional(), // The Monster Slot
+  loom: RpgLoomSchema.optional() // The Narrative Graph Slot
 });
 
 export type Stats = z.infer<typeof StatsSchema>;
 export type RpgClass = z.infer<typeof RpgClassSchema>;
 export type RpgItem = z.infer<typeof RpgItemSchema>;
 export type RpgBestiary = z.infer<typeof RpgBestiarySchema>;
-// export type Unit = z.infer<typeof UnitSchema>; // Deprecated
-// export type Building = z.infer<typeof BuildingSchema>; // Deprecated
-// export type Race = z.infer<typeof RaceSchema>; // Deprecated
+export type LoomNode = z.infer<typeof LoomNodeSchema>;
+export type LoomEdge = z.infer<typeof LoomEdgeSchema>;
+export type RpgLoom = z.infer<typeof RpgLoomSchema>;
 export type Realm = z.infer<typeof RealmSchema>;

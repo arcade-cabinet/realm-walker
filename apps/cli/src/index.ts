@@ -17,10 +17,45 @@ program
   .option('-s, --seed <seed>', 'Seed for generation', 'Floating-Crystal-Sanctuary')
   .option('-a, --age <age>', 'Age/Era name', 'ancient')
   .option('-c, --creative', 'Use higher temperature for more creativity', false)
+  .option('--mock', 'Use mock data instead of API', false)
   .action(async (options) => {
+    console.log('DEBUG Options:', options);
+    console.log('DEBUG Argv:', process.argv);
+    // Mock Handling
+    if (options.mock) {
+      console.log('🎭 Using MOCK data (No API Key required)...');
+      const mockRealm = {
+        age: { id: "mock-age", name: "The Mock Era", description: "A simulated timeline.", theme: "Digital" },
+        classes: [{ id: "c1", name: "Debug Knight", description: "Tester", stats: { str: 10, agi: 10, int: 10, hp: 100 }, visuals: { spriteId: "knight", billboard: true } }],
+        items: [{ id: "i1", name: "Debug Sword", description: "Sharp", type: "weapon", visuals: { iconId: "sword" } }],
+        bestiary: [{ id: "m1", name: "Glitch", description: "Bug", stats: { str: 5, agi: 5, int: 5, hp: 50 }, behavior: "aggressive", visuals: { spriteId: "glitch" } }],
+        loom: {
+          title: "The Debug Graph",
+          summary: "A test graph.",
+          nodes: [
+            { id: "n1", name: "Start", description: "Entry", biome: "forest", difficulty: 1 },
+            { id: "n2", name: "Middle", description: "Path", biome: "ruin", difficulty: 5 },
+            { id: "n3", name: "End", description: "Boss", biome: "tech", difficulty: 10 }
+          ],
+          edges: [
+            { from: "n1", to: "n2", description: "Path", travelTime: 10 },
+            { from: "n2", to: "n3", description: "Bridge", travelTime: 10 }
+          ]
+        }
+      };
+      // Save Function Reuse
+      const outputDir = path.resolve(process.cwd(), './generated');
+      if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+      const filename = `${options.seed}_MOCK.json`;
+      const filepath = path.join(outputDir, filename);
+      fs.writeFileSync(filepath, JSON.stringify(mockRealm, null, 2));
+      console.log(`✅ Mock Realm generated: ${filepath}`);
+      return;
+    }
+
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      console.error('Error: GEMINI_API_KEY environment variable is required');
+    if (!apiKey && !options.mock) {
+      console.error('Error: GEMINI_API_KEY environment variable is required (or use --mock)');
       process.exit(1);
     }
 
@@ -34,16 +69,27 @@ program
       Theme: ${theme}
       
       Requirements:
-      - Classes: RPG-style classes (Warrior, Mage, etc.) adapted to the theme.
-      - Items: Weapons, Armor, and Consumables.
-      - **Visuals**: You MUST populate the 'visuals' field for Classes and Items.
-        - spriteId: A short, descriptive ID for a 2D billboard sprite (e.g. 'pixel_knight_blue', 'sword_iron_icon').
-        - iconId: A short ID for the inventory icon.
-        - NO 3D MODELS.
+      1. **Loom (Narrative Graph)**:
+         - Create a Directed Acyclic Graph (DAG) of 3-5 Story Nodes.
+         - Structure: Intro -> Rising Action -> Climax.
+         - Assign a specific 'biome' (forest, cave, sky, tech, city, ruin) to each node.
+      2. **Bestiary**: 
+         - Create 3-5 Monsters native to these biomes.
+      3. **Classes**: 
+         - RPG-style classes (Warrior, Mage, etc.) adapted to the theme.
+      4. **Items**: 
+         - Weapons, Armor, and Consumables.
+      5. **Visuals**: 
+         - Populate the 'visuals' field for ALL entities (Classes, Items, Monsters).
+         - spriteId: A short, descriptive ID for a 2D billboard (e.g. 'pixel_knight_blue').
+         - NO 3D MODELS.
       
       Outputs:
+      - Valid JSON matching RealmSchema.
+      - loom: The Narrative Graph.
       - classes: 3-5 distinct classes.
-      - items: 5-10 starting items. INTERESTING and THEMATIC. Use the provided schema for structured output.
+      - items: 5-10 thematic items.
+      - bestiary: 3-5 monsters.
     `;
 
     try {
@@ -156,4 +202,4 @@ program
     loop.start();
   });
 
-program.parse();
+program.parse(process.argv.filter(a => a !== '--'));
