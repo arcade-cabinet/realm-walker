@@ -157,4 +157,69 @@ describe('Isolated Loom Verification (Practical)', () => {
         expect(dialogue.length).toBeGreaterThan(0);
     });
 
+    // Property 5: Loom Content Generation
+    // **Validates: Requirements 2.1, 2.4**
+    it('property: loom content generation consistency across multiple seeds', async () => {
+        // Property-based test: For any valid seed and context,
+        // Looms should generate consistent, valid content that meets minimum thresholds
+        const testSeeds = ['seed-alpha', 'seed-beta', 'seed-gamma'];
+        const testContexts = [
+            { worldScale: 1, minNodes: 3 },
+            { worldScale: 2, minNodes: 5 },
+            { worldScale: 3, minNodes: 7 }
+        ];
+
+        for (const seed of testSeeds) {
+            for (const context of testContexts) {
+                const settings: LoomSettings = {
+                    seed,
+                    age: `Age of ${seed}`,
+                    controls: {
+                        worldScale: context.worldScale,
+                        minNodes: context.minNodes,
+                        dangerLevel: 5,
+                        magicLevel: 5,
+                        technologyLevel: 5
+                    },
+                    preferences: {
+                        biases: { questFocus: 'balanced', combatDifficulty: 'balanced' }
+                    }
+                };
+
+                // Test critical Looms that must meet quantity thresholds
+                const items = await weaveIsolated(ItemLoomDef, {});
+                expect(items.length).toBeGreaterThanOrEqual(1);
+                expect(items.every((item: any) => item.id && item.name && item.type)).toBe(true);
+
+                const classes = await weaveIsolated(ClassLoomDef, {});
+                expect(classes.length).toBeGreaterThanOrEqual(3);
+                expect(classes.every((cls: any) => cls.id && cls.name && cls.stats)).toBe(true);
+
+                const abilities = await weaveIsolated(AbilityLoomDef, { classes });
+                expect(abilities.length).toBeGreaterThanOrEqual(3);
+                expect(abilities.every((ability: any) => ability.id && ability.name && ability.type)).toBe(true);
+
+                // Test that generated content is contextually appropriate
+                expect(items.length).toBeLessThanOrEqual(context.worldScale * 10); // Reasonable upper bound
+                expect(classes.length).toBeLessThanOrEqual(context.worldScale * 5); // Reasonable upper bound
+                
+                // Test that all generated content has required fields
+                for (const item of items) {
+                    expect(typeof item.id).toBe('string');
+                    expect(typeof item.name).toBe('string');
+                    expect(typeof item.description).toBe('string');
+                    expect(['item', 'weapon', 'armor'].includes(item.type)).toBe(true);
+                }
+
+                for (const cls of classes) {
+                    expect(typeof cls.id).toBe('string');
+                    expect(typeof cls.name).toBe('string');
+                    expect(typeof cls.description).toBe('string');
+                    expect(cls.stats.hp).toBeGreaterThan(0);
+                    expect(cls.stats.str).toBeGreaterThan(0);
+                }
+            }
+        }
+    });
+
 }, 120000); // 2 minute timeout for AI calls

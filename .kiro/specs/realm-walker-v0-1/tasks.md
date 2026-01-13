@@ -26,12 +26,12 @@ This implementation plan focuses on stabilizing the existing RealmWalker archite
   - Ensure all Loom definitions have proper pattern functions
   - _Requirements: 2.1, 2.4, 2.5_
 
-- [ ] 2.1 Debug and fix Universal Loom orchestration error
+- [x] 2.1 Debug and fix Universal Loom orchestration error
   - Investigate the pattern function call failure in Shuttle.launch
   - Ensure all LoomDefinitions have valid pattern functions
   - _Requirements: 2.5_
 
-- [ ] 2.2 Fix content generation quantity thresholds
+- [x] 2.2 Fix content generation quantity thresholds
   - Adjust AbilityLoom to generate minimum 5 abilities
   - Adjust DialogueLoom to generate minimum 5 dialogue entries
   - Review and fix other Loom verification functions
