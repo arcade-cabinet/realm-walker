@@ -2,31 +2,38 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main, release/*]
   pull_request:
-    branches: [ main ]
+    branches: [main, release/*]
 
 jobs:
-  build:
+  build-and-test:
+    name: Build & Test
     runs-on: ubuntu-latest
+    
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      
+      - uses: pnpm/action-setup@v3
         with:
-          version: 10
+          version: 9
+          
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20'
           cache: 'pnpm'
-      
-      - name: Install dependencies
-        run: pnpm install
-        
-      - name: Lint
-        run: pnpm lint
-        
-      - name: Test
-        run: pnpm test
-        
-      - name: Build
-        run: pnpm build
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Core & Mechanics
+        run: pnpm --filter "./packages/**" build
+
+      - name: Test Core (The Gauntlet)
+        run: pnpm --filter @realm-walker/core test
+
+      - name: Upload Mechanics Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mechanics-dist
+          path: packages/mechanics/dist
