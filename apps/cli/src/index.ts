@@ -161,9 +161,15 @@ program
     console.log('📖 Inspired by: Final Fantasy VI, Chrono Trigger, Secret of Mana, Earthbound');
     console.log('DEBUG Options:', options);
     console.log('DEBUG Mock flag:', options.mock, typeof options.mock);
+    console.log('DEBUG All options keys:', Object.keys(options));
+    console.log('DEBUG process.argv:', process.argv);
+
+    // Check for mock flag in process.argv as fallback
+    const isMockMode = options.mock || process.argv.includes('--mock');
+    console.log('DEBUG Final mock mode:', isMockMode);
 
     // Mock handling for archetypal realm
-    if (options.mock) {
+    if (isMockMode) {
       console.log('🎭 Using MOCK archetypal data...');
       const { ArchetypalTapestry } = await import('@realm-walker/looms');
       const mockSettings = {
@@ -432,7 +438,7 @@ async function runSingleSimulation(realmData: any, config: {
   loop.addSystem((dt) => aiSystem.update(dt));
 
   // 5. State tracking for verification
-  const stateHistory = [];
+  const stateHistory: any[] = [];
   let currentTick = 0;
 
   // 7. Run simulation
@@ -449,8 +455,8 @@ async function runSingleSimulation(realmData: any, config: {
         totalTicks: currentTick,
         finalEntityCount: world.with('position').size,
         stateChecksum: generateStateChecksum(stateHistory),
-        firstState: stateHistory[0],
-        lastState: stateHistory[stateHistory.length - 1]
+        firstState: stateHistory[0] || null,
+        lastState: stateHistory[stateHistory.length - 1] || null
       };
 
       if (config.verbose) {
