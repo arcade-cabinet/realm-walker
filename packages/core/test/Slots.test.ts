@@ -1,6 +1,7 @@
 import { Registry, SchemaLoader } from '@realm-walker/mechanics';
 import { RealmSchema } from '@realm-walker/shared';
 import { describe, expect, it } from 'vitest';
+import { World } from '../src/World';
 
 describe('The Slots Contract (Data Pipeline)', () => {
     it('should validate and hydrate a full Realm with all Slots filled', () => {
@@ -161,6 +162,97 @@ describe('The Slots Contract (Data Pipeline)', () => {
         // Test invalid realms fail validation
         for (const realm of invalidRealms) {
             expect(() => RealmSchema.parse(realm)).toThrow();
+        }
+    });
+
+    // Property 4: State Serialization Round Trip
+    // **Validates: Requirements 6.1, 6.2, 6.3**
+    it('property: state serialization round trip integrity', () => {
+        // Property-based test: For any valid world state,
+        // serialization and deserialization should preserve all data
+        const testScenarios = [
+            {
+                seed: 'serialization-test-1',
+                entities: [
+                    { name: 'Player', hp: 100, level: 5, inventory: ['sword', 'potion'] },
+                    { name: 'Enemy', hp: 50, type: 'goblin', position: { x: 10, y: 20 } }
+                ]
+            },
+            {
+                seed: 'serialization-test-2',
+                entities: [
+                    { name: 'Warrior', class: 'fighter', stats: { str: 18, agi: 12, int: 8 } },
+                    { name: 'Mage', class: 'wizard', stats: { str: 8, agi: 10, int: 20 }, spells: ['fireball', 'heal'] },
+                    { name: 'Item', type: 'treasure', value: 1000, magical: true }
+                ]
+            },
+            {
+                seed: 'serialization-test-3',
+                entities: [
+                    { name: 'Complex Entity', nested: { deep: { value: 42 } }, array: [1, 2, 3], boolean: true },
+                    { name: 'Simple Entity', value: 'test' }
+                ]
+            }
+        ];
+
+        for (const scenario of testScenarios) {
+            // Create world and populate with test data
+            const originalWorld = new World(scenario.seed);
+            const originalEntities = [];
+
+            for (const entityData of scenario.entities) {
+                originalEntities.push(originalWorld.create(entityData));
+            }
+
+            // Perform some operations to advance RNG state
+            for (let i = 0; i < 5; i++) {
+                originalWorld.create({ temp: `temp_${i}`, random: originalWorld.rng.next() });
+            }
+
+            // Serialize the world state
+            const serializedState = originalWorld.serialize();
+
+            // Verify serialized state structure
+            expect(serializedState.seed).toBe(scenario.seed);
+            expect(serializedState.entities).toBeDefined();
+            expect(serializedState.rngState).toBeDefined();
+            expect(serializedState.metadata).toBeDefined();
+            expect(serializedState.metadata.entityCount).toBe(originalWorld.entities.length);
+
+            // Deserialize into new world
+            const restoredWorld = World.deserialize(serializedState);
+
+            // Verify world properties match
+            expect(restoredWorld.entities.length).toBe(originalWorld.entities.length);
+            expect(restoredWorld.rng.getSeed()).toBe(originalWorld.rng.getSeed());
+
+            // Verify all entities are restored correctly
+            for (let i = 0; i < originalWorld.entities.length; i++) {
+                const original = originalWorld.entities[i];
+                const restored = restoredWorld.entities[i];
+
+                expect(restored.id).toBe(original.id);
+                expect(restored.name).toBe(original.name);
+
+                // Deep compare all properties
+                for (const [key, value] of Object.entries(original)) {
+                    expect(restored[key]).toEqual(value);
+                }
+            }
+
+            // Verify RNG state is preserved by generating next values
+            const originalNext = originalWorld.rng.next();
+            const restoredNext = restoredWorld.rng.next();
+            expect(restoredNext).toBe(originalNext);
+
+            // Verify serialization validation passes
+            expect(originalWorld.validateSerialization()).toBe(true);
+            expect(restoredWorld.validateSerialization()).toBe(true);
+
+            // Test that creating new entities produces same IDs
+            const newOriginal = originalWorld.create({ test: 'new' });
+            const newRestored = restoredWorld.create({ test: 'new' });
+            expect(newRestored.id).toBe(newOriginal.id);
         }
     });
 });

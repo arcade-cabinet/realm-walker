@@ -74,12 +74,12 @@ This implementation plan focuses on stabilizing the existing RealmWalker archite
   - Add support for projecting game state N moves ahead
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
 
-- [ ] 5.1 Enhance game loop determinism
+- [x] 5.1 Enhance game loop determinism
   - Ensure entity update ordering is consistent
   - Validate that all state transitions are deterministic
   - _Requirements: 3.1, 3.2, 3.3_
 
-- [ ] 5.2 Write property test for game state determinism
+- [x] 5.2 Write property test for game state determinism
   - **Property 3: Game State Determinism**
   - **Validates: Requirements 3.1, 3.2, 3.3**
 
