@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
-import { Fabric } from '../src/Fabric.js';
+import { LoomDefinition } from '../src/Loom.js';
 import { Shuttle } from '../src/Shuttle.js';
 import { Tapestry } from '../src/Tapestry.js';
 
@@ -10,7 +10,7 @@ dotenv.config({ path: '../../.env' });
 // --- MOCKS ---
 
 interface MockContext {
-    seed: string;
+    settings: { message: string };
     result?: { echo: string };
 }
 
@@ -18,16 +18,25 @@ const OutputSchema = z.object({
     echo: z.string()
 });
 
-class MockLoom extends Fabric<{ message: string }, { echo: string }, MockContext> {
-    protected weavePattern(input: { message: string }, tapestry: Tapestry<MockContext>): string {
+// DDL-style LoomDefinition (matches current architecture)
+const EchoLoomDef: LoomDefinition<{ message: string }, { echo: string }, MockContext> = {
+    name: "EchoLoom",
+    tags: ['test'],
+    produces: ['result'],
+    schema: OutputSchema,
+    pattern: (input, tapestry) => {
         return `
       Echo the following message exactly as is: "${input.message}"
-      Context Seed: ${tapestry.get('seed')}
       
       Output JSON matching { echo: string }.
     `;
+    },
+    verify: (output, input) => {
+        if (!output.echo) {
+            throw new Error("Echo response missing");
+        }
     }
-}
+};
 
 // --- TEST ---
 
@@ -38,28 +47,25 @@ describe('Loom Framework (Core Proof)', () => {
         return;
     }
 
-    it('Should orchestrate a distinct Loom via Shuttle and update Tapestry', async () => {
-        // 1. Init Tapestry
-        const tapestry = new Tapestry<MockContext>({ seed: "Framework-Test-123" });
+    it('Should orchestrate a LoomDefinition via Shuttle and update Tapestry', async () => {
+        // 1. Init Tapestry with settings
+        const tapestry = new Tapestry<MockContext>({ 
+            settings: { message: "Hello Framework" }
+        });
 
-        // 2. Init Loom
-        const mockLoom = new MockLoom(OutputSchema, { apiKey });
+        // 2. Init Shuttle with API key
+        const shuttle = new Shuttle<MockContext>(apiKey, tapestry);
 
-        // 3. Init Shuttle
-        const shuttle = new Shuttle(tapestry);
-
-        // 4. Register Job
-        shuttle.addJob({
-            name: "Echo Test",
-            loom: mockLoom,
-            transform: (t) => ({ message: "Hello Framework" }),
+        // 3. Register Job using DDL definition
+        shuttle.addJob(EchoLoomDef, {
+            transform: (t) => t.get('settings'),
             onWeave: (result, t) => t.weave('result', result)
         });
 
-        // 5. Launch
+        // 4. Launch
         await shuttle.launch();
 
-        // 6. Verify State
+        // 5. Verify State
         const finalState = tapestry.snapshot();
         console.log("Final Tapestry State:", finalState);
 

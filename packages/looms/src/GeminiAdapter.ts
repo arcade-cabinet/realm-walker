@@ -6,18 +6,11 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 dotenv.config();
 
 export enum GeminiModel {
-    GEMINI_1_5_FLASH = "models/gemini-1.5-flash",
-    GEMINI_1_5_PRO = "models/gemini-1.5-pro",
-    GEMINI_2_0_FLASH = "models/gemini-2.0-flash-exp",
-    GEMINI_3_FLASH = "models/gemini-3-flash-preview" // FALLBACK TO KNOWN GOOD 2.0 FOR NOW IF 3 FAILS?
-    // No, user demanded 3.
-    // I will use "models/gemini-2.0-flash-exp" as a sanity check if 3 fails again.
-    // BUT User said "gemini-3-flash-preview".
-    // I will try literal "models/gemini-3-flash-preview" first.
+    GEMINI_1_5_FLASH = "gemini-1.5-flash",
+    GEMINI_1_5_PRO = "gemini-1.5-pro", 
+    GEMINI_2_0_FLASH = "gemini-2.0-flash-exp",
+    GEMINI_3_FLASH = "gemini-3-flash-preview"
 }
-// User said "gemini-3-flash-preview". ListModels said "models/gemini-3-flash-preview" (Wait, did it?)
-// Step 2338 summary says: "ListModels output ... confirmed ... models/gemini-3-flash-preview".
-// So use that.
 
 interface GenerationOptions<T> {
     model?: GeminiModel;
@@ -28,6 +21,8 @@ interface GenerationOptions<T> {
 export class GeminiAdapter {
     private client: GoogleGenAI;
     private defaultModel: GeminiModel;
+    private static lastRequestTime = 0;
+    private static readonly MIN_REQUEST_INTERVAL = 6000; // 6 seconds between requests
 
     constructor(apiKey?: string, defaultModel: GeminiModel = GeminiModel.GEMINI_3_FLASH) {
         const key = apiKey || process.env.GEMINI_API_KEY;
@@ -36,53 +31,67 @@ export class GeminiAdapter {
         this.defaultModel = defaultModel;
     }
 
+    private async enforceRateLimit(): Promise<void> {
+        const now = Date.now();
+        const timeSinceLastRequest = now - GeminiAdapter.lastRequestTime;
+        
+        if (timeSinceLastRequest < GeminiAdapter.MIN_REQUEST_INTERVAL) {
+            const waitTime = GeminiAdapter.MIN_REQUEST_INTERVAL - timeSinceLastRequest;
+            console.log(`⏳ [GeminiAdapter] Rate limiting: waiting ${waitTime}ms...`);
+            await new Promise(resolve => setTimeout(resolve, waitTime));
+        }
+        
+        GeminiAdapter.lastRequestTime = Date.now();
+    }
+
     async generate<T>(prompt: string, options: GenerationOptions<T> = {}): Promise<T> {
         const modelName = options.model || this.defaultModel;
         const temperature = options.temperature ?? 0.7;
         const maxRetries = 3;
-        const baseDelay = 2000;
 
-        const config: any = {
+        // Enforce rate limiting before making request
+        await this.enforceRateLimit();
+
+        const generationConfig: any = {
             temperature,
         };
 
-        // Strict Structured Output Setup
+        // Structured Output Setup
         if (options.schema) {
-            config.responseMimeType = "application/json";
-            // Convert Zod to JSON Schema, then cast to Google's Type
+            generationConfig.responseMimeType = "application/json";
             const jsonSchema = zodToJsonSchema(options.schema, { target: "openApi3" });
-
-            // @google/genai expects a specific Schema type.
-            // We pass the JSON Schema object directly as `responseSchema` 
-            // relying on the SDK's ability to handle standard JSON schemas.
-            config.responseSchema = jsonSchema;
-
-            // DEBUG: Log the schema to catch 400s
+            generationConfig.responseSchema = jsonSchema;
             console.log(`DEBUG SCHEMA (${modelName}):`, JSON.stringify(jsonSchema, null, 2));
         }
 
+        // Get the model instance
+        const model = this.client.getGenerativeModel({ 
+            model: modelName,
+            generationConfig
+        });
+
+        return await this.generateWithRetry(model, prompt, options, maxRetries);
+    }
+
+    private async generateWithRetry<T>(
+        model: any, 
+        prompt: string, 
+        options: GenerationOptions<T>, 
+        maxRetries: number
+    ): Promise<T> {
         let lastError: any;
 
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
-                if (attempt > 1) {
-                    const delay = baseDelay * Math.pow(2, attempt - 1);
-                    console.log(`⏳ [GeminiAdapter] Rate Limit hit. Retrying in ${delay}ms... (Attempt ${attempt}/${maxRetries})`);
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                }
-
-                console.log(`📡 [GeminiAdapter] Requesting ${modelName}...`);
+                console.log(`📡 [GeminiAdapter] Requesting ${model.model}... (Attempt ${attempt}/${maxRetries})`);
                 const start = Date.now();
-                // NEW SDK Usage: Direct call via `ai.models`
-                const result = await this.client.models.generateContent({
-                    model: modelName,
-                    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-                    config
-                });
+                
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                const responseText = response.text();
+                
                 const duration = Date.now() - start;
                 console.log(`✅ [GeminiAdapter] Response received in ${duration}ms`);
-
-                const responseText = result.text;
 
                 if (!responseText) {
                     throw new Error("Empty response from Gemini.");
@@ -93,7 +102,7 @@ export class GeminiAdapter {
                         const json = JSON.parse(responseText);
                         return options.schema.parse(json);
                     } catch (parseError: any) {
-                        console.error(`❌ JSON Parse/Validate Error for ${modelName}:`, parseError.message);
+                        console.error(`❌ JSON Parse/Validate Error:`, parseError.message);
                         console.error("Raw Output (First 500 chars):", responseText.slice(0, 500));
                         throw parseError;
                     }
@@ -103,30 +112,48 @@ export class GeminiAdapter {
 
             } catch (error: any) {
                 lastError = error;
-                // Check for Rate Limit (429) or Server Error (503)
-                const status = error.status || error.response?.status;
-                if (status === 429 || status === 503) {
-                    continue; // Retry
-                }
-
-                // Enhanced Logging for 400s (Schema issues)
-                if (status === 400) {
-                    console.error(`❌ Gemini API 400 Bad Request (${modelName}):`);
-                    console.error(`   Message: ${error.message}`);
-                    if (error.response) {
-                        console.error(`   Response Body: ${JSON.stringify(error.response, null, 2)}`);
+                
+                // Handle ApiError properly
+                if (error instanceof ApiError) {
+                    console.error(`❌ Gemini API Error (${error.status}):`, error.message);
+                    
+                    switch (error.status) {
+                        case 429:
+                            if (attempt < maxRetries) {
+                                const delay = Math.pow(2, attempt) * 2000; // Exponential backoff: 4s, 8s, 16s
+                                console.log(`⏳ Rate limit exceeded. Retrying in ${delay}ms...`);
+                                await new Promise(resolve => setTimeout(resolve, delay));
+                                continue;
+                            }
+                            break;
+                        case 503:
+                            if (attempt < maxRetries) {
+                                const delay = Math.pow(2, attempt) * 1000; // Exponential backoff: 2s, 4s, 8s
+                                console.log(`⏳ Service unavailable. Retrying in ${delay}ms...`);
+                                await new Promise(resolve => setTimeout(resolve, delay));
+                                continue;
+                            }
+                            break;
+                        case 400:
+                            console.error(`❌ Bad Request - likely schema issue:`, error.details);
+                            throw error; // Don't retry 400s
+                        case 401:
+                            console.error(`❌ Authentication failed. Check API key.`);
+                            throw error; // Don't retry auth failures
+                        case 404:
+                            console.error(`❌ Model not found: ${model.model}`);
+                            throw error; // Don't retry model not found
+                        default:
+                            console.error(`❌ Unexpected API error:`, error.details);
+                            throw error;
                     }
-                    // Log the prompt and schema context if possible (verbose)
-                    // console.dir(config, { depth: null });
                 } else {
-                    console.error(`❌ Gemini API Error (${modelName}):`, error.message);
+                    console.error(`❌ Non-API Error:`, error.message);
+                    throw error;
                 }
-
-                throw error;
             }
         }
 
-        // If we exhausted retries
         console.error(`❌ Gemini API Failed after ${maxRetries} retries.`);
         throw lastError;
     }

@@ -1,4 +1,4 @@
-# The Agentic Bible: Guidelines for Empirical Verification
+ and s# The Agentic Bible: Guidelines for Empirical Verification
 
 > "You need to be able to tell me deterministically that fifty or a hundred moves down the line... that a player won't be stuck head first in a wall."
 

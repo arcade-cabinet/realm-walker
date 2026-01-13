@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 describe('The Slots Contract (Data Pipeline)', () => {
     it('should validate and hydrate a full Realm with all Slots filled', () => {
         // 1. The Mock Data (Simulating Weaver Output)
+        // Note: Include all fields that Zod will add via defaults to ensure exact match
         const mockRealm = {
             age: {
                 id: 'age_1',
@@ -19,7 +20,8 @@ describe('The Slots Contract (Data Pipeline)', () => {
                     name: 'Pyromancer',
                     description: 'Burns things',
                     stats: { hp: 80, sp: 100, str: 5, agi: 10, int: 20 },
-                    visuals: { spriteId: 'pyro_v1', billboard: true }
+                    skillsToLearn: [], // Zod default
+                    visuals: { spriteId: 'pyro_v1', billboard: true, scale: 1 } // scale is Zod default
                 }
             ],
             items: [
@@ -28,6 +30,10 @@ describe('The Slots Contract (Data Pipeline)', () => {
                     name: 'Cinder Shard',
                     description: 'Glowing hot',
                     type: 'item',
+                    price: 0, // Zod default
+                    hpValue: 0, // Zod default
+                    hitRate: 0, // Zod default
+                    consumable: false, // Zod default
                     visuals: { iconId: 'cinder_icon' }
                 }
             ],
@@ -46,7 +52,7 @@ describe('The Slots Contract (Data Pipeline)', () => {
 
         // 2. The Verification (Type Check via Zod)
         const parsed = RealmSchema.parse(mockRealm);
-        expect(parsed).toEqual(mockRealm); // Passes Schema Contract
+        expect(parsed).toEqual(mockRealm); // Passes Schema Contract - now includes Zod defaults
 
         // 3. The Hydration (Registry Slotting)
         const registry = new Registry();

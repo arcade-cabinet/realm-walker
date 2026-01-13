@@ -1,7 +1,6 @@
 import { LoomSettings } from '@realm-walker/shared';
 import * as dotenv from 'dotenv';
 import { describe, expect, it } from 'vitest';
-import { Loom } from '../src/Loom.js';
 import { Shuttle } from '../src/Shuttle.js';
 import { Tapestry } from '../src/Tapestry.js';
 import {
@@ -51,103 +50,28 @@ describe('Universal Loom (DDL Proof)', () => {
     };
 
     it('Should execute Full DDL Chain (World... -> Quest) with Verification', async () => {
-        // 1. Setup
+        // 1. Setup - Use current Shuttle API: Shuttle(apiKey, tapestry)
         const tapestry = new Tapestry<RealmContext>({ settings: SETTINGS });
-        const engine = new Loom({ apiKey });
-        const shuttle = new Shuttle(tapestry, engine);
+        const shuttle = new Shuttle<RealmContext>(apiKey, tapestry);
 
-        // 2. Register Jobs (DDL Execution)
+        // 2. Register Jobs using current DDL API: addJob(def, options?)
+        // The LoomDefinitions already have 'produces' which auto-weaves to tapestry
         shuttle
-            .addJob({
-                name: "World Generation",
-                def: WorldLoomDef,
-                transform: (t) => t.get('settings'),
-                onWeave: (result, t) => t.weave('world', result)
-            })
-            .addJob({
-                name: "Faction Generation",
-                def: FactionLoomDef,
-                transform: (t) => t.get('settings'),
-                onWeave: (result, t) => t.weave('factions', result)
-            })
-            .addJob({
-                name: "Class Generation",
-                def: ClassLoomDef,
-                transform: (t) => t.get('settings'),
-                onWeave: (result, t) => t.weave('classes', result)
-            })
-            .addJob({
-                name: "Item Generation",
-                def: ItemLoomDef,
-                transform: (t) => t.get('settings'),
-                onWeave: (result, t) => t.weave('items', result)
-            })
-            .addJob({
-                name: "Bestiary Generation",
-                def: BestiaryLoomDef,
-                transform: (t) => t.get('settings'),
-                onWeave: (result, t) => t.weave('bestiary', result)
-            })
-            .addJob({
-                name: "Historian",
-                def: HistoryLoomDef,
-                transform: (t) => t.get('settings'),
-                onWeave: (result, t) => t.weave('history', result)
-            })
-            .addJob({
-                name: "Theology (Pantheon)",
-                def: PantheonLoomDef,
-                transform: (t) => t.get('settings'),
-                onWeave: (result, t) => t.weave('pantheon', result)
-            })
-            .addJob({
-                name: "Ability Mechanics",
-                def: AbilityLoomDef,
-                transform: (t) => t.get('settings'),
-                onWeave: (result, t) => t.weave('abilities', result)
-            })
-            .addJob({
-                name: "Hero Generation",
-                def: HeroLoomDef,
-                transform: (t) => t.get('settings'),
-                onWeave: (result, t) => t.weave('hero', result)
-            })
-            .addJob({
-                name: "Talent Trees",
-                def: TalentLoomDef,
-                transform: (t) => t.get('settings'),
-                onWeave: (result, t) => t.weave('talents', result)
-            })
-            .addJob({
-                name: "Dungeon Architect",
-                def: DungeonLoomDef,
-                transform: (t) => t.get('settings'),
-                onWeave: (result, t) => t.weave('dungeons', result)
-            })
-            .addJob({
-                name: "Economy (Shops)",
-                def: ShopLoomDef,
-                transform: (t) => t.get('settings'),
-                onWeave: (result, t) => t.weave('shops', result)
-            })
-            .addJob({
-                name: "Population (NPCs)",
-                def: NpcLoomDef,
-                transform: (t) => t.get('settings'),
-                onWeave: (result, t) => t.weave('npcs', result)
-            })
-            .addJob({
-                name: "Narrative (Dialogue)",
-                def: DialogueLoomDef,
-                transform: (t) => t.get('settings'),
-                onWeave: (result, t) => t.weave('dialogue', result)
-            })
-            .addJob({
-                name: "Quest Generation",
-                def: QuestLoomDef,
-                transform: (t) => t.get('settings'),
-                onWeave: (result, t) => t.weave('quests', result)
-            });
+            .addJob(WorldLoomDef)
+            .addJob(FactionLoomDef)
+            .addJob(ClassLoomDef)
+            .addJob(ItemLoomDef)
+            .addJob(BestiaryLoomDef)
+            .addJob(HistoryLoomDef)
+            .addJob(PantheonLoomDef)
+            .addJob(AbilityLoomDef)
+            .addJob(HeroLoomDef)
+            .addJob(TalentLoomDef)
+            .addJob(DungeonLoomDef)
+            .addJob(ShopLoomDef)
+            .addJob(NpcLoomDef)
+            .addJob(DialogueLoomDef)
+            .addJob(QuestLoomDef);
 
         // 3. Launch
         console.log("🚀 Launching Universal Shuttle...");

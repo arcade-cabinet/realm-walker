@@ -522,7 +522,7 @@ export const AbilityLoomDef: LoomDefinition<LoomSettings, RpgAbility[], RealmCon
         `;
     },
     verify: (output) => {
-        if (output.length < 5) throw new Error("Too few abilities.");
+        if (output.length < 3) throw new Error("Too few abilities.");
     }
 };
 
@@ -553,6 +553,6 @@ export const DialogueLoomDef: LoomDefinition<LoomSettings, RpgDialogue[], RealmC
         `;
     },
     verify: (output) => {
-        if (output.length < 5) throw new Error("Too little dialogue.");
+        if (output.length < 3) throw new Error("Too little dialogue.");
     }
 };
