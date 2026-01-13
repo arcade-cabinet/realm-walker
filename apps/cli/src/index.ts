@@ -159,14 +159,8 @@ program
   .action(async (options) => {
     console.log('🌟 Generating Archetypal RPG Realm...');
     console.log('📖 Inspired by: Final Fantasy VI, Chrono Trigger, Secret of Mana, Earthbound');
-    console.log('DEBUG Options:', options);
-    console.log('DEBUG Mock flag:', options.mock, typeof options.mock);
-    console.log('DEBUG All options keys:', Object.keys(options));
-    console.log('DEBUG process.argv:', process.argv);
-
     // Check for mock flag in process.argv as fallback
     const isMockMode = options.mock || process.argv.includes('--mock');
-    console.log('DEBUG Final mock mode:', isMockMode);
 
     // Mock handling for archetypal realm
     if (isMockMode) {
