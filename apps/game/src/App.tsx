@@ -1,12 +1,13 @@
+import type { Realm } from '@realm-walker/shared';
 import { useState } from 'react';
 import { GameView } from './components/GameView';
 import { MainMenu } from './components/MainMenu';
 
 function App() {
   const [gameState, setGameState] = useState<'menu' | 'playing'>('menu');
-  const [realmData, setRealmData] = useState<any>(null);
+  const [realmData, setRealmData] = useState<Realm | null>(null);
 
-  const handleStartGame = (data: any) => {
+  const handleStartGame = (data: Realm) => {
     setRealmData(data);
     setGameState('playing');
   };

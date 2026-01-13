@@ -35,7 +35,6 @@ export const GameView: React.FC<GameViewProps> = ({ realm }) => {
         <button
           type="button"
           onClick={() => {
-            const _data = btoa(JSON.stringify(realm));
             const url = `https://github.com/arcade-center/realm-walker/issues/new?title=Realm+Contribution:+${realm.age.name}&body=Please+review+my+generated+realm:%0A%0A\`\`\`json%0A${JSON.stringify(realm, null, 2)}%0A\`\`\``;
             window.open(url, '_blank');
           }}
