@@ -289,6 +289,7 @@ export const AtbLoomDef: LoomDefinition<LoomSettings, RpgCombatSystem, Archetypa
         WARP CONSTRAINTS:
         - systemType: "active_time_battle"
         - timingMechanism: "speed_based_charging"
+        - speedBasedTiming: true
         - actionModes: ["active", "wait", "recommended"]
         - castingTimes: true
         - interruptible: true

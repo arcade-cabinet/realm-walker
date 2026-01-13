@@ -233,15 +233,8 @@ program
     console.log(`🧵 Weaving Archetypal Realm with Settings:`, settings.controls);
 
     try {
-      let archetypalRealm: any;
-      
-      if (options.mock) {
-        console.log('🎭 Using Mock Mode - No API calls');
-        archetypalRealm = ArchetypalTapestry.createMockArchetypalRealm(settings);
-      } else {
-        const archetypalTapestry = new ArchetypalTapestry(apiKey);
-        archetypalRealm = await archetypalTapestry.weaveArchetypalRealm(settings);
-      }
+      const archetypalTapestry = new ArchetypalTapestry(apiKey);
+      const archetypalRealm = await archetypalTapestry.weaveArchetypalRealm(settings);
 
       // Save the complete archetypal realm
       const outputDir = path.resolve(process.cwd(), './generated');

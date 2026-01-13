@@ -6,7 +6,7 @@
     "start": "tsx src/index.ts",
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "lint": "biome check .",
-    "generate-realm": "./src/index.ts",
+    "generate-realm": "tsx src/index.ts",
     "test": "vitest",
     "test:headless": "tsx test/headless-runner.ts"
   },
