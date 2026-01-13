@@ -336,7 +336,7 @@ The system employs both unit testing and property-based testing for comprehensiv
 - Test specific game scenarios with known outcomes
 - Validate error conditions and boundary cases
 - Verify component integration and API contracts
-- Test the "Noun-Verb-Adjective" pattern: load fixture (Noun), execute action (Verb), assert outcome (Adjective)
+- Follow the Arrange-Act-Assert pattern: load fixture data (Arrange), execute action (Act), assert expected outcome (Assert)
 
 **Property-Based Tests**: Verify universal properties across all inputs
 - Generate random game states and verify deterministic behavior
