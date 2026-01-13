@@ -139,4 +139,110 @@ describe('Universal Loom (DDL Proof)', () => {
         expect(npcs?.length).toBeGreaterThanOrEqual(1);
 
     }, 300000); // 5 minute timeout for 15 jobs
+
+    // Property 6: Dependency Orchestration
+    // **Validates: Requirements 2.5**
+    it('property: dependency orchestration consistency across different job orders', async () => {
+        // Property-based test: For any valid ordering of Loom jobs,
+        // the dependency orchestration should produce consistent results
+        const jobOrders = [
+            // Standard order (dependencies first)
+            [WorldLoomDef, FactionLoomDef, ClassLoomDef, ItemLoomDef, BestiaryLoomDef, HeroLoomDef],
+            // Reverse order (dependencies last)
+            [HeroLoomDef, BestiaryLoomDef, ItemLoomDef, ClassLoomDef, FactionLoomDef, WorldLoomDef],
+            // Mixed order
+            [ClassLoomDef, WorldLoomDef, ItemLoomDef, FactionLoomDef, HeroLoomDef, BestiaryLoomDef]
+        ];
+
+        const results = [];
+
+        for (const [index, jobOrder] of jobOrders.entries()) {
+            const testSettings: LoomSettings = {
+                seed: `dependency-test-${index}`,
+                age: `Age of Order ${index}`,
+                controls: {
+                    worldScale: 1,
+                    minNodes: 3,
+                    dangerLevel: 5,
+                    magicLevel: 5,
+                    technologyLevel: 5
+                },
+                preferences: {
+                    biases: { questFocus: 'balanced', combatDifficulty: 'balanced' }
+                }
+            };
+
+            const tapestry = new Tapestry<RealmContext>({ settings: testSettings });
+            const shuttle = new Shuttle<RealmContext>(apiKey, tapestry);
+
+            // Add jobs in the specified order
+            for (const jobDef of jobOrder) {
+                shuttle.addJob(jobDef);
+            }
+
+            await shuttle.launch();
+
+            // Collect results for comparison
+            const result = {
+                world: tapestry.get('world'),
+                factions: tapestry.get('factions'),
+                classes: tapestry.get('classes'),
+                items: tapestry.get('items'),
+                bestiary: tapestry.get('bestiary'),
+                hero: tapestry.get('hero')
+            };
+
+            results.push(result);
+
+            // Verify all dependencies were resolved correctly regardless of order
+            expect(result.world).toBeDefined();
+            expect(result.world?.nodes.length).toBeGreaterThanOrEqual(3);
+            
+            expect(result.factions).toBeDefined();
+            expect(result.factions?.length).toBeGreaterThanOrEqual(2);
+            
+            expect(result.classes).toBeDefined();
+            expect(result.classes?.length).toBeGreaterThanOrEqual(3);
+            
+            expect(result.items).toBeDefined();
+            expect(result.items?.length).toBeGreaterThanOrEqual(1);
+            
+            expect(result.bestiary).toBeDefined();
+            expect(result.bestiary?.length).toBeGreaterThanOrEqual(1);
+            
+            expect(result.hero).toBeDefined();
+            expect(result.hero?.name).toBeTruthy();
+            expect(result.hero?.originNodeId).toBeTruthy();
+
+            // Verify hero references valid world node
+            const heroNode = result.world?.nodes.find(n => n.id === result.hero?.originNodeId);
+            expect(heroNode).toBeDefined();
+
+            // Verify hero references valid class
+            const heroClass = result.classes?.find(c => c.id === result.hero?.classId);
+            expect(heroClass).toBeDefined();
+
+            // Verify hero references valid faction
+            const heroFaction = result.factions?.find(f => f.id === result.hero?.factionId);
+            expect(heroFaction).toBeDefined();
+        }
+
+        // Verify that different job orders produce structurally consistent results
+        // (same types of content, even if specific content differs due to different seeds)
+        for (let i = 1; i < results.length; i++) {
+            const prev = results[i - 1];
+            const curr = results[i];
+
+            // Structure should be consistent
+            expect(typeof curr.world?.nodes.length).toBe(typeof prev.world?.nodes.length);
+            expect(typeof curr.factions?.length).toBe(typeof prev.factions?.length);
+            expect(typeof curr.classes?.length).toBe(typeof prev.classes?.length);
+            expect(typeof curr.hero?.name).toBe(typeof prev.hero?.name);
+
+            // All should have valid cross-references
+            expect(curr.hero?.originNodeId).toBeTruthy();
+            expect(curr.hero?.classId).toBeTruthy();
+            expect(curr.hero?.factionId).toBeTruthy();
+        }
+    }, 600000); // 10 minute timeout for multiple orchestrations
 });
