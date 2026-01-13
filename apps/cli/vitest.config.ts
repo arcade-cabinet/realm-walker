@@ -3,8 +3,8 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
     test: {
-        // Run in single execution mode by default (no watch mode)
-        run: true,
+        // Disable watch mode by default
+        watch: false,
         globals: true,
         environment: 'node',
         include: ['test/**/*.test.ts'],

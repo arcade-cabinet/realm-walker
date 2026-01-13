@@ -2,8 +2,8 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
     test: {
-        // Run in single execution mode by default (no watch mode)
-        run: true,
+        // Disable watch mode by default
+        watch: false,
     },
     // Force Vitest to bundle/transpile our local packages
     server: {
