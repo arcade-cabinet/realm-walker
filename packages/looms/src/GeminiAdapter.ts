@@ -1,4 +1,4 @@
-import { GoogleGenAI } from '@google/genai';
+import { ApiError, GoogleGenAI } from '@google/genai';
 import * as dotenv from 'dotenv';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
