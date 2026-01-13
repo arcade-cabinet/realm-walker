@@ -68,7 +68,7 @@ This implementation plan focuses on stabilizing the existing RealmWalker archite
   - **Property 7: Generation Mode Consistency**
   - **Validates: Requirements 2.6**
 
-- [ ] 5. Strengthen Deterministic Simulation
+- [x] 5. Strengthen Deterministic Simulation
   - Ensure game loop produces identical results for identical inputs
   - Implement comprehensive state serialization validation
   - Add support for projecting game state N moves ahead
@@ -83,12 +83,12 @@ This implementation plan focuses on stabilizing the existing RealmWalker archite
   - **Property 3: Game State Determinism**
   - **Validates: Requirements 3.1, 3.2, 3.3**
 
-- [ ] 5.3 Implement comprehensive state serialization
+- [x] 5.3 Implement comprehensive state serialization
   - Ensure all entity relationships are preserved during serialization
   - Add validation for serialized data integrity
   - _Requirements: 3.4, 6.1, 6.2_
 
-- [ ] 5.4 Write property test for state serialization round trip
+- [x] 5.4 Write property test for state serialization round trip
   - **Property 4: State Serialization Round Trip**
   - **Validates: Requirements 6.1, 6.2, 6.3**
 
