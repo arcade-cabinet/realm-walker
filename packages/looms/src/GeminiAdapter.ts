@@ -52,30 +52,25 @@ export class GeminiAdapter {
         // Enforce rate limiting before making request
         await this.enforceRateLimit();
 
-        const generationConfig: any = {
+        const config: any = {
             temperature,
         };
 
         // Structured Output Setup
         if (options.schema) {
-            generationConfig.responseMimeType = "application/json";
+            config.responseMimeType = "application/json";
             const jsonSchema = zodToJsonSchema(options.schema, { target: "openApi3" });
-            generationConfig.responseSchema = jsonSchema;
+            config.responseSchema = jsonSchema;
             console.log(`DEBUG SCHEMA (${modelName}):`, JSON.stringify(jsonSchema, null, 2));
         }
 
-        // Get the model instance
-        const model = this.client.getGenerativeModel({ 
-            model: modelName,
-            generationConfig
-        });
-
-        return await this.generateWithRetry(model, prompt, options, maxRetries);
+        return await this.generateWithRetry(modelName, prompt, config, options, maxRetries);
     }
 
     private async generateWithRetry<T>(
-        model: any, 
+        modelName: string,
         prompt: string, 
+        config: any,
         options: GenerationOptions<T>, 
         maxRetries: number
     ): Promise<T> {
@@ -83,15 +78,19 @@ export class GeminiAdapter {
 
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
-                console.log(`📡 [GeminiAdapter] Requesting ${model.model}... (Attempt ${attempt}/${maxRetries})`);
+                console.log(`📡 [GeminiAdapter] Requesting ${modelName}... (Attempt ${attempt}/${maxRetries})`);
                 const start = Date.now();
                 
-                const result = await model.generateContent(prompt);
-                const response = await result.response;
-                const responseText = response.text();
+                const result = await this.client.models.generateContent({
+                    model: modelName,
+                    contents: prompt,
+                    config
+                });
                 
                 const duration = Date.now() - start;
                 console.log(`✅ [GeminiAdapter] Response received in ${duration}ms`);
+
+                const responseText = result.text;
 
                 if (!responseText) {
                     throw new Error("Empty response from Gemini.");
@@ -141,7 +140,7 @@ export class GeminiAdapter {
                             console.error(`❌ Authentication failed. Check API key.`);
                             throw error; // Don't retry auth failures
                         case 404:
-                            console.error(`❌ Model not found: ${model.model}`);
+                            console.error(`❌ Model not found: ${modelName}`);
                             throw error; // Don't retry model not found
                         default:
                             console.error(`❌ Unexpected API error:`, error.details);
