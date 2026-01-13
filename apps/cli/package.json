@@ -7,7 +7,8 @@
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "lint": "biome check .",
     "generate-realm": "./src/index.ts",
-    "test": "tsx test/headless-runner.ts"
+    "test": "vitest",
+    "test:headless": "tsx test/headless-runner.ts"
   },
   "dependencies": {
     "@realm-walker/ai": "workspace:*",
@@ -19,6 +20,7 @@
     "dotenv": "^16.4.5"
   },
   "devDependencies": {
+    "@fast-check/vitest": "^0.2.4",
     "vite-tsconfig-paths": "^6.0.4"
   }
 }

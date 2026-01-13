@@ -51,6 +51,9 @@ importers:
         specifier: ^16.4.5
         version: 16.6.1
     devDependencies:
+      '@fast-check/vitest':
+        specifier: ^0.2.4
+        version: 0.2.4(vitest@4.0.17(@types/node@25.0.6)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0))
       vite-tsconfig-paths:
         specifier: ^6.0.4
         version: 6.0.4(typescript@5.9.3)(vite@6.4.1(@types/node@25.0.6)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0))
@@ -810,6 +813,11 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@fast-check/vitest@0.2.4':
+    resolution: {integrity: sha512-Ilcr+JAIPhb1s6FRm4qoglQYSGXXrS+zAupZeNuWAA3qHVGDA1d1Gb84Hb/+otL3GzVZjFJESg5/1SfIvrgssA==}
+    peerDependencies:
+      vitest: ^1 || ^2 || ^3 || ^4
 
   '@google/genai@1.35.0':
     resolution: {integrity: sha512-ZC1d0PSM5eS73BpbVIgL3ZsmXeMKLVJurxzww1Z9axy3B2eUB3ioEytbQt4Qu0Od6qPluKrTDew9pSi9kEuPaw==}
@@ -2769,6 +2777,11 @@ snapshots:
 
   '@esbuild/win32-x64@0.27.2':
     optional: true
+
+  '@fast-check/vitest@0.2.4(vitest@4.0.17(@types/node@25.0.6)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0))':
+    dependencies:
+      fast-check: 4.5.3
+      vitest: 4.0.17(@types/node@25.0.6)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0)
 
   '@google/genai@1.35.0':
     dependencies:
