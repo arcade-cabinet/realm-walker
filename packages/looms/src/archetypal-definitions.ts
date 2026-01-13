@@ -22,6 +22,21 @@ import { GeminiModel } from './GeminiAdapter.js';
 import { LoomDefinition } from './Loom.js';
 import { RealmContext } from './definitions.js';
 
+// Extended context for archetypal systems
+export interface ArchetypalRealmContext extends RealmContext {
+    magicSystem?: RpgMagicSystem;
+    materiaProgression?: RpgCharacterProgression;
+    equipmentSystem?: any;
+    atbCombat?: RpgCombatSystem;
+    ringMenuCombat?: RpgCombatSystem;
+    dualTechs?: RpgTechnique[];
+    statusEffects?: RpgStatusEffect[];
+    elementalSystem?: RpgElementalSystem;
+    timelineEvents?: RpgTimelineEvent[];
+    apocalypseEvents?: RpgWorldEvent[];
+    psiSystem?: RpgMagicSystem;
+}
+
 /**
  * ARCHETYPAL LOOM DDLs
  * 
@@ -40,7 +55,7 @@ import { RealmContext } from './definitions.js';
  * ESPER LOOM: Final Fantasy VI Magicite System
  * Generates magical beings that teach spells and provide stat bonuses
  */
-export const EsperLoomDef: LoomDefinition<LoomSettings, RpgMagicSystem, RealmContext> = {
+export const EsperLoomDef: LoomDefinition<LoomSettings, RpgMagicSystem, ArchetypalRealmContext> = {
     name: "EsperLoom",
     tags: ['magic', 'summons', 'archetypal', 'ff6'],
     consumes: ['world', 'classes'],
@@ -96,7 +111,7 @@ export const EsperLoomDef: LoomDefinition<LoomSettings, RpgMagicSystem, RealmCon
  * PSI LOOM: Earthbound Psychic System
  * Generates PSI abilities with Greek letter progression (α, β, γ, Ω)
  */
-export const PsiLoomDef: LoomDefinition<LoomSettings, RpgMagicSystem, RealmContext> = {
+export const PsiLoomDef: LoomDefinition<LoomSettings, RpgMagicSystem, ArchetypalRealmContext> = {
     name: "PsiLoom", 
     tags: ['magic', 'psychic', 'archetypal', 'earthbound'],
     consumes: ['classes'],
@@ -150,7 +165,7 @@ export const PsiLoomDef: LoomDefinition<LoomSettings, RpgMagicSystem, RealmConte
  * MATERIA LOOM: Final Fantasy VII-style Customization
  * Generates socketed equipment and growth systems
  */
-export const MateriaLoomDef: LoomDefinition<LoomSettings, RpgCharacterProgression, RealmContext> = {
+export const MateriaLoomDef: LoomDefinition<LoomSettings, RpgCharacterProgression, ArchetypalRealmContext> = {
     name: "MateriaLoom",
     tags: ['progression', 'customization', 'archetypal', 'ff7'],
     consumes: ['classes', 'magicSystem'],
@@ -195,7 +210,7 @@ export const MateriaLoomDef: LoomDefinition<LoomSettings, RpgCharacterProgressio
  * DUAL TECH LOOM: Chrono Trigger Combination Attacks
  * Generates cooperative techniques between characters
  */
-export const DualTechLoomDef: LoomDefinition<LoomSettings, RpgTechnique[], RealmContext> = {
+export const DualTechLoomDef: LoomDefinition<LoomSettings, RpgTechnique[], ArchetypalRealmContext> = {
     name: "DualTechLoom",
     tags: ['combat', 'cooperation', 'archetypal', 'chrono-trigger'],
     consumes: ['classes', 'abilities'],
@@ -250,7 +265,7 @@ export const DualTechLoomDef: LoomDefinition<LoomSettings, RpgTechnique[], Realm
  * ATB LOOM: Active Time Battle System
  * Generates real-time turn-based combat mechanics
  */
-export const AtbLoomDef: LoomDefinition<LoomSettings, RpgCombatSystem, RealmContext> = {
+export const AtbLoomDef: LoomDefinition<LoomSettings, RpgCombatSystem, ArchetypalRealmContext> = {
     name: "AtbLoom",
     tags: ['combat', 'realtime', 'archetypal', 'ff4-ff6'],
     produces: ['atbCombat'],
@@ -296,7 +311,7 @@ export const AtbLoomDef: LoomDefinition<LoomSettings, RpgCombatSystem, RealmCont
  * RING MENU LOOM: Secret of Mana Interface System
  * Generates radial menu combat interface
  */
-export const RingMenuLoomDef: LoomDefinition<LoomSettings, RpgCombatSystem, RealmContext> = {
+export const RingMenuLoomDef: LoomDefinition<LoomSettings, RpgCombatSystem, ArchetypalRealmContext> = {
     name: "RingMenuLoom",
     tags: ['interface', 'realtime', 'archetypal', 'secret-of-mana'],
     consumes: ['abilities', 'items'],
@@ -347,7 +362,7 @@ export const RingMenuLoomDef: LoomDefinition<LoomSettings, RpgCombatSystem, Real
  * TIME TRAVEL LOOM: Chrono Trigger Timeline System
  * Generates time periods and causal event chains
  */
-export const TimeTravelLoomDef: LoomDefinition<LoomSettings, RpgTimelineEvent[], RealmContext> = {
+export const TimeTravelLoomDef: LoomDefinition<LoomSettings, RpgTimelineEvent[], ArchetypalRealmContext> = {
     name: "TimeTravelLoom",
     tags: ['narrative', 'time', 'archetypal', 'chrono-trigger'],
     consumes: ['world', 'history'],
@@ -403,7 +418,7 @@ export const TimeTravelLoomDef: LoomDefinition<LoomSettings, RpgTimelineEvent[],
  * APOCALYPSE LOOM: Final Fantasy VI World of Ruin
  * Generates world-changing catastrophic events
  */
-export const ApocalypseLoomDef: LoomDefinition<LoomSettings, RpgWorldEvent[], RealmContext> = {
+export const ApocalypseLoomDef: LoomDefinition<LoomSettings, RpgWorldEvent[], ArchetypalRealmContext> = {
     name: "ApocalypseLoom",
     tags: ['narrative', 'catastrophe', 'archetypal', 'ff6'],
     consumes: ['world', 'factions', 'npcs'],
@@ -463,7 +478,7 @@ export const ApocalypseLoomDef: LoomDefinition<LoomSettings, RpgWorldEvent[], Re
  * STATUS AILMENT LOOM: Classic RPG Status Effects
  * Generates comprehensive status effect systems
  */
-export const StatusAilmentLoomDef: LoomDefinition<LoomSettings, RpgStatusEffect[], RealmContext> = {
+export const StatusAilmentLoomDef: LoomDefinition<LoomSettings, RpgStatusEffect[], ArchetypalRealmContext> = {
     name: "StatusAilmentLoom",
     tags: ['combat', 'status', 'archetypal', 'classic-rpg'],
     produces: ['statusEffects'],
@@ -513,7 +528,7 @@ export const StatusAilmentLoomDef: LoomDefinition<LoomSettings, RpgStatusEffect[
  * ELEMENTAL WHEEL LOOM: Rock-Paper-Scissors Magic System
  * Generates elemental affinities and weaknesses
  */
-export const ElementalWheelLoomDef: LoomDefinition<LoomSettings, RpgElementalSystem, RealmContext> = {
+export const ElementalWheelLoomDef: LoomDefinition<LoomSettings, RpgElementalSystem, ArchetypalRealmContext> = {
     name: "ElementalWheelLoom",
     tags: ['magic', 'elements', 'archetypal', 'classic-rpg'],
     produces: ['elementalSystem'],

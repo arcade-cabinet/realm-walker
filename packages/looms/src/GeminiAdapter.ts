@@ -134,7 +134,7 @@ export class GeminiAdapter {
                             }
                             break;
                         case 400:
-                            console.error(`❌ Bad Request - likely schema issue:`, error.details);
+                            console.error(`❌ Bad Request - likely schema issue:`, (error as any).details || error.message);
                             throw error; // Don't retry 400s
                         case 401:
                             console.error(`❌ Authentication failed. Check API key.`);
@@ -143,7 +143,7 @@ export class GeminiAdapter {
                             console.error(`❌ Model not found: ${modelName}`);
                             throw error; // Don't retry model not found
                         default:
-                            console.error(`❌ Unexpected API error:`, error.details);
+                            console.error(`❌ Unexpected API error:`, (error as any).details || error.message);
                             throw error;
                     }
                 } else {

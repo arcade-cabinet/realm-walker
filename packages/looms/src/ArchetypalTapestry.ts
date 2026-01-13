@@ -1,9 +1,6 @@
 import { LoomSettings } from '@realm-walker/shared';
-import { Shuttle } from './Shuttle.js';
-import { Tapestry } from './Tapestry.js';
 import {
-    ApocalypseLoomDef,
-    AtbLoomDef,
+    ApocalypseLoomDef, ArchetypalRealmContext, AtbLoomDef,
     DualTechLoomDef,
     ElementalWheelLoomDef,
     // Archetypal Looms
@@ -31,51 +28,8 @@ import {
     // Original Looms
     WorldLoomDef
 } from './definitions.js';
-
-/**
- * ARCHETYPAL TAPESTRY CONTEXT
- * 
- * Extended context that includes all mid-1990s RPG archetypal systems
- */
-export interface ArchetypalRealmContext {
-    // Core World Building
-    settings: LoomSettings;
-    world?: any;
-    factions?: any[];
-    items?: any[];
-    bestiary?: any[];
-    hero?: any;
-    quests?: any[];
-    history?: any[];
-    pantheon?: any[];
-    dungeons?: any[];
-    shops?: any[];
-    talents?: any[];
-    npcs?: any[];
-    classes?: any[];
-    abilities?: any[];
-    dialogue?: any[];
-    
-    // Archetypal Magic Systems
-    magicSystem?: any;        // Esper/Magicite system
-    psiSystem?: any;          // Earthbound PSI system
-    
-    // Character Progression Systems
-    materiaProgression?: any; // FF7-style socketed system
-    
-    // Combat Systems
-    atbCombat?: any;          // Active Time Battle
-    ringMenuCombat?: any;     // Secret of Mana style
-    dualTechs?: any[];        // Chrono Trigger combinations
-    
-    // World Event Systems
-    timelineEvents?: any[];   // Time travel mechanics
-    apocalypseEvents?: any[]; // World transformation events
-    
-    // Status & Elemental Systems
-    statusEffects?: any[];    // Classic RPG status ailments
-    elementalSystem?: any;    // Elemental wheel system
-}
+import { Shuttle } from './Shuttle.js';
+import { Tapestry } from './Tapestry.js';
 
 /**
  * ARCHETYPAL TAPESTRY ORCHESTRATOR
@@ -106,7 +60,7 @@ export class ArchetypalTapestry {
                 transform: () => settings,
                 onWeave: (result, tapestry) => {
                     tapestry.weave('settings', settings);
-                    tapestry.weave('world', result);
+                    tapestry.weave('world', result as any);
                 }
             }
         );
@@ -285,9 +239,9 @@ export class ArchetypalTapestry {
             settings,
             world: {
                 nodes: [
-                    { id: 'start', name: 'Origin Town', type: 'start', biome: 'grassland', dangerLevel: 1 },
-                    { id: 'dungeon1', name: 'Crystal Cave', type: 'dungeon', biome: 'cave', dangerLevel: 5 },
-                    { id: 'end', name: 'Final Tower', type: 'end', biome: 'magical', dangerLevel: 10 }
+                    { id: 'start', name: 'Origin Town', description: 'A peaceful starting town', type: 'start', biome: 'grassland', dangerLevel: 1 },
+                    { id: 'dungeon1', name: 'Crystal Cave', description: 'A mysterious cave filled with crystals', type: 'dungeon', biome: 'cave', dangerLevel: 5 },
+                    { id: 'end', name: 'Final Tower', description: 'The towering fortress of the final boss', type: 'end', biome: 'magical', dangerLevel: 10 }
                 ],
                 edges: [
                     { from: 'start', to: 'dungeon1', type: 'road', travelTime: 2 },
@@ -295,16 +249,17 @@ export class ArchetypalTapestry {
                 ]
             },
             factions: [
-                { id: 'empire', name: 'Gestahl Empire', archetype: 'empire', homeNodeId: 'end' },
-                { id: 'returners', name: 'Returners', archetype: 'rebellion', homeNodeId: 'start' }
+                { id: 'empire', name: 'Gestahl Empire', description: 'A tyrannical empire seeking world domination', archetype: 'empire', motto: 'Order through power', homeNodeId: 'end', allies: [], enemies: ['returners'], colors: ['purple', 'black'] },
+                { id: 'returners', name: 'Returners', description: 'A rebel group fighting against the empire', archetype: 'rebellion', motto: 'Freedom for all', homeNodeId: 'start', allies: [], enemies: ['empire'], colors: ['blue', 'white'] }
             ],
             classes: [
-                { id: 'warrior', name: 'Warrior', stats: { str: 8, agi: 5, int: 3, hp: 100, sp: 20 } },
-                { id: 'mage', name: 'Mage', stats: { str: 3, agi: 6, int: 9, hp: 60, sp: 80 } }
+                { id: 'warrior', name: 'Warrior', description: 'A strong melee fighter', visuals: { spriteId: 'warrior', scale: 1, billboard: true }, stats: { str: 8, agi: 5, int: 3, hp: 100, sp: 20 }, skillsToLearn: [] },
+                { id: 'mage', name: 'Mage', description: 'A master of magical arts', visuals: { spriteId: 'mage', scale: 1, billboard: true }, stats: { str: 3, agi: 6, int: 9, hp: 60, sp: 80 }, skillsToLearn: [] }
             ],
             magicSystem: {
                 id: 'esper_system',
                 name: 'Esper Magicite System',
+                description: 'A magic system based on summoned beings called Espers',
                 systemType: 'esper_magicite',
                 resourceType: 'mp',
                 learningMechanism: 'ap_accumulation',
@@ -326,17 +281,25 @@ export class ArchetypalTapestry {
             atbCombat: {
                 id: 'atb_system',
                 name: 'Active Time Battle',
+                description: 'Real-time combat system with charging ATB bars',
                 systemType: 'active_time_battle',
                 timingMechanism: 'speed_based_charging',
                 speedBasedTiming: true,
                 actionModes: ['active', 'wait'],
                 castingTimes: true,
-                interruptible: true
+                interruptible: true,
+                ringMenuInterface: false,
+                realtimeCombat: true,
+                chargeMechanics: true,
+                cooperativePlay: false,
+                weaponSkillProgression: false,
+                castingInterruption: false
             },
             dualTechs: [
                 {
                     id: 'x_strike',
                     name: 'X-Strike',
+                    description: 'Two warriors cross their swords in a devastating attack',
                     participantCount: 2,
                     techType: 'dual',
                     requiredCharacters: ['warrior', 'warrior'],
@@ -352,6 +315,7 @@ export class ArchetypalTapestry {
                 {
                     id: 'poison',
                     name: 'Poison',
+                    description: 'A toxic condition that causes damage over time',
                     category: 'negative',
                     duration: 'battle_persistent',
                     stackable: false,
@@ -365,6 +329,7 @@ export class ArchetypalTapestry {
             elementalSystem: {
                 id: 'classic_elements',
                 name: 'Classic Elemental Wheel',
+                description: 'Traditional elemental system with weaknesses and strengths',
                 elements: [
                     { id: 'fire', name: 'Fire', color: '#FF4444', weakTo: ['ice'], strongAgainst: ['ice'] },
                     { id: 'ice', name: 'Ice', color: '#4444FF', weakTo: ['fire'], strongAgainst: ['fire'] },
@@ -372,7 +337,9 @@ export class ArchetypalTapestry {
                 ],
                 coreElements: ['fire', 'ice', 'lightning'],
                 weaknessChains: true,
-                absorptionPossible: true
+                absorptionPossible: true,
+                environmentalInteractions: true,
+                equipmentAffinities: true
             }
         };
     }

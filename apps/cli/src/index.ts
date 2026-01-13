@@ -1,6 +1,7 @@
 #!/usr/bin/env tsx
 console.log("DEBUG: CLI Script Starting...");
 import {
+    ArchetypalTapestry,
     BestiaryLoomDef,
     ClassLoomDef,
     ItemLoomDef,
@@ -24,7 +25,7 @@ program
   .option('-s, --seed <seed>', 'Seed for generation', 'Floating-Crystal-Sanctuary')
   .option('-a, --age <age>', 'Age/Era name', 'ancient')
   .option('-c, --creative', 'Use higher temperature for more creativity', false)
-  .option('--mock', 'Use mock data instead of API', false)
+  .option('--mock', 'Use mock data instead of API')
   .option('--danger <level>', 'Danger Level (1-11)', '5')
   .option('--magic <level>', 'Magic Level (1-10)', '5')
   .option('--tech <level>', 'Tech Level (1-10)', '1')
@@ -149,7 +150,7 @@ program
   .description('Generate an archetypal RPG realm inspired by mid-1990s classics')
   .option('-s, --seed <seed>', 'Seed for generation', 'Crystal-Sanctuary-1994')
   .option('-a, --age <age>', 'Age/Era theme', 'The Age of Espers')
-  .option('--mock', 'Use mock data instead of API', false)
+  .option('--mock', 'Use mock data instead of API')
   .option('--danger <level>', 'Danger Level (1-10)', '7')
   .option('--magic <level>', 'Magic Level (1-10)', '8')
   .option('--tech <level>', 'Tech Level (1-10)', '3')
@@ -159,6 +160,7 @@ program
     console.log('🌟 Generating Archetypal RPG Realm...');
     console.log('📖 Inspired by: Final Fantasy VI, Chrono Trigger, Secret of Mana, Earthbound');
     console.log('DEBUG Options:', options);
+    console.log('DEBUG Mock flag:', options.mock, typeof options.mock);
 
     // Mock handling for archetypal realm
     if (options.mock) {
@@ -231,8 +233,15 @@ program
     console.log(`🧵 Weaving Archetypal Realm with Settings:`, settings.controls);
 
     try {
-      const archetypalTapestry = new ArchetypalTapestry(apiKey);
-      const archetypalRealm = await archetypalTapestry.weaveArchetypalRealm(settings);
+      let archetypalRealm: any;
+      
+      if (options.mock) {
+        console.log('🎭 Using Mock Mode - No API calls');
+        archetypalRealm = ArchetypalTapestry.createMockArchetypalRealm(settings);
+      } else {
+        const archetypalTapestry = new ArchetypalTapestry(apiKey);
+        archetypalRealm = await archetypalTapestry.weaveArchetypalRealm(settings);
+      }
 
       // Save the complete archetypal realm
       const outputDir = path.resolve(process.cwd(), './generated');
@@ -266,7 +275,7 @@ program
   .option('-t, --ticks <count>', 'Number of simulation ticks to run', '10')
   .option('-r, --report-interval <interval>', 'Report state every N ticks', '1')
   .option('-v, --verbose', 'Enable verbose state reporting', false)
-  .option('--mock', 'Use mock realm data for testing', false)
+  .option('--mock', 'Use mock realm data for testing')
   .option('--verify-determinism', 'Run multiple simulations to verify deterministic behavior', false)
   .action(async (options) => {
     console.log('🚀 Starting RealmWalker Headless Simulation...');
