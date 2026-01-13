@@ -1,0 +1,21 @@
+{
+    "name": "@realm-walker/looms",
+    "version": "0.1.0",
+    "main": "src/index.ts",
+    "types": "src/index.ts",
+    "type": "module",
+    "scripts": {
+        "test": "vitest"
+    },
+    "dependencies": {
+        "@google/genai": "^1.34.0",
+        "@realm-walker/shared": "workspace:*",
+        "dotenv": "^16.4.5",
+        "zod": "^3.23.8",
+        "zod-to-json-schema": "^3.25.1"
+    },
+    "devDependencies": {
+        "typescript": "^5.2.2",
+        "vitest": "^1.6.0"
+    }
+}
