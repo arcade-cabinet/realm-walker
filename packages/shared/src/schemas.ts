@@ -14,7 +14,83 @@ export const TraitSchema = z.object({
   weaknesses: z.array(z.string()),
 });
 
-// RPG-JS compatible schemas
+// --- PRACTICAL SCHEMAS ---
+
+export const RpgShopSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  type: z.enum(['general', 'blacksmith', 'alchemist', 'magic', 'relics']),
+  locationNodeId: z.string(),
+  inventory: z.array(z.object({
+    itemId: z.string(),
+    priceMultiplier: z.number().default(1),
+    stock: z.number().default(99)
+  })),
+  keeper: z.object({
+    name: z.string(),
+    personality: z.string()
+  })
+});
+
+export const RpgTalentSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  classId: z.string().optional(),
+  type: z.enum(['passive', 'active', 'ultimate']),
+  requirements: z.object({
+    level: z.number().default(1),
+    stat: z.object({ name: z.string(), value: z.number() }).optional()
+  }).default({ level: 1 }),
+  effects: z.array(z.string())
+});
+
+export const RpgAbilitySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  type: z.enum(['physical', 'magical', 'support']),
+  damage: z.number().default(0),
+  cost: z.object({
+    mp: z.number().default(0),
+    sp: z.number().default(0)
+  }).default({ mp: 0, sp: 0 }),
+  target: z.enum(['single', 'all', 'self', 'ally']),
+  visuals: z.object({
+    animationId: z.string().default("none"),
+    color: z.string().default("#FFFFFF")
+  }).default({ animationId: "none", color: "#FFFFFF" })
+});
+
+export const RpgDialogueSchema = z.object({
+  id: z.string(),
+  speakerId: z.string().optional(),
+  text: z.string(),
+  trigger: z.enum(['greet', 'quest_start', 'quest_turnin', 'rumor', 'battle_cry']),
+  conditions: z.array(z.string()).default([])
+});
+
+export const RpgNpcSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  role: z.enum(['villager', 'guard', 'merchant', 'boss', 'monster_elite']),
+  description: z.string(),
+  stats: StatsSchema,
+  visuals: z.object({
+    spriteId: z.string(),
+    scale: z.number().default(1)
+  }),
+  dialogue: z.array(z.string()).default([]),
+  lootTableId: z.string().optional()
+});
+
+export type RpgShop = z.infer<typeof RpgShopSchema>;
+export type RpgTalent = z.infer<typeof RpgTalentSchema>;
+export type RpgAbility = z.infer<typeof RpgAbilitySchema>;
+export type RpgDialogue = z.infer<typeof RpgDialogueSchema>;
+export type RpgNpc = z.infer<typeof RpgNpcSchema>;
+
+// --- CORE RPG SCHEMAS ---
 
 export const StatsSchema = z.object({
   str: z.number(),
@@ -75,6 +151,41 @@ export const RpgBestiarySchema = z.object({
   })
 });
 
+export const LoomNodeSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  biome: z.enum(['forest', 'cave', 'sky', 'tech', 'city', 'ruin']),
+  difficulty: z.number().min(1).max(11),
+  encounters: z.array(z.string()).optional() // IDs from Bestiary
+});
+
+export const LoomEdgeSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  description: z.string(),
+  travelTime: z.number().default(1)
+});
+
+export const RpgLoomSchema = z.object({
+  title: z.string(),
+  summary: z.string(),
+  nodes: z.array(LoomNodeSchema),
+  edges: z.array(LoomEdgeSchema)
+});
+
+export const LoomSettingsSchema = z.object({
+  seed: z.string(),
+  age: z.string().default('ancient'),
+  controls: z.object({
+    worldScale: z.number().min(1).max(10).default(5),
+    minNodes: z.number().min(3).max(20).default(5),
+    dangerLevel: z.number().min(1).max(11).default(5), // Spinal Tap
+    magicLevel: z.number().min(1).max(10).default(5),
+    technologyLevel: z.number().min(1).max(10).default(1)
+  })
+});
+
 export const RealmSchema = z.object({
   age: z.object({
     id: z.string(),
@@ -82,16 +193,25 @@ export const RealmSchema = z.object({
     description: z.string(),
     theme: z.string(),
     seed: z.string().optional(), // For re-hydrating the PRNG
+    settings: LoomSettingsSchema.optional() // Persist settings used for gen
   }),
   classes: z.array(RpgClassSchema),
   items: z.array(RpgItemSchema),
-  bestiary: z.array(RpgBestiarySchema).optional() // The Monster Slot
+  bestiary: z.array(RpgBestiarySchema).optional(), // The Monster Slot
+  loom: RpgLoomSchema.optional() // The Narrative Graph Slot
 });
 
 export type Stats = z.infer<typeof StatsSchema>;
 export type RpgClass = z.infer<typeof RpgClassSchema>;
 export type RpgItem = z.infer<typeof RpgItemSchema>;
 export type RpgBestiary = z.infer<typeof RpgBestiarySchema>;
+<<<<<<< HEAD
+=======
+export type LoomNode = z.infer<typeof LoomNodeSchema>;
+export type LoomEdge = z.infer<typeof LoomEdgeSchema>;
+export type RpgLoom = z.infer<typeof RpgLoomSchema>;
+export type LoomSettings = z.infer<typeof LoomSettingsSchema>;
+>>>>>>> feat/visual-bridge
 export type Realm = z.infer<typeof RealmSchema>;
 
 // --- LOOM SCHEMAS (The Narrative Graph) ---
@@ -259,78 +379,4 @@ export type RpgHistoryEvent = z.infer<typeof RpgHistoryEventSchema>;
 export type RpgGod = z.infer<typeof RpgGodSchema>;
 export type RpgDungeon = z.infer<typeof RpgDungeonSchema>;
 
-// --- PRACTICAL SCHEMAS ---
-
-export const RpgShopSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  type: z.enum(['general', 'blacksmith', 'alchemist', 'magic', 'relics']),
-  locationNodeId: z.string(),
-  inventory: z.array(z.object({
-    itemId: z.string(),
-    priceMultiplier: z.number().default(1),
-    stock: z.number().default(99)
-  })),
-  keeper: z.object({
-    name: z.string(),
-    personality: z.string()
-  })
-});
-
-export const RpgTalentSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string(),
-  classId: z.string().optional(), // Specific to a class or generic
-  type: z.enum(['passive', 'active', 'ultimate']),
-  requirements: z.object({
-    level: z.number().default(1),
-    stat: z.object({ name: z.string(), value: z.number() }).optional()
-  }).optional(),
-  effects: z.array(z.string()) // Description of mechanics
-});
-
-export const RpgNpcSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  role: z.enum(['villager', 'guard', 'merchant', 'boss', 'monster_elite']),
-  description: z.string(),
-  stats: StatsSchema,
-  visuals: z.object({
-    spriteId: z.string(),
-    scale: z.number().default(1)
-  }),
-  dialogue: z.array(z.string()).default([]),
-  lootTableId: z.string().optional()
-});
-
-export type RpgShop = z.infer<typeof RpgShopSchema>;
-export type RpgTalent = z.infer<typeof RpgTalentSchema>;
-export const RpgAbilitySchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string(),
-  type: z.enum(['physical', 'magical', 'support']),
-  damage: z.number().default(0),
-  cost: z.object({
-    mp: z.number().default(0),
-    sp: z.number().default(0)
-  }).default({ mp: 0, sp: 0 }),
-  target: z.enum(['single', 'all', 'self', 'ally']),
-  visuals: z.object({
-    animationId: z.string().optional(),
-    color: z.string().optional()
-  }).default({ animationId: "none", color: "#FFFFFF" })
-});
-
-export const RpgDialogueSchema = z.object({
-  id: z.string(),
-  speakerId: z.string().optional(), // If specific NPC
-  text: z.string(), // The line
-  trigger: z.enum(['greet', 'quest_start', 'quest_turnin', 'rumor', 'battle_cry']),
-  conditions: z.array(z.string()).default([])
-});
-
-export type RpgAbility = z.infer<typeof RpgAbilitySchema>;
-export type RpgDialogue = z.infer<typeof RpgDialogueSchema>;
-export type RpgNpc = z.infer<typeof RpgNpcSchema>;
+// End of Schemas

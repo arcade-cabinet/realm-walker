@@ -1,3 +1,4 @@
+import { generatePlaceholderTexture } from '../utils/SpriteGenerator';
 import { Environment, OrthographicCamera } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Entity } from '@realm-walker/core';
@@ -14,14 +15,16 @@ const EntityView: React.FC<{ entity: Entity }> = ({ entity }) => {
         }
     });
 
-    // Simple placeholder visualization based on Type
-    const color = entity.type === 'enemy' ? 'red' : 'royalblue';
+    // Memoize texture to avoid regeneration every frame (simplified for now, ideally useMemo aligned with entity)
+    const label = entity.type === 'enemy' ? 'E' : 'H';
+    const color = entity.type === 'enemy' ? '#e74c3c' : '#3498db';
+
+    const texture = React.useMemo(() => generatePlaceholderTexture(label, color), [label, color]);
 
     return (
-        <mesh ref={meshRef} position={[entity.position.x, entity.position.y, entity.position.z]}>
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color={color} />
-        </mesh>
+        <sprite ref={meshRef as any} position={[entity.position.x, entity.position.y, entity.position.z]} scale={[1, 1, 1]}>
+            <spriteMaterial map={texture} />
+        </sprite>
     );
 };
 

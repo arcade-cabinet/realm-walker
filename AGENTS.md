@@ -25,3 +25,12 @@ Every verification must follow this structure:
 -   **Precision over Politeness.** If a tool fails, fix it. Do not apologize.
 -   **Architectural Integrity.** Do not band-aid. If an export is missing, fix the export, don't bypass the architecture.
 -   **Continuous Roadmap.** Work on the next logical piece while waiting for non-blocking reviews.
+
+## 5. The Rotational Worktree Protocol
+When managing Critical Reviews (Core) and New Contributions (Growth) simultaneously:
+1.  **Do not Context Switch the Main Workspace.** Keep the root directory focused on the **Stable/Release** branch (e.g., `release/v0.1`).
+2.  **Spin up Satellite Worktrees.** Use `git worktree add .worktrees/<feature-name> <branch-name>` for new features.
+3.  **Parallel Execution.**
+    -   **Main**: Monitor GH Feedback. Resolve Threads.
+    -   **Satellite**: Push new code. Create PRs.
+4.  **Context Synchronization.** When pushing from Satellite, reference Core PRs if dependencies exist. Notify CodeRabbit of the relationship.
