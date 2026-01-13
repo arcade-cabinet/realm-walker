@@ -1,3 +1,3 @@
-export * from './Agent';
-export * from './AISystem';
+export * from './Agent.js';
+export * from './AISystem.js';
 

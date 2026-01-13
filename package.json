@@ -11,7 +11,8 @@
         "lint:fix": "biome check --write .",
         "format": "biome format --write .",
         "generate-realm": "pnpm --filter @realm-walker/cli start",
-        "test": "pnpm -r test"
+        "test": "vitest --workspace",
+        "test:run": "vitest run --workspace"
     },
     "devDependencies": {
         "@biomejs/biome": "^2.3.11",
