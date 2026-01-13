@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+// --- BASE SCHEMAS ---
+
 export const VisualConfigSchema = z.object({
   furColor: z.string(),
   secondaryColor: z.string(),
@@ -13,6 +15,17 @@ export const TraitSchema = z.object({
   strengths: z.array(z.string()),
   weaknesses: z.array(z.string()),
 });
+
+export const StatsSchema = z.object({
+  str: z.number(),
+  agi: z.number(),
+  int: z.number(),
+  dex: z.number().optional(),
+  hp: z.number(),
+  sp: z.number().optional()
+});
+
+export type Stats = z.infer<typeof StatsSchema>;
 
 // --- PRACTICAL SCHEMAS ---
 
@@ -92,15 +105,6 @@ export type RpgNpc = z.infer<typeof RpgNpcSchema>;
 
 // --- CORE RPG SCHEMAS ---
 
-export const StatsSchema = z.object({
-  str: z.number(),
-  agi: z.number(),
-  int: z.number(),
-  dex: z.number().optional(),
-  hp: z.number(),
-  sp: z.number().optional()
-});
-
 export const RpgClassSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -128,8 +132,8 @@ export const RpgItemSchema = z.object({
   consumable: z.boolean().default(false),
   type: z.enum(['item', 'weapon', 'armor']),
   visuals: z.object({
-    iconId: z.string(), // 2D Icon for inventory
-    spriteId: z.string().optional(), // Dropped/Equipped sprite
+    iconId: z.string(),
+    spriteId: z.string().optional(),
     tint: z.string().optional()
   }).default({ iconId: "generic_item" })
 });
@@ -138,11 +142,11 @@ export const RpgBestiarySchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
-  stats: StatsSchema, // Reusing standard stats (HP, STR, etc.)
+  stats: StatsSchema,
   behavior: z.enum(['aggressive', 'neutral', 'scared', 'stationary']).default('neutral'),
   lootTable: z.array(z.object({
     itemId: z.string(),
-    chance: z.number() // 0.0 to 1.0
+    chance: z.number()
   })).optional(),
   visuals: z.object({
     spriteId: z.string(),
@@ -151,70 +155,11 @@ export const RpgBestiarySchema = z.object({
   })
 });
 
-export const LoomNodeSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string(),
-  biome: z.enum(['forest', 'cave', 'sky', 'tech', 'city', 'ruin']),
-  difficulty: z.number().min(1).max(11),
-  encounters: z.array(z.string()).optional() // IDs from Bestiary
-});
-
-export const LoomEdgeSchema = z.object({
-  from: z.string(),
-  to: z.string(),
-  description: z.string(),
-  travelTime: z.number().default(1)
-});
-
-export const RpgLoomSchema = z.object({
-  title: z.string(),
-  summary: z.string(),
-  nodes: z.array(LoomNodeSchema),
-  edges: z.array(LoomEdgeSchema)
-});
-
-export const LoomSettingsSchema = z.object({
-  seed: z.string(),
-  age: z.string().default('ancient'),
-  controls: z.object({
-    worldScale: z.number().min(1).max(10).default(5),
-    minNodes: z.number().min(3).max(20).default(5),
-    dangerLevel: z.number().min(1).max(11).default(5), // Spinal Tap
-    magicLevel: z.number().min(1).max(10).default(5),
-    technologyLevel: z.number().min(1).max(10).default(1)
-  })
-});
-
-export const RealmSchema = z.object({
-  age: z.object({
-    id: z.string(),
-    name: z.string(),
-    description: z.string(),
-    theme: z.string(),
-    seed: z.string().optional(), // For re-hydrating the PRNG
-    settings: LoomSettingsSchema.optional() // Persist settings used for gen
-  }),
-  classes: z.array(RpgClassSchema),
-  items: z.array(RpgItemSchema),
-  bestiary: z.array(RpgBestiarySchema).optional(), // The Monster Slot
-  loom: RpgLoomSchema.optional() // The Narrative Graph Slot
-});
-
-export type Stats = z.infer<typeof StatsSchema>;
 export type RpgClass = z.infer<typeof RpgClassSchema>;
 export type RpgItem = z.infer<typeof RpgItemSchema>;
 export type RpgBestiary = z.infer<typeof RpgBestiarySchema>;
-<<<<<<< HEAD
-=======
-export type LoomNode = z.infer<typeof LoomNodeSchema>;
-export type LoomEdge = z.infer<typeof LoomEdgeSchema>;
-export type RpgLoom = z.infer<typeof RpgLoomSchema>;
-export type LoomSettings = z.infer<typeof LoomSettingsSchema>;
->>>>>>> feat/visual-bridge
-export type Realm = z.infer<typeof RealmSchema>;
 
-// --- LOOM SCHEMAS (The Narrative Graph) ---
+// --- LOOM SCHEMAS ---
 
 export const LoomNodeSchema = z.object({
   id: z.string(),
@@ -223,31 +168,29 @@ export const LoomNodeSchema = z.object({
   type: z.enum(['start', 'end', 'hub', 'dungeon', 'town', 'wild']),
   biome: z.string(),
   dangerLevel: z.number().min(1).max(10),
-  // Visual Slots
   visuals: z.object({
-    color: z.string().optional(), // Hex
+    color: z.string().optional(),
     icon: z.string().optional()
   }).optional()
 });
 
 export const LoomEdgeSchema = z.object({
-  from: z.string(), // Node ID
-  to: z.string(),   // Node ID
+  from: z.string(),
+  to: z.string(),
   type: z.enum(['road', 'path', 'river', 'portal']),
-  travelTime: z.number() // Abstract units
+  travelTime: z.number()
 });
 
 export const RpgLoomSchema = z.object({
   nodes: z.array(LoomNodeSchema),
   edges: z.array(LoomEdgeSchema),
-  // Metadata
   name: z.string().optional(),
   description: z.string().optional()
 });
 
 export const LoomSettingsSchema = z.object({
   seed: z.string(),
-  age: z.string(), // The Theme (e.g. "Frozen Iron Dominion")
+  age: z.string(),
   controls: z.object({
     worldScale: z.number().min(1).max(10),
     minNodes: z.number().min(3),
@@ -255,14 +198,12 @@ export const LoomSettingsSchema = z.object({
     magicLevel: z.number().min(0).max(10),
     technologyLevel: z.number().min(0).max(10)
   }),
-  // User Preferences for Generation Modules
   preferences: z.object({
     factions: z.boolean().default(true),
     items: z.boolean().default(true),
     bestiary: z.boolean().default(true),
     hero: z.boolean().default(true),
     quests: z.boolean().default(true),
-    // Granular Biases
     biases: z.object({
       questFocus: z.enum(['dungeon', 'political', 'exploration', 'balanced']).default('balanced'),
       combatDifficulty: z.enum(['story', 'balanced', 'brutal']).default('balanced')
@@ -270,10 +211,24 @@ export const LoomSettingsSchema = z.object({
   }).optional()
 });
 
+export const RealmSchema = z.object({
+  age: z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string(),
+    theme: z.string(),
+    seed: z.string().optional(),
+  }),
+  classes: z.array(RpgClassSchema),
+  items: z.array(RpgItemSchema),
+  bestiary: z.array(RpgBestiarySchema).optional()
+});
+
 export type LoomNode = z.infer<typeof LoomNodeSchema>;
 export type LoomEdge = z.infer<typeof LoomEdgeSchema>;
 export type RpgLoom = z.infer<typeof RpgLoomSchema>;
 export type LoomSettings = z.infer<typeof LoomSettingsSchema>;
+export type Realm = z.infer<typeof RealmSchema>;
 
 // --- FACTION SCHEMAS ---
 
@@ -283,12 +238,10 @@ export const FactionSchema = z.object({
   description: z.string(),
   archetype: z.enum(['empire', 'rebellion', 'cult', 'merchant', 'scholars', 'tribe']),
   motto: z.string(),
-  // Relationships
-  homeNodeId: z.string(), // Must reference a valid Node ID from WorldLoom
+  homeNodeId: z.string(),
   allies: z.array(z.string()),
   enemies: z.array(z.string()),
-  // Visuals
-  colors: z.array(z.string()).length(2), // Primary, Secondary
+  colors: z.array(z.string()).length(2),
   emblem: z.string().optional()
 });
 
@@ -301,7 +254,7 @@ export const RpgHeroSchema = z.object({
   name: z.string(),
   title: z.string(),
   biography: z.string(),
-  classId: z.string().default('adventurer'), // Links to RpgClass
+  classId: z.string().default('adventurer'),
   factionId: z.string().optional(),
   originNodeId: z.string(),
   stats: StatsSchema,
@@ -316,18 +269,18 @@ export const RpgQuestSchema = z.object({
   title: z.string(),
   description: z.string(),
   giver: z.object({
-    id: z.string(), // Hero ID or Faction ID
+    id: z.string(),
     type: z.enum(['hero', 'faction', 'board'])
   }),
   objectives: z.array(z.object({
     type: z.enum(['kill', 'fetch', 'explore', 'talk']),
-    targetId: z.string(), // Monster ID, Item ID, Node ID, Hero ID
+    targetId: z.string(),
     amount: z.number().default(1),
     description: z.string()
   })),
   rewards: z.object({
     gold: z.number().optional(),
-    items: z.array(z.string()).optional(), // Item IDs
+    items: z.array(z.string()).optional(),
     xp: z.number().optional()
   })
 });
@@ -348,7 +301,7 @@ export const RpgHistoryEventSchema = z.object({
 export const RpgGodSchema = z.object({
   id: z.string(),
   name: z.string(),
-  domains: z.array(z.string()), // e.g. War, Peace, Harvest
+  domains: z.array(z.string()),
   symbol: z.string(),
   description: z.string(),
   alignment: z.enum(['lawful', 'chaotic', 'neutral', 'good', 'evil']).optional()
@@ -360,23 +313,21 @@ export const RpgDungeonRoomSchema = z.object({
   description: z.string(),
   type: z.enum(['entry', 'corridor', 'hall', 'puzzle', 'boss', 'loot']),
   traps: z.boolean().default(false),
-  monsters: z.array(z.string()).optional(), // Monster IDs
-  loot: z.array(z.string()).optional() // Item IDs
+  monsters: z.array(z.string()).optional(),
+  loot: z.array(z.string()).optional()
 });
 
 export const RpgDungeonSchema = z.object({
-  id: z.string(), // Links to a WorldNode ID
+  id: z.string(),
   name: z.string(),
   theme: z.string(),
   rooms: z.array(RpgDungeonRoomSchema),
   connections: z.array(z.object({
     from: z.string(),
     to: z.string()
-  })) // Adjacency list for the dungeon layout
+  }))
 });
 
 export type RpgHistoryEvent = z.infer<typeof RpgHistoryEventSchema>;
 export type RpgGod = z.infer<typeof RpgGodSchema>;
 export type RpgDungeon = z.infer<typeof RpgDungeonSchema>;
-
-// End of Schemas
