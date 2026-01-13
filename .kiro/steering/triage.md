@@ -74,33 +74,6 @@ gh issue edit {number} --remove-label "needs-triage"
 
 ## Triage Decision Tree
 
-```
-New Issue
-    │
-    ├─ Is it a duplicate?
-    │   └─ Yes → Label "duplicate", close with reference
-    │
-    ├─ Is it valid/actionable?
-    │   └─ No → Label "invalid", close with explanation
-    │
-    ├─ Is it a question?
-    │   └─ Yes → Label "question", answer, close
-    │
-    ├─ Is it a bug?
-    │   ├─ Yes → Label "bug"
-    │   │   ├─ Critical? → "priority:critical", assign immediately
-    │   │   ├─ High? → "priority:high", add to current milestone
-    │   │   └─ Medium/Low? → appropriate priority, backlog
-    │   │
-    │   └─ No → Is it a feature?
-    │       ├─ Yes → Label "feature"
-    │       │   ├─ Has spec? → Label "spec", link to spec
-    │       │   └─ Needs spec? → Create spec first
-    │       │
-    │       └─ No → Label "enhancement" or "docs"
-    │
-    └─ Assign system label and milestone
-```
 
 ## RealmWalker-Specific Triage
 
