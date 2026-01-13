@@ -1,60 +1,17 @@
-import { GameEngine } from '@realm-walker/engine';
 import type { Realm } from '@realm-walker/shared';
 import type React from 'react';
-import { useEffect, useRef } from 'react';
-import * as THREE from 'three';
+import { DioramaRenderer } from './DioramaRenderer';
 
 interface GameViewProps {
   realm: Realm;
 }
 
 export const GameView: React.FC<GameViewProps> = ({ realm }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const engineRef = useRef<GameEngine | null>(null);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const engine = new GameEngine();
-    engineRef.current = engine;
-
-    // Renderer setup
-    const renderer = new THREE.WebGLRenderer({ antialias: false });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setClearColor(0x1a1a1a);
-    containerRef.current.appendChild(renderer.domElement);
-
-    // Camera setup
-    const aspect = window.innerWidth / window.innerHeight;
-    const d = 10;
-    const camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
-    camera.position.set(20, 20, 20);
-    camera.lookAt(0, 0, 0);
-
-    // Initial Scene
-    const grid = new THREE.GridHelper(20, 20, 0x444444, 0x222222);
-    engine.scene.add(grid);
-
-    const animate = () => {
-      requestAnimationFrame(animate);
-      engine.update();
-      renderer.render(engine.scene, camera);
-    };
-
-    animate();
-
-    return () => {
-      renderer.dispose();
-      if (containerRef.current) {
-        containerRef.current.removeChild(renderer.domElement);
-      }
-    };
-  }, []);
-
   return (
     <div className="relative w-full h-screen overflow-hidden">
-      <div ref={containerRef} className="absolute inset-0" />
+      <div className="absolute inset-0">
+        <DioramaRenderer />
+      </div>
 
       {/* UI Overlay */}
       <div className="absolute top-0 left-0 w-full p-4 pointer-events-none flex justify-between">
