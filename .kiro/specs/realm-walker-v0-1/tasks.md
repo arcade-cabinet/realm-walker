@@ -54,12 +54,12 @@ This implementation plan focuses on stabilizing the existing RealmWalker archite
   - Add support for both API and mock generation modes
   - _Requirements: 2.2, 2.6_
 
-- [ ] 4.1 Resolve missing Fabric.js dependency
+- [x] 4.1 Resolve missing Fabric.js dependency
   - Investigate the missing ../src/Fabric.js file
   - Either implement the missing file or remove the dependency
   - _Requirements: 1.4_
 
-- [ ] 4.2 Enhance Gemini API error handling
+- [x] 4.2 Enhance Gemini API error handling
   - Implement exponential backoff for rate limiting
   - Add graceful fallback to mock data when API fails
   - _Requirements: 2.2_
