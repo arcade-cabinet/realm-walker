@@ -29,4 +29,39 @@ describe('Determinism', () => {
 
         expect(entityA.id).not.toBe(entityB.id);
     });
+
+    // Property 1: Deterministic Entity Creation
+    // **Validates: Requirements 1.3**
+    it('property: deterministic entity creation across multiple worlds', () => {
+        // Property-based test: For any seed and entity count, 
+        // creating entities in the same order should produce identical IDs
+        const seeds = ["test-seed-1", "realm-alpha", "dungeon-beta", "forest-gamma"];
+        const entityCounts = [1, 5, 10, 20];
+
+        for (const seed of seeds) {
+            for (const count of entityCounts) {
+                const worldA = new World(seed);
+                const worldB = new World(seed);
+                
+                const entitiesA = [];
+                const entitiesB = [];
+                
+                // Create entities in both worlds
+                for (let i = 0; i < count; i++) {
+                    entitiesA.push(worldA.create({ index: i }));
+                    entitiesB.push(worldB.create({ index: i }));
+                }
+                
+                // Verify all IDs match
+                for (let i = 0; i < count; i++) {
+                    expect(entitiesA[i].id).toBe(entitiesB[i].id);
+                }
+                
+                // Verify IDs are unique within each world
+                const idsA = entitiesA.map(e => e.id);
+                const uniqueIdsA = new Set(idsA);
+                expect(uniqueIdsA.size).toBe(count);
+            }
+        }
+    });
 });

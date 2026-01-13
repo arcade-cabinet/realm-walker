@@ -12,11 +12,11 @@ This implementation plan focuses on stabilizing the existing RealmWalker archite
   - Ensure all imports and dependencies are properly resolved
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
-- [ ] 1.1 Write property test for deterministic entity creation
+- [x] 1.1 Write property test for deterministic entity creation
   - **Property 1: Deterministic Entity Creation**
   - **Validates: Requirements 1.3**
 
-- [ ] 1.2 Write property test for schema validation completeness
+- [x] 1.2 Write property test for schema validation completeness
   - **Property 2: Schema Validation Completeness**
   - **Validates: Requirements 1.2, 2.3, 6.4**
 
