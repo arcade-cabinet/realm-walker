@@ -12,12 +12,12 @@ RealmWalker v0.1 is the initial release of an engine-first procedural RPG built 
 - **Shuttle**: A dependency-aware orchestration wrapper for Loom execution
 - **Tapestry**: The unified framework managing all Loom operations and dependencies
 - **ECS**: Entity Component System runtime powered by Miniplex
-- **Headless_Simulation**: Text-only game execution without graphics for verification
+- **Headless Simulation**: Text-only game execution without graphics for verification
 - **Realm**: A complete procedurally generated game world with all associated content
 - **Diorama**: Visual representation layer that maps ECS state to graphics
-- **AI_Agent**: Yuka-powered decision-making entity that controls game characters
-- **World_Graph**: Geographic narrative structure defining locations and connections
-- **Deterministic_Loop**: Game loop that produces identical results given the same inputs
+- **AI Agent**: Yuka-powered decision-making entity that controls game characters
+- **World Graph**: Geographic narrative structure defining locations and connections
+- **Deterministic Loop**: Game loop that produces identical results given the same inputs
 
 ## Requirements
 
