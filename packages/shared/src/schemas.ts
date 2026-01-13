@@ -152,7 +152,7 @@ export const RpgBestiarySchema = z.object({
     spriteId: z.string(),
     scale: z.number().default(1),
     tint: z.string().optional()
-  })
+  }).default({ spriteId: "monster_base", scale: 1 })
 });
 
 export type RpgClass = z.infer<typeof RpgClassSchema>;

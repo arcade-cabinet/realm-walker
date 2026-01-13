@@ -1,4 +1,3 @@
-import { World } from './World';
 
 // Abstract input state
 export type InputState = {
@@ -18,7 +17,7 @@ export class InputSystem {
         actions: new Set(),
     };
 
-    constructor(private world: World) { }
+    constructor() { }
 
     // Update the input component on controlled entities
     update() {

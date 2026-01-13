@@ -1,4 +1,4 @@
-# The Weaver's Guide (`packages/genai`)
+# The Weaver's Guide (`packages/looms`)
 
 This document describes how the AI "Weaver" generates the soul of the realm.
 

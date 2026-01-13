@@ -1,11 +1,11 @@
-import { generatePlaceholderTexture } from '../utils/SpriteGenerator';
 import { Environment, OrthographicCamera } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Entity } from '@realm-walker/core';
 import React, { useRef } from 'react';
+import * as THREE from 'three';
 import { useEntities } from '../ecs'; // We need to ensure ecs.ts exposes this
+import { generatePlaceholderTexture } from '../utils/SpriteGenerator';
 
-const EntityView: React.FC<{ entity: Entity }> = ({ entity }) => {
+const EntityView: React.FC<{ entity: any }> = ({ entity }) => {
     const meshRef = useRef<THREE.Mesh>(null);
 
     useFrame(() => {
@@ -30,7 +30,7 @@ const EntityView: React.FC<{ entity: Entity }> = ({ entity }) => {
 
 export const DioramaRenderer: React.FC = () => {
     // Query entities that have a position component
-    const entities = useEntities(e => !!e.position);
+    const entities = useEntities((e: any) => !!e.position);
 
     return (
         <div style={{ width: '100%', height: '100vh', background: '#111' }}>
@@ -39,7 +39,7 @@ export const DioramaRenderer: React.FC = () => {
                 <ambientLight intensity={0.5} />
                 <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
                 <group rotation={[-Math.PI / 4, Math.PI / 4, 0]}> {/* Isometric Angle */}
-                    {entities.map(e => (
+                    {entities.map((e: any) => (
                         <EntityView key={e.id} entity={e} />
                     ))}
                     {/* Ground Plane */}

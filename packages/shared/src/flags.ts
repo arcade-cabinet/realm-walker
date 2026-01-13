@@ -1,6 +1,6 @@
 export const FeatureFlags = {
     // Logic Flags
-    USE_GENAI_DRIVER: process.env.USE_GENAI_DRIVER === 'true',
+    USE_AI_DRIVER: process.env.USE_AI_DRIVER === 'true',
     ENABLE_DEBUG_LOGGING: process.env.ENABLE_DEBUG_LOGGING === 'true',
 
     // Visual Flags (The "Cart")

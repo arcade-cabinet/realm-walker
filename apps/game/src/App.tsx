@@ -17,7 +17,7 @@ function App() {
       {gameState === 'menu' ? (
         <MainMenu onStart={handleStartGame} />
       ) : (
-        <GameView realm={realmData} />
+        realmData && <GameView realm={realmData} />
       )}
     </div>
   );

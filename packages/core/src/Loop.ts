@@ -1,5 +1,4 @@
 import { TIME_CONSTANTS } from '@realm-walker/shared';
-import { World } from './World';
 
 type System = (dt: number) => void;
 
@@ -10,7 +9,7 @@ export class Loop {
     private readonly dt = TIME_CONSTANTS.FIXED_DT;
     private systems: System[] = [];
 
-    constructor(private world: World) { }
+    constructor() { }
 
     addSystem(system: System) {
         this.systems.push(system);

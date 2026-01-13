@@ -61,7 +61,7 @@ export const WorldLoomDef: LoomDefinition<LoomSettings, RpgLoom, RealmContext> =
     name: "WorldLoom",
     tags: ['core', 'world'],
     produces: ['world'],
-    schema: RpgLoomSchema,
+    schema: RpgLoomSchema as z.ZodType<any>,
     model: GeminiModel.GEMINI_2_0_FLASH, // Pinned to v2 for stability
     pattern: (settings) => {
         const { worldScale, minNodes, dangerLevel, magicLevel, technologyLevel } = settings.controls;
@@ -93,7 +93,7 @@ export const FactionLoomDef: LoomDefinition<LoomSettings, RpgFaction[], RealmCon
     tags: ['social', 'world'],
     consumes: ['world'],
     produces: ['factions'],
-    schema: z.array(FactionSchema),
+    schema: z.array(FactionSchema) as z.ZodType<any>,
     model: GeminiModel.GEMINI_2_0_FLASH,
     pattern: (settings, tapestry) => {
         const world = tapestry.get('world');
@@ -134,7 +134,7 @@ export const ItemLoomDef: LoomDefinition<LoomSettings, RpgItem[], RealmContext> 
     tags: ['loot', 'economy'],
     consumes: ['world', 'factions'],
     produces: ['items'],
-    schema: z.array(RpgItemSchema),
+    schema: z.array(RpgItemSchema) as z.ZodType<any>,
     model: GeminiModel.GEMINI_2_0_FLASH,
     pattern: (settings, tapestry) => {
         const world = tapestry.get('world');
@@ -170,7 +170,7 @@ export const BestiaryLoomDef: LoomDefinition<LoomSettings, RpgBestiary[], RealmC
     tags: ['world', 'monsters'],
     consumes: ['world'],
     produces: ['bestiary'],
-    schema: z.array(RpgBestiarySchema),
+    schema: z.array(RpgBestiarySchema) as z.ZodType<any>,
     model: GeminiModel.GEMINI_2_0_FLASH,
     pattern: (settings, tapestry) => {
         const world = tapestry.get('world');
@@ -200,7 +200,7 @@ export const HeroLoomDef: LoomDefinition<LoomSettings, RpgHero, RealmContext> = 
     tags: ['character', 'protagonist'],
     consumes: ['world', 'factions'],
     produces: ['hero'],
-    schema: RpgHeroSchema,
+    schema: RpgHeroSchema as z.ZodType<any>,
     model: GeminiModel.GEMINI_2_0_FLASH,
     pattern: (settings, tapestry) => {
         const world = tapestry.get('world');
@@ -224,7 +224,7 @@ export const HeroLoomDef: LoomDefinition<LoomSettings, RpgHero, RealmContext> = 
         Output strictly valid JSON for a Single Hero.
         `;
     },
-    verify: (output, input, tapestry) => {
+    verify: (output, _input, tapestry) => {
         const world = tapestry.get('world');
         if (world) {
             const nodeIds = new Set(world.nodes.map(n => n.id));
@@ -240,7 +240,7 @@ export const QuestLoomDef: LoomDefinition<LoomSettings, RpgQuest[], RealmContext
     tags: ['scenarios', 'gameplay'],
     consumes: ['world', 'factions', 'bestiary', 'items', 'hero'],
     produces: ['quests'],
-    schema: z.array(RpgQuestSchema),
+    schema: z.array(RpgQuestSchema) as z.ZodType<any>,
     model: GeminiModel.GEMINI_2_0_FLASH,
     pattern: (settings, tapestry) => {
         // We need all context here
@@ -277,7 +277,7 @@ export const HistoryLoomDef: LoomDefinition<LoomSettings, RpgHistoryEvent[], Rea
     name: "HistoryLoom",
     tags: ['lore', 'background'],
     produces: ['history'],
-    schema: z.array(RpgHistoryEventSchema),
+    schema: z.array(RpgHistoryEventSchema) as z.ZodType<any>,
     model: GeminiModel.GEMINI_2_0_FLASH,
     pattern: (settings) => {
         return `
@@ -303,7 +303,7 @@ export const PantheonLoomDef: LoomDefinition<LoomSettings, RpgGod[], RealmContex
     tags: ['religion', 'lore'],
     consumes: ['history'],
     produces: ['pantheon'],
-    schema: z.array(RpgGodSchema),
+    schema: z.array(RpgGodSchema) as z.ZodType<any>,
     model: GeminiModel.GEMINI_2_0_FLASH,
     pattern: (settings, tapestry) => {
         const history = tapestry.get('history');
@@ -332,7 +332,7 @@ export const DungeonLoomDef: LoomDefinition<LoomSettings, RpgDungeon[], RealmCon
     tags: ['gameplay', 'level-design'],
     consumes: ['world', 'bestiary', 'items'],
     produces: ['dungeons'],
-    schema: z.array(RpgDungeonSchema),
+    schema: z.array(RpgDungeonSchema) as z.ZodType<any>,
     model: GeminiModel.GEMINI_2_0_FLASH,
     pattern: (settings, tapestry) => {
         const world = tapestry.get('world');
@@ -374,7 +374,7 @@ export const ShopLoomDef: LoomDefinition<LoomSettings, RpgShop[], RealmContext> 
     tags: ['economy', 'gameplay'],
     consumes: ['world', 'items'],
     produces: ['shops'],
-    schema: z.array(RpgShopSchema),
+    schema: z.array(RpgShopSchema) as z.ZodType<any>,
     model: GeminiModel.GEMINI_2_0_FLASH,
     pattern: (settings, tapestry) => {
         const world = tapestry.get('world');
@@ -412,7 +412,7 @@ export const TalentLoomDef: LoomDefinition<LoomSettings, RpgTalent[], RealmConte
     tags: ['gameplay', 'mechanics'],
     consumes: ['hero'], // Could look at class
     produces: ['talents'],
-    schema: z.array(RpgTalentSchema),
+    schema: z.array(RpgTalentSchema) as z.ZodType<any>,
     model: GeminiModel.GEMINI_2_0_FLASH,
     pattern: (settings) => {
         return `
@@ -439,7 +439,7 @@ export const NpcLoomDef: LoomDefinition<LoomSettings, RpgNpc[], RealmContext> = 
     tags: ['characters', 'world'],
     consumes: ['world', 'factions', 'dungeons'],
     produces: ['npcs'],
-    schema: z.array(RpgNpcSchema),
+    schema: z.array(RpgNpcSchema) as z.ZodType<any>,
     model: GeminiModel.GEMINI_2_0_FLASH,
     pattern: (settings, tapestry) => {
         const dungeons = tapestry.get('dungeons');
@@ -475,7 +475,7 @@ export const ClassLoomDef: LoomDefinition<LoomSettings, RpgClass[], RealmContext
     name: "ClassLoom",
     tags: ['mechanics', 'core'],
     produces: ['classes'],
-    schema: z.array(RpgClassSchema),
+    schema: z.array(RpgClassSchema) as z.ZodType<any>,
     model: GeminiModel.GEMINI_2_0_FLASH,
     pattern: (settings) => {
         return `
@@ -502,7 +502,7 @@ export const AbilityLoomDef: LoomDefinition<LoomSettings, RpgAbility[], RealmCon
     tags: ['combat', 'mechanics'],
     consumes: ['classes'],
     produces: ['abilities'],
-    schema: z.array(RpgAbilitySchema),
+    schema: z.array(RpgAbilitySchema) as z.ZodType<any>,
     model: GeminiModel.GEMINI_2_0_FLASH,
     pattern: (settings, tapestry) => {
         const classes = tapestry.get('classes');
@@ -531,7 +531,7 @@ export const DialogueLoomDef: LoomDefinition<LoomSettings, RpgDialogue[], RealmC
     tags: ['narrative', 'flavor'],
     consumes: ['npcs', 'world'],
     produces: ['dialogue'],
-    schema: z.array(RpgDialogueSchema),
+    schema: z.array(RpgDialogueSchema) as z.ZodType<any>,
     model: GeminiModel.GEMINI_2_0_FLASH,
     pattern: (settings, tapestry) => {
         const npcs = tapestry.get('npcs');

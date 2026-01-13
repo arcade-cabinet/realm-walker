@@ -1,5 +1,14 @@
 #!/usr/bin/env tsx
 console.log("DEBUG: CLI Script Starting...");
+import {
+  BestiaryLoomDef,
+  ClassLoomDef,
+  ItemLoomDef,
+  RealmContext,
+  Shuttle,
+  Tapestry,
+  WorldLoomDef
+} from '@realm-walker/looms';
 import { Command } from 'commander';
 import * as dotenv from 'dotenv';
 import * as fs from 'node:fs';
@@ -65,8 +74,6 @@ program
     }
 
     // 1. Configure the Warp (Settings)
-    // Dynamic import to avoid earlier circular dep issues if any
-    const { WorldLoom, CharacterLoom, BestiaryLoom, ItemLoom } = await import('@realm-walker/genai');
 
     const settings = {
       seed: options.seed,
@@ -84,21 +91,17 @@ program
 
     try {
       // 2. The Shuttle (Orchestration)
-      const worldLoom = new WorldLoom(apiKey);
-      console.log('🌍 Spinning World...');
-      const loom = await worldLoom.weave(settings);
+      const tapestry = new Tapestry<RealmContext>({ settings });
+      const shuttle = new Shuttle<RealmContext>(apiKey, tapestry);
 
-      const charLoom = new CharacterLoom(apiKey);
-      console.log('👤 Spinning Characters...');
-      const classes = await charLoom.weave(settings, loom);
+      // Register Jobs (Dependencies handled by order of addition here)
+      shuttle.addJob(WorldLoomDef);
+      shuttle.addJob(ClassLoomDef);
+      shuttle.addJob(BestiaryLoomDef);
+      shuttle.addJob(ItemLoomDef);
 
-      const bestiaryLoom = new BestiaryLoom(apiKey);
-      console.log('⚔️ Spinning Bestiary...');
-      const bestiary = await bestiaryLoom.weave(settings, loom);
-
-      const itemLoom = new ItemLoom(apiKey);
-      console.log('🛡️ Spinning Items...');
-      const items = await itemLoom.weave(settings, { world: loom, classes });
+      console.log(`🚀 Launching Shuttle...`);
+      const context = await shuttle.launch();
 
       // 3. Assemble
       const realm = {
@@ -110,10 +113,10 @@ program
           seed: options.seed,
           settings
         },
-        loom,
-        classes,
-        bestiary,
-        items
+        loom: context.world,
+        classes: context.classes,
+        bestiary: context.bestiary,
+        items: context.items
       };
 
       // 4. Save
@@ -175,7 +178,7 @@ program
       createEntity({
         position: { x: 0, y: 0, z: 0 },
         velocity: { x: 0, y: 0, z: 0 },
-        brain: new Agent(),
+        brain: { agent: new Agent() },
         visuals: {
           spriteId: cls.visuals?.spriteId || 'default_sprite',
           scale: cls.visuals?.scale || 1,
@@ -186,32 +189,33 @@ program
       console.warn('⚠️ No classes found in realm data, spawning generic agent.');
       createEntity({
         position: { x: 0, y: 0, z: 0 },
-        brain: new Agent()
+        brain: { agent: new Agent() }
       });
     }
 
     // 5. Run Loop
-    const loop = new Loop(60);
-    loop.addSystem(new InputSystem(world));
-    loop.addSystem(new AISystem(world));
+    const loop = new Loop();
+    const inputSystem = new InputSystem();
+    const aiSystem = new AISystem(world);
+    loop.addSystem(() => inputSystem.update());
+    loop.addSystem((dt) => aiSystem.update(dt));
 
     let ticks = 0;
     const maxTicks = 5;
 
     console.log(`Simulation: Running for ${maxTicks} ticks...`);
 
-    loop.start((dt) => {
+    loop.addSystem((_dt) => {
       ticks++;
       // Log first entity position and visual state
       const entities = world.with('position', 'visuals');
-      if (entities.size > 0) {
-        const e = entities.first;
-        if (e) {
-          console.log(`[Tick ${ticks}] Pos: ${JSON.stringify(e.position)} | Sprite: ${e.visuals.spriteId}`);
-        }
+      if (entities.size > 0 && ticks % 1 === 0) {
+        const [first] = entities;
+        console.log(`Tick ${ticks}: Entity ${first.id} at ${JSON.stringify(first.position)}`);
       }
 
       if (ticks >= maxTicks) {
+        console.log("Simulation: Complete.");
         loop.stop();
         process.exit(0);
       }

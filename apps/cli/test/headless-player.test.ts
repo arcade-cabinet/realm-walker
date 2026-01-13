@@ -3,13 +3,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { ActionHandler, GameStateSerializer, createEntity, world } from '../../../packages/core/src/index';
-import { GenAIWrapper, PlayerDriver } from '../../../packages/genai/src/index';
+import { PlayerDriver } from '../../../packages/looms/src/index';
 import { SchemaLoader, db } from '../../../packages/mechanics/src/index';
 
 // Load root .env
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-describe('GenAI End-to-End Playthrough', () => {
+describe('Looms End-to-End Playthrough', () => {
     let driver: any;
     let serializer: GameStateSerializer;
     let handler: ActionHandler;
@@ -19,9 +19,8 @@ describe('GenAI End-to-End Playthrough', () => {
         // 1. Setup Driver
         const apiKey = process.env.GEMINI_API_KEY;
         if (apiKey) {
-            console.log("🔑 API Key found. Using Gemini 1.5 Flash.");
-            const wrapper = new GenAIWrapper(apiKey, 'gemini-1.5-flash');
-            driver = new PlayerDriver(wrapper);
+            console.log("🔑 API Key found. Using PlayerDriver from looms.");
+            driver = new PlayerDriver(apiKey);
         } else {
             console.warn('⚠️ GEMINI_API_KEY missing. Using MOCK Driver.');
             driver = {
@@ -105,5 +104,5 @@ describe('GenAI End-to-End Playthrough', () => {
                 expect(hero?.equipment?.['main_hand']).toBe('item_rusty_sword');
             }
         }
-    }, 30000); // 30s timeout for GenAI
+    }, 30000); // 30s timeout for AI
 });

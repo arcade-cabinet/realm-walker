@@ -3,7 +3,7 @@
 This document defines the roles of the various "Intelligences" within the RealmWalker architecture.
 
 ## 1. The Weaver ("God")
-*   **Location**: `packages/genai`
+*   **Location**: `packages/looms`
 *   **Model**: Gemini Pro 1.5
 *   **Role**: Creates the Universe.
 *   **Input**: Seed Phrase (e.g., "Crystal Sky Sanctuary").
@@ -11,8 +11,8 @@ This document defines the roles of the various "Intelligences" within the RealmW
 *   **Frequency**: Once per "Run" (or generating Fixtures).
 
 ## 2. The Driver ("Player")
-*   **Location**: `packages/genai` (Test Harness)
-*   **Model**: Gemini Flash 1.5 (High speed, lower cost)
+*   **Location**: `packages/looms`
+*   **Model**: Gemini 2.0 Flash (Automated via `PlayerDriver`)
 *   **Role**: **Plays the Game** during testing.
 *   **Input**: serialized `GameStateView` (JSON).
     *   "You are standing at (12, 12). Health: 100/100. You see: [ Rusty Sword ]."

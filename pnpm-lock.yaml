@@ -11,6 +11,9 @@ importers:
       '@biomejs/biome':
         specifier: ^2.3.11
         version: 2.3.11
+      '@types/node':
+        specifier: ^25.0.6
+        version: 25.0.6
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(postcss@8.5.6)(tsx@4.21.0)(typescript@5.9.3)
@@ -26,15 +29,18 @@ importers:
 
   apps/cli:
     dependencies:
-      '@google/generative-ai':
-        specifier: ^0.1.3
-        version: 0.1.3
+      '@realm-walker/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@realm-walker/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@realm-walker/genai':
+      '@realm-walker/looms':
         specifier: workspace:*
-        version: link:../../packages/genai
+        version: link:../../packages/looms
+      '@realm-walker/mechanics':
+        specifier: workspace:*
+        version: link:../../packages/mechanics
       '@realm-walker/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -60,9 +66,9 @@ importers:
       '@realm-walker/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@realm-walker/genai':
+      '@realm-walker/looms':
         specifier: workspace:*
-        version: link:../../packages/genai
+        version: link:../../packages/looms
       '@realm-walker/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -121,6 +127,10 @@ importers:
       yuka:
         specifier: ^0.7.4
         version: 0.7.8
+    devDependencies:
+      '@types/yuka':
+        specifier: ^0.7.4
+        version: 0.7.4
 
   packages/core:
     dependencies:
@@ -149,31 +159,6 @@ importers:
       vitest:
         specifier: ^1.2.2
         version: 1.6.1(@types/node@25.0.6)(sass@1.97.2)(terser@5.44.1)
-
-  packages/genai:
-    dependencies:
-      '@google/generative-ai':
-        specifier: ^0.24.1
-        version: 0.24.1
-      '@realm-walker/shared':
-        specifier: workspace:*
-        version: link:../shared
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.6.1
-      zod:
-        specifier: ^3.23.8
-        version: 3.25.76
-    devDependencies:
-      '@types/node':
-        specifier: ^20.14.2
-        version: 20.19.28
-      tsup:
-        specifier: ^8.1.0
-        version: 8.5.1(postcss@8.5.6)(tsx@4.21.0)(typescript@5.9.3)
-      typescript:
-        specifier: ^5.4.5
-        version: 5.9.3
 
   packages/looms:
     dependencies:
@@ -829,14 +814,6 @@ packages:
       '@modelcontextprotocol/sdk':
         optional: true
 
-  '@google/generative-ai@0.1.3':
-    resolution: {integrity: sha512-Cm4uJX1sKarpm1mje/MiOIinM7zdUUrQp/5/qGPAgznbdd/B9zup5ehT6c1qGqycFcSopTA1J1HpqHS5kJR8hQ==}
-    engines: {node: '>=18.0.0'}
-
-  '@google/generative-ai@0.24.1':
-    resolution: {integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==}
-    engines: {node: '>=18.0.0'}
-
   '@hmans/id@0.0.1':
     resolution: {integrity: sha512-2BxHxZziST8F0P5Dt+UuttF2lwCaKK7QFR814PwEp708l6dm86pjWJAFr7BKyAGu27mRpYcghvCAUAucNdsCdw==}
 
@@ -1170,9 +1147,6 @@ packages:
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
-  '@types/node@20.19.28':
-    resolution: {integrity: sha512-VyKBr25BuFDzBFCK5sUM6ZXiWfqgCTwTAOK8qzGV/m9FCirXYDlmczJ+d5dXBAQALGCdRRdbteKYfJ84NGEusw==}
-
   '@types/node@25.0.6':
     resolution: {integrity: sha512-NNu0sjyNxpoiW3YuVFfNz7mxSQ+S4X2G28uqg2s+CzoqoQjLPsWSbsFFyztIAqt2vb8kfEAsJNepMGPTxFDx3Q==}
 
@@ -1203,6 +1177,9 @@ packages:
 
   '@types/webxr@0.5.24':
     resolution: {integrity: sha512-h8fgEd/DpoS9CBrjEQXR+dIDraopAEfu4wYVNY2tEPwk60stPWhvZMf4Foo5FakuQ7HFZoa8WceaWFervK2Ovg==}
+
+  '@types/yuka@0.7.4':
+    resolution: {integrity: sha512-nyfp47Re8wtzG0DdBPQ6PepXOU0CiMpPVWZ21y1mRImbnz53ADdHUbDY2GRNbIdsl7qlV3XWS+gVpj3zoIIPXA==}
 
   '@use-gesture/core@10.3.1':
     resolution: {integrity: sha512-WcINiDt8WjqBdUXye25anHiNxPc0VOrlT8F6LLkU6cycrOGUDyY/yyFmsg3k8i5OLvv25llc0QC45GhR/C8llw==}
@@ -2086,9 +2063,6 @@ packages:
   ufo@1.6.2:
     resolution: {integrity: sha512-heMioaxBcG9+Znsda5Q8sQbWnLJSl98AFDXTO80wELWEzX3hordXsTdxrIfMQoO9IY1MEnoGoPjpoKpMj+Yx0Q==}
 
-  undici-types@6.21.0:
-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
-
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
 
@@ -2694,10 +2668,6 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@google/generative-ai@0.1.3': {}
-
-  '@google/generative-ai@0.24.1': {}
-
   '@hmans/id@0.0.1': {}
 
   '@hmans/queue@0.0.1': {}
@@ -2987,10 +2957,6 @@ snapshots:
 
   '@types/estree@1.0.8': {}
 
-  '@types/node@20.19.28':
-    dependencies:
-      undici-types: 6.21.0
-
   '@types/node@25.0.6':
     dependencies:
       undici-types: 7.16.0
@@ -3024,6 +2990,8 @@ snapshots:
       meshoptimizer: 0.22.0
 
   '@types/webxr@0.5.24': {}
+
+  '@types/yuka@0.7.4': {}
 
   '@use-gesture/core@10.3.1': {}
 
@@ -3949,8 +3917,6 @@ snapshots:
   typescript@5.9.3: {}
 
   ufo@1.6.2: {}
-
-  undici-types@6.21.0: {}
 
   undici-types@7.16.0: {}
 

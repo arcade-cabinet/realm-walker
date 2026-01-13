@@ -30,8 +30,8 @@ export class AISystem {
         // Sync Yuka transforms back to ECS components if needed (e.g. for creating a 'transform' component for rendering)
         // This depends on whether Yuka or ECS is the source of truth for position. 
         // In this architecture, Yuka drives the position of agents.
-        for (const entity of this.world.with('brain', 'position')) {
-            const agent = entity.brain.agent;
+        for (const _entity of this.world.with('brain', 'position')) {
+            // const agent = entity.brain.agent;
             // We assume the entity has a position component that matches the core structure
             // entity.position.copy(agent.position); 
             // For now, we leave this sync logic up to specific implementations or a separate SyncSystem

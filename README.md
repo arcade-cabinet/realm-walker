@@ -1,14 +1,16 @@
-# RealmWalker 🌍
+# 🌍 RealmWalker
 
-> "A Loom for Worlds"
+> [!IMPORTANT]
+> **HANDOVER IN PROGRESS**: If you are the next agent, please read the [COMPREHENSIVE MISSION HANDOFF](file:///Users/jbogaty/src/arcade-cabinet/realm-walker/HANDOFF.md) immediately. Every scrap of context and unmerged history is documented there.
 
-RealmWalker is an engine-first procedural RPG where every realm is woven from a seed phrase. It emphasizes **Structure** (RPG-JS), **Logic** (Yuka/Miniplex), and **Soul** (GenAI).
+## 🚀 The Mission
+RealmWalker is an engine-first procedural RPG built on the principle of **Empirical Verification**. Every realm is woven from a seed phrase. It emphasizes **Structure** (RPG-JS), **Logic** (Yuka/Miniplex), and **Soul** (Looms).
 
 ## 🏗 Architecture (The Loom)
 - **`packages/core`**: The ECS Runtime (Miniplex).
 - **`packages/ai`**: The Decision Engine (Yuka).
 - **`packages/mechanics`**: The Rulebook & Registry (RPG-JS).
-- **`packages/genai`**: The Weaver (Gemini).
+- **`packages/looms`**: The Loom & Weaver (Gemini).
 
 ## 🚀 Getting Started
 

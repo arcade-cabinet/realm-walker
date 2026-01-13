@@ -1,4 +1,4 @@
-import { GenAIWrapper } from '@realm-walker/genai';
+import { GeminiAdapter } from '@realm-walker/looms';
 import { Realm, RealmSchema } from '@realm-walker/shared';
 import type React from 'react';
 import { useState } from 'react';
@@ -23,14 +23,14 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onStart }) => {
         setStatus('Consulting the Archives...');
 
         try {
-            const wrapper = new GenAIWrapper(apiKey);
+            const adapter = new GeminiAdapter(apiKey);
             const prompt = `
         Generate complete game content for the "ancient" age of RealmWalker.
         Theme: ${seed.replace(/-/g, ' ')}
         Requirements: High fantasy, balanced gameplay, otter civilizations.
       `;
 
-            const realm = await wrapper.generateStructuredContent(prompt, RealmSchema);
+            const realm = await adapter.generate<Realm>(prompt, { schema: RealmSchema as any });
             onStart(realm);
         } catch (error) {
             console.error(error);
