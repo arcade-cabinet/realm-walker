@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RealmWalker: Infinite Worlds</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=MedievalSharp&family=Lato:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* VISUAL IDENTITY: "RealmWalker" - High Fantasy, Clean, Readable */
+        :root {
+            --bg-color: #f3e5ab;
+            /* Parchment */
+            --panel-bg: #fdf6e3;
+            --text-main: #2c1a0b;
+            --text-accent: #8b4513;
+            --primary: #d35400;
+            /* Burnt Orange */
+            --secondary: #27ae60;
+            /* Emerald */
+            --ui-border: #5d4037;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #1a1a1a;
+            color: var(--text-main);
+            font-family: 'Lato', sans-serif;
+            touch-action: none;
+            user-select: none;
+        }
+
+        h1,
+        h2,
+        h3,
+        .fantasy-font {
+            font-family: 'MedievalSharp', cursive;
+        }
+
+        .title-font {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* UI LAYOUT */
+        #game-ui {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        .panel {
+            pointer-events: auto;
+            background: var(--panel-bg);
+            border: 3px double var(--ui-border);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* START SCREEN */
+        #start-screen-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            z-index: 50;
+            background: radial-gradient(circle, #2c1a0b 0%, #000000 100%);
+        }
+
+        #start-screen {
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            background: url('https://www.transparenttextures.com/patterns/aged-paper.png'), var(--bg-color);
+        }
+
+        /* INPUTS & BUTTONS */
+        input {
+            background: #fff;
+            border: 1px solid var(--ui-border);
+            color: #000;
+            padding: 10px;
+            font-family: 'Lato', sans-serif;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .btn {
+            background: linear-gradient(to bottom, #d35400, #a04000);
+            color: white;
+            border: 2px solid #5d4037;
+            padding: 15px 30px;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.2s;
+            font-size: 18px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 0 #5d4037;
+            width: 100%;
+            border-radius: 6px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #5d4037;
+            filter: brightness(1.1);
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0;
+        }
+
+        .btn:disabled {
+            background: #7f8c8d;
+            border-color: #555;
+            cursor: wait;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* HUD */
+        #hud {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 15px;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        #top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(44, 26, 11, 0.9);
+            border-bottom: 2px solid #d35400;
+            padding: 10px 20px;
+            color: #f3e5ab;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: auto;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #log-box {
+            height: 120px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.4;
+            display: flex;
+            flex-direction: column-reverse;
+            pointer-events: auto;
+            opacity: 0.95;
+            background: rgba(253, 246, 227, 0.9);
+            border: 2px solid var(--ui-border);
+            color: #333;
+        }
+
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .log-entry.important {
+            color: #d35400;
+            font-weight: bold;
+        }
+
+        /* CONTROLS */
+        #controls-area {
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            pointer-events: none;
+            width: 100%;
+        }
+
+        .d-pad {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            pointer-events: auto;
+        }
+
+        .d-btn {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            touch-action: manipulation;
+            font-size: 24px;
+            color: white;
+            backdrop-filter: blur(4px);
+        }
+
+        .d-btn:active {
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(0.95);
+        }
+
+        .d-up {
+            top: 0;
+            left: 55px;
+        }
+
+        .d-down {
+            bottom: 0;
+            left: 55px;
+        }
+
+        .d-left {
+            top: 55px;
+            left: 0;
+        }
+
+        .d-right {
+            top: 55px;
+            right: 0;
+        }
+
+        /* MODALS (Combat, Loot) */
+        .modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 450px;
+            z-index: 100;
+        }
+
+        #combat-panel {
+            background: #fff0f0;
+            border-color: #c0392b;
+            text-align: center;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .hp-bar-bg {
+            width: 100%;
+            height: 15px;
+            background: #ddd;
+            border: 1px solid #999;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .hp-fill {
+            height: 100%;
+            background: #27ae60;
+            transition: width 0.3s ease;
+        }
+
+        .hp-fill.enemy {
+            background: #c0392b;
+        }
+
+        .combat-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-combat {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        #loot-panel {
+            background: #fef9e7;
+            border-color: #f1c40f;
+            text-align: center;
+        }
+
+        .loot-name {
+            color: #d35400;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .loot-desc {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (min-width: 768px) {
+            #hud {
+                flex-direction: row;
+                align-items: flex-end;
+                height: auto;
+            }
+
+            #log-box {
+                width: 400px;
+                height: 150px;
+            }
+
+            .d-pad {
+                margin-right: 30px;
+                margin-bottom: 30px;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #d35400;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="canvas-container"></div>
+
+    <!-- UI LAYER -->
+    <div id="game-ui">
+
+        <!-- Top Bar -->
+        <div id="top-bar" class="hidden">
+            <div>
+                <span class="title-font text-lg text-orange-400">RealmWalker</span>
+                <span id="zone-name" class="ml-4 text-sm text-gray-300 font-serif italic">Loading...</span>
+            </div>
+            <div class="text-right">
+                <div class="text-xs text-gray-400">ZONE</div>
+                <div id="zone-level" class="text-xl font-bold">1</div>
+            </div>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="start-screen-container">
+            <div id="start-screen" class="panel">
+                <h1 class="title-font text-4xl mb-2 text-[#d35400]">RealmWalker</h1>
+                <p class="fantasy-font text-lg text-[#5d4037] mb-6">Infinite Worlds. Pre-Rendered. Real.</p>
+
+                <div class="mb-6 text-left">
+                    <label class="block text-xs font-bold uppercase text-[#8b4513] mb-2">Gemini API Key (Required for
+                        World Gen)</label>
+                    <input type="password" id="api-key-input" placeholder="Paste your API key here..." class="w-full">
+                    <div class="text-right mt-1"><a href="https://aistudio.google.com/app/apikey" target="_blank"
+                            class="text-xs text-[#d35400] hover:underline">Get Key</a></div>
+                </div>
+
+                <div class="mb-6 text-left">
+                    <label class="block text-xs font-bold uppercase text-[#8b4513] mb-2">Initial World Seed</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="seed-input" value="Floating-Crystal-Sanctuary" class="flex-1 font-bold">
+                        <button id="btn-refresh"
+                            class="px-3 bg-[#e0e0e0] border border-[#999] rounded hover:bg-[#d0d0d0]">↻</button>
+                    </div>
+                </div>
+
+                <button id="btn-start" class="btn">Forge World</button>
+                <div id="loading-status" class="mt-4 text-sm font-bold text-[#d35400] h-6"></div>
+            </div>
+        </div>
+
+        <!-- HUD -->
+        <div id="hud" class="hidden">
+            <div id="log-box" class="panel">
+                <!-- Logs go here -->
+            </div>
+
+            <div id="controls-area">
+                <div class="d-pad">
+                    <div class="d-btn d-up" data-key="ArrowUp">▲</div>
+                    <div class="d-btn d-left" data-key="ArrowLeft">◀</div>
+                    <div class="d-btn d-right" data-key="ArrowRight">▶</div>
+                    <div class="d-btn d-down" data-key="ArrowDown">▼</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMBAT MODAL -->
+        <div id="combat-modal" class="modal hidden">
+            <div id="combat-panel" class="panel">
+                <h2 class="fantasy-font text-2xl text-[#c0392b] mb-4">Hostile Encounter</h2>
+
+                <!-- Enemy Info -->
+                <div class="mb-4 text-left bg-white p-3 rounded border border-red-200">
+                    <div class="flex justify-between items-center mb-1">
+                        <span id="enemy-name" class="font-bold text-lg">Unknown Entity</span>
+                        <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Lv <span
+                                id="enemy-lvl">1</span></span>
+                    </div>
+                    <div class="text-xs italic text-gray-600 mb-2" id="enemy-desc">Analysing...</div>
+                    <div class="text-xs font-bold text-red-600 mb-1">TACTICAL SCAN:</div>
+                    <div class="text-xs text-gray-800 bg-red-50 p-2 rounded" id="enemy-weakness">Weakness: Unknown</div>
+                </div>
+
+                <!-- Health Bars -->
+                <div class="mb-2">
+                    <div class="stat-row"><span>YOU</span> <span id="player-hp-text">100/100</span></div>
+                    <div class="hp-bar-bg">
+                        <div id="player-hp-fill" class="hp-fill"></div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="stat-row"><span>ENEMY</span> <span id="enemy-hp-text">50/50</span></div>
+                    <div class="hp-bar-bg">
+                        <div id="enemy-hp-fill" class="hp-fill enemy"></div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="combat-actions">
+                    <button id="btn-attack" class="btn btn-combat">Strike</button>
+                    <button id="btn-flee" class="btn btn-combat"
+                        style="background: #7f8c8d; border-color: #555;">Flee</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOOT MODAL -->
+        <div id="loot-modal" class="modal hidden">
+            <div id="loot-panel" class="panel">
+                <h2 class="fantasy-font text-2xl text-[#f39c12] mb-2">Victory!</h2>
+                <p class="text-sm">You found an artifact:</p>
+                <div class="loot-name fantasy-font" id="loot-name">Sword of Testing</div>
+                <div class="loot-desc" id="loot-desc">A generic sword used for debugging.</div>
+                <button id="btn-claim" class="btn btn-combat">Claim & Advance</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /* ---------------- CONSTANTS & CONFIG ---------------- */
+        const THEMES = {
+            adjectives: ['Floating', 'Crystal', 'Overgrown', 'Neon', 'Ancient', 'Clockwork', 'Frozen', 'Burning', 'Hollow', 'Gilded'],
+            nouns: ['Sanctuary', 'Ruins', 'Citadel', 'Forest', 'Wasteland', 'Factory', 'Spire', 'Nexus', 'Temple', 'Archive']
+        };
+
+        const pickRandom = arr => arr[Math.floor(Math.random() * arr.length)];
+
+        /* ---------------- AUDIO SYSTEM ---------------- */
+        class AudioEngine {
+            constructor() {
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                this.master = this.ctx.createGain();
+                this.master.gain.value = 0.3;
+                this.master.connect(this.ctx.destination);
+            }
+
+            playTone(freq, type, duration, vol = 1) {
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(this.master);
+                osc.start();
+                osc.stop(this.ctx.currentTime + duration);
+            }
+
+            sfxStep() { this.playTone(100 + Math.random() * 20, 'triangle', 0.1, 0.2); }
+            sfxUI() { this.playTone(600, 'sine', 0.1, 0.3); }
+            sfxCombatStart() {
+                this.playTone(200, 'square', 0.3);
+                setTimeout(() => this.playTone(150, 'sawtooth', 0.5), 100);
+            }
+            sfxWin() {
+                this.playTone(400, 'sine', 0.2);
+                setTimeout(() => this.playTone(500, 'sine', 0.2), 150);
+                setTimeout(() => this.playTone(800, 'sine', 0.6), 300);
+            }
+        }
+
+        /* ---------------- AI ENGINE ---------------- */
+        class AIEngine {
+            constructor(key) { this.key = key; }
+
+            async generateText(prompt) {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${this.key}`;
+                const payload = {
+                    contents: [{ parts: [{ text: prompt }] }]
+                };
+                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const data = await res.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text;
+            }
+
+            async generateImage(prompt) {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${this.key}`;
+                // Enforce the FF7 Pre-rendered style and Chroma Key in every prompt
+                const styledPrompt = `${prompt}, isometric view, pre-rendered 3D style, Final Fantasy 7 background art style, detailed diorama, soft lighting, on a solid bright green background (hex #00FF00), no shadows on background`;
+
+                const payload = {
+                    instances: [{ prompt: styledPrompt }],
+                    parameters: { sampleCount: 1 }
+                };
+                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const data = await res.json();
+                if (!data.predictions) throw new Error("Image Gen Failed");
+                return `data:image/png;base64,${data.predictions[0].bytesBase64Encoded}`;
+            }
+
+            async getWorldIntel(theme) {
+                // One mega-prompt to get all text data for the zone
+                const prompt = `
+            You are a game master. Generate JSON data for a RPG zone themed: "${theme}".
+            Strictly return ONLY raw JSON. No markdown.
+            Structure:
+            {
+                "lore": "One sentence atmospheric intro.",
+                "enemy": {
+                    "name": "Name of a standard monster",
+                    "description": "Short visual description",
+                    "weakness": "Tactical analysis of weakness (1 sentence)"
+                },
+                "boss": {
+                    "name": "Name of the zone boss",
+                    "description": "Short visual description",
+                    "weakness": "Tactical analysis of weakness"
+                },
+                "loot": {
+                    "name": "Cool fantasy artifact name",
+                    "effect": "Flavor text description of what it does"
+                }
+            }
+        `;
+                const text = await this.generateText(prompt);
+                // Clean markdown if Gemini adds it
+                const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
+                return JSON.parse(clean);
+            }
+        }
+
+        /* ---------------- GAME LOGIC ---------------- */
+        class Game {
+            constructor() {
+                this.audio = new AudioEngine();
+                this.scene = new THREE.Scene();
+                this.renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false }); // False for sharp pixels
+
+                // Game State
+                this.state = {
+                    zone: 1,
+                    seed: '',
+                    playerHp: 100,
+                    maxHp: 100,
+                    pos: { x: 1, z: 1 },
+                    gridSize: 10,
+                    inCombat: false,
+                    intel: null, // Holds the generated JSON
+                    enemies: []
+                };
+
+                this.assets = {};
+                this.ui = {
+                    log: document.getElementById('log-box'),
+                    status: document.getElementById('loading-status'),
+                    start: document.getElementById('start-screen-container'),
+                    hud: document.getElementById('hud'),
+                    top: document.getElementById('top-bar'),
+                    zoneName: document.getElementById('zone-name'),
+                    zoneLvl: document.getElementById('zone-level')
+                };
+            }
+
+            init() {
+                // Setup Three.js
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(2); // High DPI for crisper text/sprites
+                this.renderer.setClearColor(0x1a1a1a);
+                document.getElementById('canvas-container').appendChild(this.renderer.domElement);
+
+                const aspect = window.innerWidth / window.innerHeight;
+                const d = 10;
+                this.camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
+                this.camera.position.set(20, 20, 20);
+                this.camera.lookAt(0, 0, 0);
+
+                // Lights
+                const light = new THREE.DirectionalLight(0xffffff, 1.1);
+                light.position.set(10, 20, 5);
+                this.scene.add(light);
+                this.scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+
+                // Listeners
+                window.addEventListener('resize', () => {
+                    const asp = window.innerWidth / window.innerHeight;
+                    this.camera.left = -d * asp; this.camera.right = d * asp;
+                    this.camera.updateProjectionMatrix();
+                    this.renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+
+                this.animate();
+            }
+
+            /* --- WORLD GENERATION (The "Architect") --- */
+            async forgeWorld(seed, apiKey) {
+                this.ai = new AIEngine(apiKey);
+                this.state.seed = seed;
+
+                this.ui.status.innerText = "Consulting the Archives...";
+
+                try {
+                    // 1. Get Intel (Text)
+                    this.state.intel = await this.ai.getWorldIntel(seed);
+
+                    // 2. Generate Assets (Images) in Parallel
+                    this.ui.status.innerText = "Painting the Realm (Pre-rendering)...";
+
+                    const pPrompt = `Fantasy hero, ${seed} style armor, isometric character sprite`;
+                    const ePrompt = `${this.state.intel.enemy.description}, isometric monster sprite`;
+                    const bPrompt = `${this.state.intel.boss.description}, huge isometric boss monster`;
+                    const gPrompt = `Ground tile for ${seed}, isometric, seamless texture`;
+
+                    const [pImg, eImg, bImg, gImg] = await Promise.all([
+                        this.ai.generateImage(pPrompt),
+                        this.ai.generateImage(ePrompt),
+                        this.ai.generateImage(bPrompt),
+                        this.ai.generateImage(gPrompt)
+                    ]);
+
+                    // 3. Process Textures (Chroma Key)
+                    this.ui.status.innerText = "Finalizing Assets...";
+                    this.assets.player = await this.processTexture(pImg, true);
+                    this.assets.enemy = await this.processTexture(eImg, true);
+                    this.assets.boss = await this.processTexture(bImg, true);
+                    this.assets.ground = await this.processTexture(gImg, false);
+
+                    // 4. Build Scene
+                    this.buildLevel();
+
+                    // 5. Start Game Loop
+                    this.ui.start.classList.add('hidden');
+                    this.ui.hud.classList.remove('hidden');
+                    this.ui.top.classList.remove('hidden');
+
+                    // UI Update
+                    this.ui.zoneName.innerText = seed.replace(/-/g, ' ');
+                    this.ui.zoneLvl.innerText = this.state.zone;
+                    this.log(`Entered ${this.ui.zoneName.innerText}`, true);
+                    this.log(this.state.intel.lore);
+                    this.audio.sfxUI();
+
+                } catch (err) {
+                    console.error(err);
+                    this.ui.status.innerText = "Generation Failed. Check API Key.";
+                    document.getElementById('btn-start').disabled = false;
+                }
+            }
+
+            async processTexture(base64, removeGreen) {
+                return new Promise(resolve => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const cvs = document.createElement('canvas');
+                        cvs.width = 64; cvs.height = 64;
+                        const ctx = cvs.getContext('2d');
+                        ctx.drawImage(img, 0, 0, 64, 64);
+
+                        if (removeGreen) {
+                            const imgData = ctx.getImageData(0, 0, 64, 64);
+                            const d = imgData.data;
+                            for (let i = 0; i < d.length; i += 4) {
+                                const red = d[i], grn = d[i + 1], blu = d[i + 2];
+                                if (grn > red + 20 && grn > blu + 20 && grn > 80) d[i + 3] = 0; // Simple Green Screen
+                            }
+                            ctx.putImageData(imgData, 0, 0);
+                        }
+                        const tex = new THREE.CanvasTexture(cvs);
+                        tex.magFilter = THREE.NearestFilter;
+                        resolve(tex);
+                    };
+                    img.src = base64;
+                });
+            }
+
+            buildLevel() {
+                // Clear old
+                while (this.scene.children.length > 0) {
+                    this.scene.remove(this.scene.children[0]);
+                }
+                // Re-add lights
+                const light = new THREE.DirectionalLight(0xffffff, 1.1);
+                light.position.set(10, 20, 5);
+                this.scene.add(light);
+                this.scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+
+                const sz = this.state.gridSize;
+                const ts = 2; // Tile Size
+                const offset = (sz * ts) / 2;
+
+                const planeGeo = new THREE.PlaneGeometry(ts, ts);
+                const planeMat = new THREE.MeshLambertMaterial({ map: this.assets.ground });
+
+                this.state.enemies = [];
+
+                // Generate Grid
+                for (let x = 0; x < sz; x++) {
+                    for (let z = 0; z < sz; z++) {
+                        // Floor
+                        const t = new THREE.Mesh(planeGeo, planeMat);
+                        t.rotation.x = -Math.PI / 2;
+                        t.position.set(x * ts - offset, 0, z * ts - offset);
+                        this.scene.add(t);
+
+                        // Logic: Enemies
+                        if (x === sz - 1 && z === sz - 1) {
+                            // Boss
+                            this.spawnSprite(x, z, this.assets.boss, 3.5, true);
+                        } else if (x > 1 && z > 1 && Math.random() > 0.8) {
+                            // Mob
+                            this.spawnSprite(x, z, this.assets.enemy, 1.8, false);
+                        }
+                    }
+                }
+
+                // Player
+                const pMat = new THREE.SpriteMaterial({ map: this.assets.player });
+                this.player = new THREE.Sprite(pMat);
+                this.player.scale.set(2, 2, 1);
+                this.state.pos = { x: 1, z: 1 };
+                this.updatePlayerVis();
+                this.scene.add(this.player);
+            }
+
+            spawnSprite(x, z, tex, scale, isBoss) {
+                const mat = new THREE.SpriteMaterial({ map: tex });
+                const s = new THREE.Sprite(mat);
+                const ts = 2;
+                const offset = (this.state.gridSize * ts) / 2;
+
+                s.scale.set(scale, scale, 1);
+                s.position.set(x * ts - offset, scale / 2, z * ts - offset);
+                this.scene.add(s);
+
+                this.state.enemies.push({
+                    x, z, mesh: s, isBoss,
+                    hp: isBoss ? 150 * this.state.zone : 40 * this.state.zone,
+                    maxHp: isBoss ? 150 * this.state.zone : 40 * this.state.zone
+                });
+            }
+
+            /* --- GAMEPLAY --- */
+            move(dx, dz) {
+                if (this.state.inCombat) return;
+
+                const nx = this.state.pos.x + dx;
+                const nz = this.state.pos.z + dz;
+
+                if (nx < 0 || nx >= this.state.gridSize || nz < 0 || nz >= this.state.gridSize) return;
+
+                // Check Enemy
+                const enemy = this.state.enemies.find(e => e.x === nx && e.z === nz);
+                if (enemy) {
+                    this.startCombat(enemy);
+                    return;
+                }
+
+                this.state.pos.x = nx;
+                this.state.pos.z = nz;
+                this.updatePlayerVis();
+                this.audio.sfxStep();
+            }
+
+            updatePlayerVis() {
+                const ts = 2;
+                const offset = (this.state.gridSize * ts) / 2;
+                this.player.position.set(this.state.pos.x * ts - offset, 1, this.state.pos.z * ts - offset);
+                this.camera.lookAt(this.player.position);
+            }
+
+            log(msg, important = false) {
+                const d = document.createElement('div');
+                d.className = `log-entry ${important ? 'important' : ''}`;
+                d.innerText = `> ${msg}`;
+                this.ui.log.insertBefore(d, this.ui.log.firstChild);
+            }
+
+            /* --- COMBAT (Uses Pre-generated Intel) --- */
+            startCombat(enemy) {
+                this.state.inCombat = true;
+                this.currentEnemy = enemy;
+                this.audio.sfxCombatStart();
+
+                const modal = document.getElementById('combat-modal');
+                modal.classList.remove('hidden');
+
+                // Populate Modal with Intel
+                const data = enemy.isBoss ? this.state.intel.boss : this.state.intel.enemy;
+                document.getElementById('enemy-name').innerText = data.name;
+                document.getElementById('enemy-lvl').innerText = this.state.zone;
+                document.getElementById('enemy-desc').innerText = data.description;
+                document.getElementById('enemy-weakness').innerText = `Analysis: ${data.weakness}`;
+
+                this.updateCombatUI();
+            }
+
+            combatAction(type) {
+                if (type === 'flee') {
+                    this.state.inCombat = false;
+                    document.getElementById('combat-modal').classList.add('hidden');
+                    this.log("You fled the battle.");
+                    // Bounce player back
+                    this.state.pos.x = 1; this.state.pos.z = 1;
+                    this.updatePlayerVis();
+                    return;
+                }
+
+                // Attack
+                const dmg = 15 + Math.floor(Math.random() * 10);
+                this.currentEnemy.hp -= dmg;
+                this.updateCombatUI();
+
+                if (this.currentEnemy.hp <= 0) {
+                    this.winCombat();
+                } else {
+                    // Enemy turn
+                    setTimeout(() => {
+                        const dmg = 5 * this.state.zone;
+                        this.state.playerHp -= dmg;
+                        this.updateCombatUI();
+                        if (this.state.playerHp <= 0) {
+                            alert("YOUR JOURNEY ENDS HERE.");
+                            location.reload();
+                        }
+                    }, 500);
+                }
+            }
+
+            updateCombatUI() {
+                const e = this.currentEnemy;
+                const pPct = (this.state.playerHp / this.state.maxHp) * 100;
+                const ePct = (e.hp / e.maxHp) * 100;
+                document.getElementById('player-hp-fill').style.width = `${pPct}%`;
+                document.getElementById('enemy-hp-fill').style.width = `${ePct}%`;
+                document.getElementById('player-hp-text').innerText = `${this.state.playerHp}/${this.state.maxHp}`;
+                document.getElementById('enemy-hp-text').innerText = `${Math.max(0, e.hp)}/${e.maxHp}`;
+            }
+
+            winCombat() {
+                this.state.inCombat = false;
+                document.getElementById('combat-modal').classList.add('hidden');
+                this.audio.sfxWin();
+
+                // Remove sprite
+                this.scene.remove(this.currentEnemy.mesh);
+                this.state.enemies = this.state.enemies.filter(e => e !== this.currentEnemy);
+
+                if (this.currentEnemy.isBoss) {
+                    this.showLoot();
+                } else {
+                    this.log("Enemy defeated.");
+                }
+            }
+
+            /* --- HANDOFF SYSTEM (Next Zone) --- */
+            showLoot() {
+                const loot = this.state.intel.loot;
+                document.getElementById('loot-modal').classList.remove('hidden');
+                document.getElementById('loot-name').innerText = loot.name;
+                document.getElementById('loot-desc').innerText = loot.effect;
+
+                // Setup Button for next zone
+                document.getElementById('btn-claim').onclick = () => {
+                    document.getElementById('loot-modal').classList.add('hidden');
+                    this.generateNextZone();
+                };
+            }
+
+            generateNextZone() {
+                this.state.zone++;
+                this.state.playerHp = this.state.maxHp; // Heal on zone change
+
+                // Handoff: Pick a new random seed
+                const newSeed = `${pickRandom(THEMES.adjectives)}-${pickRandom(THEMES.nouns)}`;
+
+                this.ui.start.classList.remove('hidden');
+                this.ui.hud.classList.add('hidden');
+                this.ui.top.classList.add('hidden');
+                document.getElementById('seed-input').value = newSeed;
+
+                // Auto-trigger for seamless feel? Or let user rest?
+                // Let's let user click to "Travel"
+                document.getElementById('btn-start').innerText = `Travel to Zone ${this.state.zone}`;
+                this.ui.status.innerText = "Zone Cleared. Ready for transit.";
+                document.getElementById('btn-start').disabled = false;
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                this.renderer.render(this.scene, this.camera);
+            }
+        }
+
+        // BOOTSTRAP
+        const game = new Game();
+        game.init();
+
+        // UI Binds
+        document.getElementById('btn-refresh').onclick = () => {
+            document.getElementById('seed-input').value = `${pickRandom(THEMES.adjectives)}-${pickRandom(THEMES.nouns)}`;
+        };
+
+        document.getElementById('btn-start').onclick = () => {
+            const key = document.getElementById('api-key-input').value;
+            const seed = document.getElementById('seed-input').value;
+            if (!key) return alert("API Key Required");
+
+            document.getElementById('btn-start').disabled = true;
+            game.forgeWorld(seed, key);
+        };
+
+        // Controls
+        const input = (k) => {
+            if (k === 'ArrowUp' || k === 'w') game.move(0, -1);
+            if (k === 'ArrowDown' || k === 's') game.move(0, 1);
+            if (k === 'ArrowLeft' || k === 'a') game.move(-1, 0);
+            if (k === 'ArrowRight' || k === 'd') game.move(1, 0);
+        }
+        document.addEventListener('keydown', e => input(e.key));
+        document.querySelectorAll('.d-btn').forEach(b => {
+            b.addEventListener('pointerdown', (e) => { e.preventDefault(); input(b.dataset.key); });
+        });
+
+        document.getElementById('btn-attack').onclick = () => game.combatAction('attack');
+        document.getElementById('btn-flee').onclick = () => game.combatAction('flee');
+
+        // Save/Load Key
+        if (localStorage.getItem('gemini_key')) {
+            document.getElementById('api-key-input').value = localStorage.getItem('gemini_key');
+        }
+        document.getElementById('api-key-input').addEventListener('change', (e) => {
+            localStorage.setItem('gemini_key', e.target.value);
+        });
+
+    </script>
+</body>
+
+</html>

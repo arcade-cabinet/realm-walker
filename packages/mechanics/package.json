@@ -1,0 +1,14 @@
+{
+    "name": "@realm-walker/mechanics",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "build": "tsup src/index.ts --format esm,cjs --dts"
+    },
+    "dependencies": {
+        "@realm-walker/shared": "workspace:*",
+        "zod": "^3.23.8"
+    }
+}

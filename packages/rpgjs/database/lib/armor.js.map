@@ -1,0 +1,1 @@
+{"version":3,"file":"armor.js","sourceRoot":"","sources":["../src/armor.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,KAAK,EAAE,MAAM,UAAU,CAAA;AAehC,MAAM,UAAU,KAAK,CAAC,OAAqB;IACvC,OAAO,KAAK,CAAC,OAAO,EAAE,OAAO,EAAE;QAC3B,KAAK,EAAE,OAAO,CAAC,KAAK;KACvB,CAAC,CAAA;AACN,CAAC"}

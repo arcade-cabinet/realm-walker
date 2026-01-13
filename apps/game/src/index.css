@@ -1,0 +1,27 @@
+:root {
+  --bg-color: #f3e5ab;
+  --panel-bg: #fdf6e3;
+  --text-main: #2c1a0b;
+  --text-accent: #8b4513;
+  --primary: #d35400;
+  --secondary: #27ae60;
+  --ui-border: #5d4037;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #1a1a1a;
+  color: var(--text-main);
+}
+
+.fantasy-title {
+  font-family: "Cinzel", serif;
+  letter-spacing: 0.1em;
+}
+
+.fantasy-font {
+  font-family: "MedievalSharp", cursive;
+}
