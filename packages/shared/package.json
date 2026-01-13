@@ -8,8 +8,6 @@
     "build": "tsup src/index.ts --format esm,cjs --dts"
   },
   "dependencies": {
-    "@rpgjs/database": "workspace:*",
-    "@rpgjs/types": "workspace:*",
     "seedrandom": "^3.0.5",
     "zod": "^3.22.4"
   },
