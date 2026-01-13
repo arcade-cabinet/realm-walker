@@ -20,7 +20,7 @@ This implementation plan focuses on stabilizing the existing RealmWalker archite
   - **Property 2: Schema Validation Completeness**
   - **Validates: Requirements 1.2, 2.3, 6.4**
 
-- [ ] 2. Fix Loom Framework Critical Issues
+- [x] 2. Fix Loom Framework Critical Issues
   - Resolve the "def.pattern is not a function" error in Universal Loom orchestration
   - Fix content generation quantity validation failures (AbilityLoom, DialogueLoom)
   - Ensure all Loom definitions have proper pattern functions
@@ -41,7 +41,7 @@ This implementation plan focuses on stabilizing the existing RealmWalker archite
   - **Property 5: Loom Content Generation**
   - **Validates: Requirements 2.1, 2.4**
 
-- [ ] 2.4 Write property test for dependency orchestration
+- [x] 2.4 Write property test for dependency orchestration
   - **Property 6: Dependency Orchestration**
   - **Validates: Requirements 2.5**
 
