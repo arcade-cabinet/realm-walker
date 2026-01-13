@@ -10,13 +10,15 @@
   },
   "dependencies": {
     "@realm-walker/shared": "workspace:*",
-    "@realm-walker/mechanics": "workspace:*",
     "miniplex": "^2.0.0",
     "miniplex-react": "^2.0.0",
     "three": "^0.182.0",
     "yuka": "^0.7.4"
   },
   "devDependencies": {
+    "@fast-check/vitest": "^0.2.4",
+    "@realm-walker/ai": "workspace:^",
+    "@realm-walker/mechanics": "workspace:*",
     "@types/node": "^25.0.6",
     "vitest": "^1.2.2"
   }

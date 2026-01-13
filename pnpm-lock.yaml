@@ -143,9 +143,6 @@ importers:
 
   packages/core:
     dependencies:
-      '@realm-walker/mechanics':
-        specifier: workspace:*
-        version: link:../mechanics
       '@realm-walker/shared':
         specifier: workspace:*
         version: link:../shared
@@ -162,6 +159,15 @@ importers:
         specifier: ^0.7.4
         version: 0.7.8
     devDependencies:
+      '@fast-check/vitest':
+        specifier: ^0.2.4
+        version: 0.2.4(vitest@1.6.1(@types/node@25.0.6)(sass@1.97.2)(terser@5.44.1))
+      '@realm-walker/ai':
+        specifier: workspace:^
+        version: link:../ai
+      '@realm-walker/mechanics':
+        specifier: workspace:*
+        version: link:../mechanics
       '@types/node':
         specifier: ^25.0.6
         version: 25.0.6
@@ -187,6 +193,9 @@ importers:
         specifier: ^3.25.1
         version: 3.25.1(zod@3.25.76)
     devDependencies:
+      '@fast-check/vitest':
+        specifier: ^0.2.4
+        version: 0.2.4(vitest@1.6.1(@types/node@25.0.6)(sass@1.97.2)(terser@5.44.1))
       typescript:
         specifier: ^5.2.2
         version: 5.9.3
@@ -2777,6 +2786,11 @@ snapshots:
 
   '@esbuild/win32-x64@0.27.2':
     optional: true
+
+  '@fast-check/vitest@0.2.4(vitest@1.6.1(@types/node@25.0.6)(sass@1.97.2)(terser@5.44.1))':
+    dependencies:
+      fast-check: 4.5.3
+      vitest: 1.6.1(@types/node@25.0.6)(sass@1.97.2)(terser@5.44.1)
 
   '@fast-check/vitest@0.2.4(vitest@4.0.17(@types/node@25.0.6)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0))':
     dependencies:
