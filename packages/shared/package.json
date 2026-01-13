@@ -12,6 +12,10 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@fast-check/vitest": "^0.2.4",
+    "@realm-walker/ai": "workspace:^",
+    "@realm-walker/core": "workspace:^",
+    "@realm-walker/mechanics": "workspace:^",
     "@types/node": "^25.0.6",
     "@types/seedrandom": "^3.0.8"
   }

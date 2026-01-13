@@ -221,6 +221,18 @@ importers:
         specifier: ^3.22.4
         version: 3.25.76
     devDependencies:
+      '@fast-check/vitest':
+        specifier: ^0.2.4
+        version: 0.2.4(vitest@4.0.17(@types/node@25.0.6)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0))
+      '@realm-walker/ai':
+        specifier: workspace:^
+        version: link:../ai
+      '@realm-walker/core':
+        specifier: workspace:^
+        version: link:../core
+      '@realm-walker/mechanics':
+        specifier: workspace:^
+        version: link:../mechanics
       '@types/node':
         specifier: ^25.0.6
         version: 25.0.6
