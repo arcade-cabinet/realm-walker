@@ -383,4 +383,4 @@ gh pr comment {pr-number} --body "@coderabbitai please review this PR"
 
 # Fallback: request human review
 gh pr edit {pr-number} --add-reviewer {username}
-```
+gh pr edit {pr-number} --add-reviewer {username}
