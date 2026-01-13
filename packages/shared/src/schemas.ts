@@ -331,3 +331,209 @@ export const RpgDungeonSchema = z.object({
 export type RpgHistoryEvent = z.infer<typeof RpgHistoryEventSchema>;
 export type RpgGod = z.infer<typeof RpgGodSchema>;
 export type RpgDungeon = z.infer<typeof RpgDungeonSchema>;
+// --- ARCHETYPAL SCHEMAS FOR MID-1990S RPG SYSTEMS ---
+
+export const RpgMagicSystemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  systemType: z.enum(['esper_magicite', 'psi_psychic', 'materia_socketed', 'vancian', 'mana_pool']),
+  description: z.string(),
+  resourceType: z.enum(['mp', 'pp', 'ap', 'mana', 'spell_slots']),
+  learningMechanism: z.enum(['ap_accumulation', 'level_based', 'item_based', 'trainer_based']),
+  espers: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    element: z.string(),
+    spells: z.array(z.object({
+      name: z.string(),
+      learningRate: z.number(),
+      mpCost: z.number(),
+      power: z.number()
+    })),
+    statBonus: z.object({
+      stat: z.string(),
+      bonus: z.number()
+    }).optional(),
+    summonPower: z.number()
+  })).optional(),
+  abilities: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    tier: z.string(), // α, β, γ, Ω for PSI
+    category: z.enum(['offensive', 'healing', 'support', 'status']),
+    cost: z.number(),
+    power: z.number(),
+    description: z.string()
+  })).optional(),
+  spellTiers: z.array(z.string()).optional(),
+  statBonuses: z.boolean().default(false),
+  summonPower: z.boolean().default(false)
+});
+
+export const RpgCharacterProgressionSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  systemType: z.enum(['socketed_materia', 'skill_trees', 'class_based', 'stat_allocation']),
+  description: z.string(),
+  materiaSlots: z.number().optional(),
+  slotTypes: z.array(z.enum(['single', 'linked_pair'])).optional(),
+  materiaCategories: z.array(z.enum(['magic', 'summon', 'command', 'support', 'independent'])).optional(),
+  growthMechanism: z.enum(['ap_accumulation', 'use_based', 'level_based']),
+  statModification: z.boolean().default(false),
+  customizationDepth: z.enum(['low', 'medium', 'high']),
+  skillTrees: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    nodes: z.array(z.object({
+      id: z.string(),
+      name: z.string(),
+      requirements: z.array(z.string()),
+      effects: z.array(z.string())
+    }))
+  })).optional()
+});
+
+export const RpgEquipmentSystemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  systemType: z.enum(['traditional', 'socketed', 'upgrade_based', 'set_based']),
+  description: z.string(),
+  socketTypes: z.array(z.string()).optional(),
+  upgradeSystem: z.boolean().default(false),
+  setBonus: z.boolean().default(false),
+  durability: z.boolean().default(false),
+  enchantments: z.boolean().default(false)
+});
+
+export const RpgCombatSystemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  systemType: z.enum(['active_time_battle', 'realtime_ring_menu', 'turn_based', 'tactical_grid']),
+  description: z.string(),
+  timingMechanism: z.enum(['speed_based_charging', 'initiative_order', 'simultaneous', 'player_controlled']),
+  speedBasedTiming: z.boolean().default(false),
+  actionModes: z.array(z.enum(['active', 'wait', 'recommended'])).optional(),
+  castingTimes: z.boolean().default(false),
+  interruptible: z.boolean().default(false),
+  ringMenuInterface: z.boolean().default(false),
+  realtimeCombat: z.boolean().default(false),
+  chargeMechanics: z.boolean().default(false),
+  weaponSkillProgression: z.boolean().default(false),
+  cooperativePlay: z.boolean().default(false),
+  castingInterruption: z.boolean().default(false),
+  statusEffects: z.array(z.string()).optional()
+});
+
+export const RpgWorldEventSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  eventType: z.enum(['world_transformation', 'political_change', 'natural_disaster', 'magical_phenomenon']),
+  scope: z.enum(['local', 'regional', 'global', 'world']),
+  consequences: z.array(z.enum(['geography_change', 'party_separation', 'tone_shift', 'new_areas', 'character_arcs'])),
+  triggerConditions: z.array(z.string()),
+  permanentChanges: z.boolean().default(true),
+  newAreas: z.boolean().default(false),
+  characterArcs: z.boolean().default(false),
+  nonLinearExploration: z.boolean().default(false)
+});
+
+export const RpgTimelineEventSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  year: z.number(),
+  era: z.string(),
+  timePeriod: z.string(),
+  causalChains: z.array(z.object({
+    cause: z.string(),
+    effect: z.string(),
+    timePeriod: z.string()
+  })).optional(),
+  recurringLocations: z.array(z.string()).optional(),
+  technologyLevel: z.number().min(0).max(10),
+  magicLevel: z.number().min(0).max(10),
+  butterflyEffects: z.array(z.object({
+    action: z.string(),
+    consequence: z.string(),
+    affectedPeriod: z.string()
+  })).optional()
+});
+
+export const RpgSummonSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  element: z.string(),
+  description: z.string(),
+  power: z.number(),
+  mpCost: z.number(),
+  animation: z.string(),
+  effects: z.array(z.string()),
+  rarity: z.enum(['common', 'rare', 'legendary', 'ultimate'])
+});
+
+export const RpgTechniqueSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  participantCount: z.number().min(2).max(3),
+  techType: z.enum(['dual', 'triple']),
+  requiredCharacters: z.array(z.string()),
+  elementCombinations: z.array(z.string()).optional(),
+  positioningEffects: z.array(z.enum(['line', 'area', 'single', 'all'])),
+  powerLevel: z.enum(['normal', 'high', 'ultimate']),
+  resourceCost: z.enum(['low', 'medium', 'high']),
+  mpCost: z.number(),
+  damage: z.number(),
+  effects: z.array(z.string())
+});
+
+export const RpgStatusEffectSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  category: z.enum(['negative', 'positive', 'neutral', 'unique']),
+  duration: z.enum(['temporary', 'battle_persistent', 'until_cured']),
+  stackable: z.boolean().default(false),
+  visualIndicator: z.string(),
+  effects: z.array(z.object({
+    type: z.enum(['stat_modifier', 'action_restriction', 'damage_over_time', 'special']),
+    value: z.number().optional(),
+    description: z.string()
+  })),
+  cureConditions: z.array(z.string()),
+  immunities: z.array(z.string()).optional()
+});
+
+export const RpgElementalSystemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  elements: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    color: z.string(),
+    weakTo: z.array(z.string()),
+    strongAgainst: z.array(z.string()),
+    absorbs: z.array(z.string()).optional(),
+    nullifies: z.array(z.string()).optional()
+  })),
+  coreElements: z.array(z.string()),
+  advancedElements: z.array(z.string()).optional(),
+  weaknessChains: z.boolean().default(true),
+  absorptionPossible: z.boolean().default(false),
+  environmentalInteractions: z.boolean().default(false),
+  equipmentAffinities: z.boolean().default(false)
+});
+
+// Export types for the new archetypal schemas
+export type RpgMagicSystem = z.infer<typeof RpgMagicSystemSchema>;
+export type RpgCharacterProgression = z.infer<typeof RpgCharacterProgressionSchema>;
+export type RpgEquipmentSystem = z.infer<typeof RpgEquipmentSystemSchema>;
+export type RpgCombatSystem = z.infer<typeof RpgCombatSystemSchema>;
+export type RpgWorldEvent = z.infer<typeof RpgWorldEventSchema>;
+export type RpgTimelineEvent = z.infer<typeof RpgTimelineEventSchema>;
+export type RpgSummon = z.infer<typeof RpgSummonSchema>;
+export type RpgTechnique = z.infer<typeof RpgTechniqueSchema>;
+export type RpgStatusEffect = z.infer<typeof RpgStatusEffectSchema>;
+export type RpgElementalSystem = z.infer<typeof RpgElementalSystemSchema>;

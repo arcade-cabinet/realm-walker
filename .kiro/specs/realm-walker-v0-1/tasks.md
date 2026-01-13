@@ -202,8 +202,214 @@ This implementation plan focuses on stabilizing the existing RealmWalker archite
 - [ ] 12. Final Checkpoint - Release Ready
   - Ensure all tests pass, ask the user if questions arise.
 
+- [ ] 13. Mid-1990s RPG Research and Analysis
+  - Research Final Fantasy VI mechanics including Esper system, Relic equipment, and character progression
+  - Research Chrono Trigger mechanics including dual/triple techs and elemental combinations
+  - Research Secret of Mana mechanics including weapon orb progression and ring menu system
+  - Document archetypal patterns and create comparative analysis
+  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6_
+
+- [ ] 13.1 Research Final Fantasy VI mechanics
+  - Analyze Esper system for magic learning and stat bonuses
+  - Document Relic system for equipment abilities and modifications
+  - Study character progression and specialization patterns
+  - _Requirements: 9.1_
+
+- [ ] 13.2 Research Chrono Trigger mechanics
+  - Analyze dual/triple tech system and character combinations
+  - Document elemental interaction patterns
+  - Study time period mechanics and progression
+  - _Requirements: 9.2_
+
+- [ ] 13.3 Research Secret of Mana mechanics
+  - Analyze weapon orb progression and branching paths
+  - Document ring menu system and real-time combat
+  - Study cooperative magic and character synergy
+  - _Requirements: 9.3_
+
+- [ ] 13.4 Create comparative analysis and archetypal patterns
+  - Identify common patterns across all three RPGs
+  - Document unique innovations and their implementation potential
+  - Create archetypal pattern library for Loom DDL development
+  - _Requirements: 9.4, 9.5, 9.6_
+
+- [ ]* 13.5 Write property test for RPG mechanics analysis completeness
+  - **Property 15: RPG Mechanics Analysis Completeness**
+  - **Validates: Requirements 9.1, 9.2, 9.3, 9.4, 9.5**
+
+- [ ]* 13.6 Write property test for archetypal pattern identification
+  - **Property 16: Archetypal Pattern Identification**
+  - **Validates: Requirements 9.5, 9.6**
+
+- [ ] 14. Implement Archetypal Loom DDLs
+  - Implement CharacterProgressionLoom based on FF6/CT/SoM patterns
+  - Implement EquipmentSystemLoom with proper stat modifications and abilities
+  - Implement MagicSystemLoom with elemental combinations and learning mechanics
+  - Implement CombatMechanicsLoom with turn-based and real-time patterns
+  - Implement WorldStructureLoom with interconnected regions and progression
+  - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6_
+
+- [ ] 14.1 Implement CharacterProgressionLoom
+  - Create Loom DDL with FF6 Esper bonuses, CT tech learning, SoM weapon mastery patterns
+  - Implement proper input/output schemas and validation
+  - Add GenAI prompt patterns for character progression generation
+  - _Requirements: 10.1_
+
+- [ ] 14.2 Implement EquipmentSystemLoom
+  - Create Loom DDL with FF6 Relic abilities, CT accessories, SoM weapon orbs
+  - Implement stat modification systems and special ability frameworks
+  - Add upgrade and enhancement mechanics
+  - _Requirements: 10.2_
+
+- [ ] 14.3 Implement MagicSystemLoom
+  - Create Loom DDL with FF6 Esper magic, CT elemental combos, SoM cooperative casting
+  - Implement spell learning progression and elemental interactions
+  - Add multi-character cooperation mechanics
+  - _Requirements: 10.3_
+
+- [ ] 14.4 Implement CombatMechanicsLoom
+  - Create Loom DDL with FF6 turn-based, CT combo attacks, SoM real-time action
+  - Implement initiative systems and action resolution
+  - Add character cooperation and positioning mechanics
+  - _Requirements: 10.4_
+
+- [ ] 14.5 Implement WorldStructureLoom
+  - Create Loom DDL with FF6 world map, CT time periods, SoM interconnected regions
+  - Implement travel mechanics and progression gating
+  - Add hidden areas and secret location generation
+  - _Requirements: 10.5_
+
+- [ ]* 14.6 Write property test for Loom DDL content generation
+  - **Property 17: Loom DDL Content Generation**
+  - **Validates: Requirements 10.1, 10.2, 10.3, 10.4, 10.5, 10.6**
+
+- [ ]* 14.7 Write property test for cross-Loom content coherence
+  - **Property 18: Cross-Loom Content Coherence**
+  - **Validates: Requirements 10.6, 12.2**
+
+- [ ] 15. Checkpoint - Archetypal Looms Functional
+  - Ensure all archetypal Loom DDLs generate valid content, ask the user if questions arise.
+
+- [ ] 16. Implement GenAI Prompt Engine System
+  - Implement sophisticated prompt engines for character, equipment, magic, and location content
+  - Add support for both text generation and image prompt creation
+  - Integrate archetypal RPG patterns into prompt generation
+  - Add content validation and quality thresholds
+  - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6_
+
+- [ ] 16.1 Implement character content prompt engine
+  - Create prompt patterns based on FF6/CT/SoM character archetypes
+  - Implement text generation for names, descriptions, backstories
+  - Add image prompt generation for portraits, actions, icons
+  - _Requirements: 11.1_
+
+- [ ] 16.2 Implement equipment content prompt engine
+  - Create prompt patterns based on iconic RPG equipment design
+  - Implement text generation for names, descriptions, lore
+  - Add image prompt generation for item renders and icons
+  - _Requirements: 11.2_
+
+- [ ] 16.3 Implement magic content prompt engine
+  - Create prompt patterns based on classic RPG magic systems
+  - Implement text generation for spell descriptions and effects
+  - Add image prompt generation for spell visuals and icons
+  - _Requirements: 11.3_
+
+- [ ] 16.4 Implement location content prompt engine
+  - Create prompt patterns based on classic RPG world design
+  - Implement text generation for location descriptions and atmosphere
+  - Add image prompt generation for environment concepts
+  - _Requirements: 11.4_
+
+- [ ]* 16.5 Write property test for content generation quality
+  - **Property 19: Content Generation Quality**
+  - **Validates: Requirements 11.1, 11.2, 11.3, 11.4, 11.6**
+
+- [ ]* 16.6 Write property test for multi-modal content consistency
+  - **Property 20: Multi-Modal Content Consistency**
+  - **Validates: Requirements 11.5, 11.6**
+
+- [ ] 17. Implement Enhanced Tapestry Orchestration System
+  - Implement complex dependency graph management
+  - Add sophisticated context sharing between Looms
+  - Implement error recovery and fallback strategies
+  - Add incremental generation support and progress tracking
+  - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6_
+
+- [ ] 17.1 Implement dependency graph management
+  - Create execution plan generation with optimal parallelization
+  - Add cycle detection and validation
+  - Implement critical path analysis
+  - _Requirements: 12.1_
+
+- [ ] 17.2 Implement context sharing and management
+  - Create context manager for inter-Loom data sharing
+  - Add context integrity validation
+  - Implement context snapshots and rollback capability
+  - _Requirements: 12.2_
+
+- [ ] 17.3 Implement error recovery system
+  - Create fallback strategies for Loom failures
+  - Add retry mechanisms with modified inputs
+  - Implement graceful degradation and alternative Loom selection
+  - _Requirements: 12.3_
+
+- [ ] 17.4 Implement incremental generation support
+  - Add partial realm creation and progressive content addition
+  - Implement consistency validation for incremental updates
+  - Add progress tracking and detailed logging
+  - _Requirements: 12.4, 12.5_
+
+- [ ]* 17.5 Write property test for complex dependency orchestration
+  - **Property 21: Complex Dependency Orchestration**
+  - **Validates: Requirements 12.1, 12.2**
+
+- [ ]* 17.6 Write property test for error recovery and fallback
+  - **Property 22: Error Recovery and Fallback**
+  - **Validates: Requirements 12.3, 12.4**
+
+- [ ]* 17.7 Write property test for incremental generation consistency
+  - **Property 23: Incremental Generation Consistency**
+  - **Validates: Requirements 12.4, 12.6**
+
+- [ ] 18. Checkpoint - Enhanced Tapestry Operational
+  - Ensure enhanced Tapestry system orchestrates complex workflows correctly, ask the user if questions arise.
+
+- [ ] 19. Complete Integration and Comprehensive Testing
+  - Integrate all archetypal Loom DDLs with enhanced Tapestry system
+  - Test complete realm generation workflows from research patterns to final output
+  - Validate that generated content follows archetypal RPG design patterns
+  - Perform comprehensive end-to-end testing of expanded system
+  - _Requirements: 12.6_
+
+- [ ] 19.1 Integrate archetypal Looms with enhanced Tapestry
+  - Wire all new Loom DDLs into Tapestry orchestration system
+  - Configure complex dependency relationships between Looms
+  - Test parallel execution and context sharing
+  - _Requirements: 12.1, 12.2_
+
+- [ ] 19.2 Test complete realm generation workflows
+  - Execute full realm generation using all archetypal Loom DDLs
+  - Validate content coherence and interconnection
+  - Test incremental generation and progressive content addition
+  - _Requirements: 12.6_
+
+- [ ]* 19.3 Write property test for complete realm validation
+  - **Property 24: Complete Realm Validation**
+  - **Validates: Requirements 12.6**
+
+- [ ] 19.4 Perform comprehensive system testing
+  - Run all existing and new property-based tests
+  - Validate all requirements are met through expanded testing
+  - Test system performance with complex generation workflows
+  - _Requirements: All requirements 1-12_
+
+- [ ] 20. Final Comprehensive Checkpoint - v0.1 Complete
+  - Ensure all tests pass including new RPG research and Loom DDL tests, ask the user if questions arise.
+
 ## Notes
 
+- Tasks marked with `*` are optional and can be skipped for faster MVP
 - Each task references specific requirements for traceability
 - Checkpoints ensure incremental validation
 - Property tests validate universal correctness properties
@@ -211,3 +417,8 @@ This implementation plan focuses on stabilizing the existing RealmWalker archite
 - The implementation prioritizes fixing existing issues before adding new features
 - All property-based tests should run minimum 100 iterations
 - Test failures should be analyzed to determine if the issue is in code, tests, or specifications
+- **EXPANDED SCOPE**: Added comprehensive RPG research, archetypal Loom DDL development, GenAI prompt engines, and enhanced Tapestry orchestration
+- **RPG Research Phase**: Sections 13-14 focus on analyzing classic RPGs and implementing archetypal patterns
+- **Content Generation Phase**: Sections 15-17 implement sophisticated content generation with GenAI integration
+- **Integration Phase**: Sections 18-20 ensure all components work together for complete realm generation
+- The expanded v0.1 now includes the missing components identified by the user: proper RPG research, archetypal Loom DDLs, GenAI prompt engines, and complete Tapestry system

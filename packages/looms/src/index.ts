@@ -1,3 +1,5 @@
+export * from './archetypal-definitions.js';
+export * from './ArchetypalTapestry.js';
 export * from './definitions.js';
 export * from './GeminiAdapter.js';
 export * from './Loom.js';

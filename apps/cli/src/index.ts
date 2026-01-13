@@ -145,6 +145,122 @@ program
   });
 
 program
+  .command('archetypal')
+  .description('Generate an archetypal RPG realm inspired by mid-1990s classics')
+  .option('-s, --seed <seed>', 'Seed for generation', 'Crystal-Sanctuary-1994')
+  .option('-a, --age <age>', 'Age/Era theme', 'The Age of Espers')
+  .option('--mock', 'Use mock data instead of API', false)
+  .option('--danger <level>', 'Danger Level (1-10)', '7')
+  .option('--magic <level>', 'Magic Level (1-10)', '8')
+  .option('--tech <level>', 'Tech Level (1-10)', '3')
+  .option('--combat <style>', 'Combat style preference', 'balanced')
+  .option('--quest-focus <focus>', 'Quest focus type', 'balanced')
+  .action(async (options) => {
+    console.log('🌟 Generating Archetypal RPG Realm...');
+    console.log('📖 Inspired by: Final Fantasy VI, Chrono Trigger, Secret of Mana, Earthbound');
+    console.log('DEBUG Options:', options);
+
+    // Mock handling for archetypal realm
+    if (options.mock) {
+      console.log('🎭 Using MOCK archetypal data...');
+      const { ArchetypalTapestry } = await import('@realm-walker/looms');
+      const mockSettings = {
+        seed: options.seed,
+        age: options.age,
+        controls: {
+          worldScale: 6,
+          minNodes: 5,
+          dangerLevel: parseInt(options.danger),
+          magicLevel: parseInt(options.magic),
+          technologyLevel: parseInt(options.tech)
+        },
+        preferences: {
+          factions: true,
+          items: true,
+          bestiary: true,
+          hero: true,
+          quests: true,
+          biases: {
+            questFocus: options.questFocus as any,
+            combatDifficulty: options.combat as any
+          }
+        }
+      };
+
+      const mockRealm = ArchetypalTapestry.createMockArchetypalRealm(mockSettings);
+      
+      const outputDir = path.resolve(process.cwd(), './generated');
+      if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+      
+      const filename = `${options.seed}_ARCHETYPAL_MOCK.json`;
+      const filepath = path.join(outputDir, filename);
+      fs.writeFileSync(filepath, JSON.stringify(mockRealm, null, 2));
+      console.log(`✅ Mock Archetypal Realm generated: ${filepath}`);
+      return;
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      console.error('Error: GEMINI_API_KEY environment variable is required');
+      process.exit(1);
+    }
+
+    const settings = {
+      seed: options.seed,
+      age: options.age,
+      controls: {
+        worldScale: 6,
+        minNodes: 5,
+        dangerLevel: parseInt(options.danger),
+        magicLevel: parseInt(options.magic),
+        technologyLevel: parseInt(options.tech)
+      },
+      preferences: {
+        factions: true,
+        items: true,
+        bestiary: true,
+        hero: true,
+        quests: true,
+        biases: {
+          questFocus: options.questFocus as any,
+          combatDifficulty: options.combat as any
+        }
+      }
+    };
+
+    console.log(`🧵 Weaving Archetypal Realm with Settings:`, settings.controls);
+
+    try {
+      const archetypalTapestry = new ArchetypalTapestry(apiKey);
+      const archetypalRealm = await archetypalTapestry.weaveArchetypalRealm(settings);
+
+      // Save the complete archetypal realm
+      const outputDir = path.resolve(process.cwd(), './generated');
+      if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+      }
+
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const filename = `${options.seed}_ARCHETYPAL_${timestamp}.json`;
+      const filepath = path.join(outputDir, filename);
+
+      fs.writeFileSync(filepath, JSON.stringify(archetypalRealm, null, 2));
+      console.log(`✅ Archetypal Realm Woven Successfully!`);
+      console.log(`💾 Saved to: ${filepath}`);
+
+      // Also create a TypeScript export
+      const tsPath = filepath.replace('.json', '.ts');
+      const tsContent = `export const ARCHETYPAL_REALM = ${JSON.stringify(archetypalRealm, null, 2)} as const;`;
+      fs.writeFileSync(tsPath, tsContent);
+      console.log(`📝 TypeScript registry: ${tsPath}`);
+
+    } catch (error) {
+      console.error('❌ Archetypal Weave failed:', error);
+      process.exit(1);
+    }
+  });
+
+program
   .command('simulate')
   .description('Run a headless simulation of the game loop using generated realm data')
   .option('-t, --ticks <count>', 'Number of simulation ticks to run', '10')

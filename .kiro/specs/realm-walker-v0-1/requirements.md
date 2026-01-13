@@ -124,3 +124,55 @@ RealmWalker v0.1 is the initial release of an engine-first procedural RPG built 
 4. THE Shared_Package SHALL provide common types, utilities, and schemas
 5. WHEN packages are updated, THE System SHALL maintain backward compatibility through workspace protocols
 6. THE System SHALL support both CLI and web application interfaces using the same core logic
+
+### Requirement 9: Mid-1990s RPG Research and Analysis
+
+**User Story:** As a game developer, I want comprehensive analysis of classic RPG mechanics, so that I can build archetypal systems based on proven game design patterns.
+
+#### Acceptance Criteria
+
+1. THE Research_System SHALL analyze Final Fantasy VI mechanics including Esper system, Relic equipment, character progression, and magic learning
+2. THE Research_System SHALL analyze Chrono Trigger mechanics including dual/triple techs, elemental systems, character combinations, and time-based progression
+3. THE Research_System SHALL analyze Secret of Mana mechanics including weapon orb progression, ring menu system, real-time combat, and cooperative gameplay
+4. THE System SHALL document archetypal patterns from each analyzed RPG including character progression, equipment systems, magic systems, and combat mechanics
+5. THE System SHALL create comparative analysis identifying common patterns and unique innovations across the three RPGs
+6. THE Documentation SHALL provide detailed breakdowns of each system suitable for procedural generation implementation
+
+### Requirement 10: Archetypal Loom DDL Development
+
+**User Story:** As a game developer, I want archetypal Loom DDLs based on classic RPG patterns, so that I can generate content that follows proven game design principles.
+
+#### Acceptance Criteria
+
+1. THE CharacterProgressionLoom SHALL generate progression systems based on FF6 Esper bonuses, CT tech learning, and SoM weapon mastery patterns
+2. THE EquipmentSystemLoom SHALL generate equipment mechanics based on FF6 Relics, CT accessories, and SoM weapon orbs with stat modifications and special abilities
+3. THE MagicSystemLoom SHALL generate magic systems based on FF6 Esper magic learning, CT elemental combinations, and SoM spell progression
+4. THE CombatMechanicsLoom SHALL generate combat systems based on FF6 turn-based mechanics, CT combo attacks, and SoM real-time action
+5. THE WorldStructureLoom SHALL generate world layouts based on FF6 world map progression, CT time period transitions, and SoM interconnected regions
+6. WHEN Loom DDLs execute, THE System SHALL produce content with proper inputs, outputs, GenAI prompt transformations, and validation schemas
+
+### Requirement 11: GenAI Prompt Engine Integration
+
+**User Story:** As a game developer, I want sophisticated GenAI prompt engines for each Loom DDL, so that I can generate high-quality text and image content for RPG elements.
+
+#### Acceptance Criteria
+
+1. THE PromptEngine SHALL generate character descriptions, backstories, and dialogue based on archetypal RPG character patterns
+2. THE PromptEngine SHALL generate equipment descriptions, lore, and visual specifications based on classic RPG item design principles
+3. THE PromptEngine SHALL generate spell descriptions, effects, and visual concepts based on analyzed magic system patterns
+4. THE PromptEngine SHALL generate location descriptions, atmosphere, and visual concepts based on classic RPG world design
+5. THE System SHALL support both text generation for descriptions and image generation prompts for visual assets
+6. WHEN content generation occurs, THE System SHALL validate outputs against expected schemas and quality thresholds
+
+### Requirement 12: Complete Tapestry System Implementation
+
+**User Story:** As a game developer, I want a fully implemented Tapestry orchestration system, so that I can coordinate complex procedural generation workflows with proper dependency management.
+
+#### Acceptance Criteria
+
+1. THE Tapestry SHALL orchestrate multiple Loom DDLs with complex dependency graphs including character-equipment-magic-world relationships
+2. THE Tapestry SHALL manage context sharing between Looms including character data influencing equipment generation and world data affecting encounter design
+3. THE Tapestry SHALL handle error recovery and fallback strategies when individual Looms fail or produce invalid content
+4. THE Tapestry SHALL support incremental generation allowing partial world creation and progressive content addition
+5. THE Tapestry SHALL provide progress tracking and detailed logging for complex generation workflows
+6. THE System SHALL validate complete realm generation produces coherent, interconnected content that follows archetypal RPG design patterns
