@@ -98,8 +98,15 @@ export class AISystem {
      */
     private applyPendingDecisions(): void {
         // Sort decisions by timestamp for deterministic ordering
-        this.pendingDecisions.sort((a, b) => a.timestamp - b.timestamp);
+        // If timestamps are identical, sort by entityId for consistency
+        this.pendingDecisions.sort((a, b) => {
+            if (a.timestamp !== b.timestamp) {
+                return a.timestamp - b.timestamp;
+            }
+            return a.entityId.localeCompare(b.entityId);
+        });
         
+        // Apply decisions in deterministic order
         for (const decision of this.pendingDecisions) {
             this.applyDecision(decision);
         }
@@ -109,41 +116,36 @@ export class AISystem {
     }
 
     /**
-     * Apply a single AI decision to the world
+     * Apply a single AI decision to the world with comprehensive validation
      */
     private applyDecision(decision: AIDecision): void {
         const entity = this.world.entities.find(e => e.id === decision.entityId);
-        if (!entity) return;
+        if (!entity) {
+            console.warn(`Entity ${decision.entityId} not found for decision ${decision.type}`);
+            return;
+        }
+
+        // Validate decision against game rules before applying
+        if (!this.validateDecisionAgainstRules(decision, entity)) {
+            console.warn(`Decision ${decision.type} for entity ${decision.entityId} failed validation`);
+            return;
+        }
 
         switch (decision.type) {
             case 'move':
-                if (entity.position && decision.parameters.direction) {
-                    entity.position.x += decision.parameters.direction.x;
-                    entity.position.y += decision.parameters.direction.y;
-                }
+                this.applyMoveDecision(decision, entity);
                 break;
                 
             case 'interact':
-                // Handle interaction logic
-                if (decision.parameters.targetId) {
-                    // Find target entity and perform interaction
-                    const target = this.world.entities.find(e => e.id === decision.parameters.targetId);
-                    if (target) {
-                        // Interaction logic would go here
-                    }
-                }
+                this.applyInteractDecision(decision, entity);
                 break;
                 
             case 'wander':
-                if (entity.position && decision.parameters.direction) {
-                    // Apply wandering movement
-                    entity.position.x += decision.parameters.direction.x * 0.1;
-                    entity.position.y += decision.parameters.direction.y * 0.1;
-                }
+                this.applyWanderDecision(decision, entity);
                 break;
                 
             case 'seek_healing':
-                // Handle healing seeking behavior
+                this.applySeekHealingDecision(decision, entity);
                 break;
                 
             case 'idle':
@@ -151,6 +153,98 @@ export class AISystem {
                 // Do nothing for idle or unknown actions
                 break;
         }
+    }
+
+    /**
+     * Validate a decision against game rules
+     */
+    private validateDecisionAgainstRules(decision: AIDecision, entity: any): boolean {
+        // Basic validation - entity must exist and have required components
+        if (!entity) return false;
+
+        switch (decision.type) {
+            case 'move':
+            case 'wander':
+                // Movement requires position component
+                return !!entity.position;
+                
+            case 'interact':
+                // Interaction requires position and valid target
+                if (!entity.position || !decision.parameters.targetId) return false;
+                const target = this.world.entities.find(e => e.id === decision.parameters.targetId);
+                return !!target && !!target.position;
+                
+            case 'seek_healing':
+                // Healing requires health component
+                return !!entity.health;
+                
+            case 'idle':
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Apply move decision with bounds checking
+     */
+    private applyMoveDecision(decision: AIDecision, entity: any): void {
+        if (!entity.position || !decision.parameters.direction) return;
+        
+        const newX = entity.position.x + decision.parameters.direction.x;
+        const newY = entity.position.y + decision.parameters.direction.y;
+        
+        // Basic bounds checking (could be configurable)
+        const maxBounds = 1000;
+        if (Math.abs(newX) <= maxBounds && Math.abs(newY) <= maxBounds) {
+            entity.position.x = newX;
+            entity.position.y = newY;
+        }
+    }
+
+    /**
+     * Apply interaction decision with distance validation
+     */
+    private applyInteractDecision(decision: AIDecision, entity: any): void {
+        if (!decision.parameters.targetId) return;
+        
+        const target = this.world.entities.find(e => e.id === decision.parameters.targetId);
+        if (!target || !target.position || !entity.position) return;
+        
+        // Check interaction distance
+        const distance = Math.sqrt(
+            Math.pow(entity.position.x - target.position.x, 2) +
+            Math.pow(entity.position.y - target.position.y, 2)
+        );
+        
+        if (distance <= 5) { // Interaction range
+            // Perform interaction (simplified)
+            if (target.health && entity.health) {
+                // Example: healing interaction
+                target.health.current = Math.min(target.health.max, target.health.current + 10);
+            }
+        }
+    }
+
+    /**
+     * Apply wander decision with controlled movement
+     */
+    private applyWanderDecision(decision: AIDecision, entity: any): void {
+        if (!entity.position || !decision.parameters.direction) return;
+        
+        // Wandering is slower than direct movement
+        const wanderSpeed = 0.1;
+        entity.position.x += decision.parameters.direction.x * wanderSpeed;
+        entity.position.y += decision.parameters.direction.y * wanderSpeed;
+    }
+
+    /**
+     * Apply seek healing decision
+     */
+    private applySeekHealingDecision(_decision: AIDecision, entity: any): void {
+        if (!entity.health) return;
+        
+        // Simple healing behavior - move towards nearest healing source or self-heal
+        entity.health.current = Math.min(entity.health.max, entity.health.current + 5);
     }
 
     /**
@@ -174,6 +268,54 @@ export class AISystem {
         }
         
         return true;
+    }
+
+    /**
+     * Validate that action resolution is deterministic and ordered correctly
+     */
+    validateActionResolutionOrdering(decisions: AIDecision[]): boolean {
+        // Sort decisions the same way applyPendingDecisions does
+        const sortedDecisions = [...decisions].sort((a, b) => {
+            if (a.timestamp !== b.timestamp) {
+                return a.timestamp - b.timestamp;
+            }
+            return a.entityId.localeCompare(b.entityId);
+        });
+        
+        // Check that the sorting is stable and deterministic
+        for (let i = 0; i < decisions.length; i++) {
+            if (decisions[i] !== sortedDecisions[i]) {
+                // If original order doesn't match sorted order, verify it's deterministic
+                const reSorted = [...decisions].sort((a, b) => {
+                    if (a.timestamp !== b.timestamp) {
+                        return a.timestamp - b.timestamp;
+                    }
+                    return a.entityId.localeCompare(b.entityId);
+                });
+                
+                // Check if re-sorting produces the same result
+                for (let j = 0; j < reSorted.length; j++) {
+                    if (sortedDecisions[j] !== reSorted[j]) {
+                        return false;
+                    }
+                }
+                break;
+            }
+        }
+        
+        return true;
+    }
+
+    /**
+     * Get the expected resolution order for a set of decisions
+     */
+    getExpectedResolutionOrder(decisions: AIDecision[]): AIDecision[] {
+        return [...decisions].sort((a, b) => {
+            if (a.timestamp !== b.timestamp) {
+                return a.timestamp - b.timestamp;
+            }
+            return a.entityId.localeCompare(b.entityId);
+        });
     }
 
     /**

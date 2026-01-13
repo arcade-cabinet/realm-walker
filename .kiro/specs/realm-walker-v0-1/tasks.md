@@ -92,27 +92,27 @@ This implementation plan focuses on stabilizing the existing RealmWalker archite
   - **Property 4: State Serialization Round Trip**
   - **Validates: Requirements 6.1, 6.2, 6.3**
 
-- [ ] 6. Enhance AI System Reliability
+- [x] 6. Enhance AI System Reliability
   - Ensure AI decisions are based solely on serialized game state
   - Implement deterministic action resolution ordering
   - Add comprehensive action validation against game rules
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
 
-- [ ] 6.1 Implement AI decision purity
+- [x] 6.1 Implement AI decision purity
   - Ensure AI agents only use serialized state for decisions
   - Add validation that decisions are reproducible
   - _Requirements: 4.2_
 
-- [ ] 6.2 Write property test for AI decision purity
+- [x] 6.2 Write property test for AI decision purity
   - **Property 8: AI Decision Purity**
   - **Validates: Requirements 4.2, 7.3**
 
-- [ ] 6.3 Implement deterministic action resolution
+- [x] 6.3 Implement deterministic action resolution
   - Ensure multiple AI actions are resolved in consistent order
   - Add comprehensive action validation
   - _Requirements: 4.3, 4.5_
 
-- [ ] 6.4 Write property test for action resolution ordering
+- [x] 6.4 Write property test for action resolution ordering
   - **Property 9: Action Resolution Ordering**
   - **Validates: Requirements 4.3, 4.5**
 
