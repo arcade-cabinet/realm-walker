@@ -98,6 +98,18 @@ export const RpgLoomSchema = z.object({
   edges: z.array(LoomEdgeSchema)
 });
 
+export const LoomSettingsSchema = z.object({
+  seed: z.string(),
+  age: z.string().default('ancient'),
+  controls: z.object({
+    worldScale: z.number().min(1).max(10).default(5),
+    minNodes: z.number().min(3).max(20).default(5),
+    dangerLevel: z.number().min(1).max(11).default(5), // Spinal Tap
+    magicLevel: z.number().min(1).max(10).default(5),
+    technologyLevel: z.number().min(1).max(10).default(1)
+  })
+});
+
 export const RealmSchema = z.object({
   age: z.object({
     id: z.string(),
@@ -105,6 +117,7 @@ export const RealmSchema = z.object({
     description: z.string(),
     theme: z.string(),
     seed: z.string().optional(), // For re-hydrating the PRNG
+    settings: LoomSettingsSchema.optional() // Persist settings used for gen
   }),
   classes: z.array(RpgClassSchema),
   items: z.array(RpgItemSchema),
@@ -119,4 +132,5 @@ export type RpgBestiary = z.infer<typeof RpgBestiarySchema>;
 export type LoomNode = z.infer<typeof LoomNodeSchema>;
 export type LoomEdge = z.infer<typeof LoomEdgeSchema>;
 export type RpgLoom = z.infer<typeof RpgLoomSchema>;
+export type LoomSettings = z.infer<typeof LoomSettingsSchema>;
 export type Realm = z.infer<typeof RealmSchema>;
