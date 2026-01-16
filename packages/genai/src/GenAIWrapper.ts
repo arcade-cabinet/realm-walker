@@ -8,7 +8,7 @@ export class GenAIWrapper {
   private genAI: GoogleGenerativeAI;
   private model: string;
 
-  constructor(apiKey: string, model: string = 'gemini-1.5-flash') {
+  constructor(apiKey: string, model: string = 'gemini-3-flash-preview') {
     this.genAI = new GoogleGenerativeAI(apiKey);
     this.model = model;
   }
@@ -22,8 +22,8 @@ export class GenAIWrapper {
       model: this.model,
       generationConfig: {
         temperature,
-        responseMimeType: "application/json",
-      },
+        ...(this.model.includes('1.5') || this.model.includes('2.0') || this.model.includes('3') ? { responseMimeType: "application/json" } : {}),
+      } as any,
     });
 
     const result = await model.generateContent(prompt);
@@ -34,9 +34,14 @@ export class GenAIWrapper {
     try {
       const json = JSON.parse(text);
       return schema.parse(json);
-    } catch (e) {
-      console.error("Failed to parse/validate Gemini response:", e);
-      console.error("Raw response:", text);
+    } catch (e: any) {
+      console.error("❌ Gemini Generation Failed:");
+      console.error("Error Message:", e?.message || String(e));
+      try {
+        console.error("Raw Response (First 500 chars):", text ? text.substring(0, 500) : "EMPTY/UNDEFINED");
+      } catch (logError) {
+        console.error("Could not log raw response.");
+      }
       throw e;
     }
   }
