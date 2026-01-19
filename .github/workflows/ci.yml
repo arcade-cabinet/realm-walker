@@ -26,8 +26,14 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Packages (topological order)
-        run: pnpm -r build
+      - name: Build Shared (tier 1)
+        run: pnpm --filter @realm-walker/shared build
+
+      - name: Build Core, Mechanics, Looms (tier 2)
+        run: pnpm --filter @realm-walker/core --filter @realm-walker/mechanics --filter @realm-walker/looms build
+
+      - name: Build AI (tier 3)
+        run: pnpm --filter @realm-walker/ai build
 
       - name: Test Core (The Gauntlet)
         run: pnpm --filter @realm-walker/core test
