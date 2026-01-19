@@ -1,4 +1,5 @@
-import { fc } from '@fast-check/vitest';
+import { test as fcTest } from '@fast-check/vitest';
+import * as fc from 'fast-check';
 import { Agent, AISystem } from '@realm-walker/ai';
 import { db, SchemaLoader } from '@realm-walker/mechanics';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -121,12 +122,11 @@ describe('Noun-Verb-Adjective Test Patterns', () => {
 
   describe('Property-Based Noun-Verb-Adjective Tests', () => {
     // Property test for the complete pattern
-    fc.it('property: noun-verb-adjective pattern maintains world consistency',
-      fc.record({
+    fcTest.prop([fc.record({
         entityCount: fc.integer({ min: 1, max: 5 }),
         initialHealth: fc.integer({ min: 20, max: 100 }),
         positionRange: fc.integer({ min: 0, max: 10 })
-      }),
+      })])('property: noun-verb-adjective pattern maintains world consistency',
       ({ entityCount, initialHealth, positionRange }) => {
         // NOUN: Generate a random but valid world state
         const entities = [];
@@ -164,18 +164,15 @@ describe('Noun-Verb-Adjective Test Patterns', () => {
         const postDecisionState = serializer.serialize(world);
         expect(postDecisionState.entities).toHaveLength(entityCount);
         expect(postDecisionState.metadata.entityCount).toBe(entityCount);
-      },
-      { numRuns: 50 }
-    );
+      }, { numRuns: 50 });
 
     // Property test for action validity
-    fc.it('property: all AI decisions are contextually valid',
-      fc.record({
+    fcTest.prop([fc.record({
         heroHealth: fc.integer({ min: 1, max: 100 }),
         enemyCount: fc.integer({ min: 0, max: 3 }),
         hasWeapon: fc.boolean(),
         hasPotion: fc.boolean()
-      }),
+      })])('property: all AI decisions are contextually valid',
       ({ heroHealth, enemyCount, hasWeapon, hasPotion }) => {
         // NOUN: Create specific scenario
         const inventory = [];
@@ -237,9 +234,7 @@ describe('Noun-Verb-Adjective Test Patterns', () => {
           const validActions = ['MOVE', 'ATTACK', 'WAIT', 'USE_ITEM', 'CONSUME', 'EQUIP_ITEM'];
           expect(validActions).toContain(action.type);
         }
-      },
-      { numRuns: 100 }
-    );
+      }, { numRuns: 100 });
   });
 
   describe('Deterministic Replay Tests', () => {

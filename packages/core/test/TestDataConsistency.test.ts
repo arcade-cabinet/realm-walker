@@ -1,4 +1,5 @@
-import { fc } from '@fast-check/vitest';
+import { test as fcTest } from '@fast-check/vitest';
+import * as fc from 'fast-check';
 import { Agent } from '@realm-walker/ai';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { GameStateSerializer, World } from '../src';
@@ -108,13 +109,12 @@ describe('Test Data Consistency', () => {
 
   describe('Property-Based Test Data Validation', () => {
     // Property test for fixture consistency
-    fc.it('property: test fixtures maintain structural consistency',
-      fc.record({
+    fcTest.prop([fc.record({
         heroHealth: fc.integer({ min: 1, max: 100 }),
         enemyHealth: fc.integer({ min: 1, max: 100 }),
         posX: fc.integer({ min: -10, max: 10 }),
         posY: fc.integer({ min: -10, max: 10 })
-      }),
+      })])('property: test fixtures maintain structural consistency',
       ({ heroHealth, enemyHealth, posX, posY }) => {
         // Create parameterized fixture
         const hero = world.create({
@@ -151,16 +151,13 @@ describe('Test Data Consistency', () => {
         expect(serializedEnemy.health.current).toBe(enemyHealth);
         expect(serializedEnemy.position.x).toBe(posX + 1);
         expect(serializedEnemy.ai.target).toBe(hero.id);
-      },
-      { numRuns: 50 }
-    );
+      }, { numRuns: 50 });
 
     // Property test for serialization round-trip consistency
-    fc.it('property: test data survives serialization round-trips',
-      fc.record({
+    fcTest.prop([fc.record({
         entityCount: fc.integer({ min: 1, max: 5 }),
         healthRange: fc.integer({ min: 10, max: 100 })
-      }),
+      })])('property: test data survives serialization round-trips',
       ({ entityCount, healthRange }) => {
         // Create entities with random but valid data
         const originalEntities = [];
@@ -194,9 +191,7 @@ describe('Test Data Consistency', () => {
           expect(roundTrip.health).toEqual(original.health);
           expect(roundTrip.stats).toEqual(original.stats);
         }
-      },
-      { numRuns: 30 }
-    );
+      }, { numRuns: 30 });
   });
 
   describe('Test Environment Isolation', () => {

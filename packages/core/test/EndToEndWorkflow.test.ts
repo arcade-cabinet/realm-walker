@@ -1,4 +1,5 @@
-import { fc } from '@fast-check/vitest';
+import { test as fcTest } from '@fast-check/vitest';
+import * as fc from 'fast-check';
 import { Agent, AISystem } from '@realm-walker/ai';
 import { db, SchemaLoader } from '@realm-walker/mechanics';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -253,13 +254,12 @@ describe('End-to-End Workflow', () => {
 
   describe('Property-Based End-to-End Testing', () => {
     // Property test for complete workflow consistency
-    fc.it('property: end-to-end workflow maintains system invariants',
-      fc.record({
+    fcTest.prop([fc.record({
         heroCount: fc.integer({ min: 1, max: 3 }),
         enemyCount: fc.integer({ min: 1, max: 4 }),
         simulationSteps: fc.integer({ min: 3, max: 12 }),
         initialHealth: fc.integer({ min: 50, max: 150 })
-      }),
+      })])('property: end-to-end workflow maintains system invariants',
       ({ heroCount, enemyCount, simulationSteps, initialHealth }) => {
         // Setup phase
         const heroes = [];
@@ -336,17 +336,14 @@ describe('End-to-End Workflow', () => {
         const finalState = serializer.serialize(world);
         expect(finalState.entities.length).toBeGreaterThan(0);
         expect(finalState.entities.length).toBeLessThanOrEqual(initialEntityCount);
-      },
-      { numRuns: 30 }
-    );
+      }, { numRuns: 30 });
 
     // Property test for serialization consistency throughout workflow
-    fc.it('property: serialization remains consistent throughout complete workflow',
-      fc.record({
+    fcTest.prop([fc.record({
         entityCount: fc.integer({ min: 2, max: 6 }),
         checkpointInterval: fc.integer({ min: 1, max: 3 }),
         totalSteps: fc.integer({ min: 5, max: 15 })
-      }),
+      })])('property: serialization remains consistent throughout complete workflow',
       ({ entityCount, checkpointInterval, totalSteps }) => {
         // Create entities
         for (let i = 0; i < entityCount; i++) {
@@ -405,9 +402,7 @@ describe('End-to-End Workflow', () => {
           // Seed should remain consistent
           expect(curr.seed).toBe(prev.seed);
         }
-      },
-      { numRuns: 25 }
-    );
+      }, { numRuns: 25 });
   });
 
   describe('Integration Failure Recovery', () => {

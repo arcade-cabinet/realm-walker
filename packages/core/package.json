@@ -20,6 +20,7 @@
     "@realm-walker/ai": "workspace:^",
     "@realm-walker/mechanics": "workspace:*",
     "@types/node": "^25.0.6",
+    "fast-check": "^4.5.3",
     "vitest": "^1.2.2"
   }
 }

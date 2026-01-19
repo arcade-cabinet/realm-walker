@@ -1,4 +1,5 @@
-import { fc } from '@fast-check/vitest';
+import { test as fcTest } from '@fast-check/vitest';
+import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import * as CorePackage from '../src';
 
@@ -163,12 +164,11 @@ describe('Package Architecture Validation', () => {
 
   describe('Property-Based Architecture Tests', () => {
     // Property test for package interface stability
-    fc.it('property: core package maintains interface stability across different usage patterns',
-      fc.record({
+    fcTest.prop([fc.record({
         worldSeed: fc.string({ minLength: 1, maxLength: 20 }),
         entityCount: fc.integer({ min: 0, max: 10 }),
         componentVariations: fc.integer({ min: 1, max: 5 })
-      }),
+      })])('property: core package maintains interface stability across different usage patterns',
       ({ worldSeed, entityCount, componentVariations }) => {
         // Test world creation with various seeds
         const world = new CorePackage.World(worldSeed);
@@ -217,16 +217,13 @@ describe('Package Architecture Validation', () => {
             expect(entity.testId).toBe(index);
           });
         }
-      },
-      { numRuns: 50 }
-    );
+      }, { numRuns: 50 });
 
     // Property test for system integration
-    fc.it('property: core systems integrate correctly regardless of configuration',
-      fc.record({
+    fcTest.prop([fc.record({
         systemCount: fc.integer({ min: 1, max: 5 }),
         entityCount: fc.integer({ min: 1, max: 8 })
-      }),
+      })])('property: core systems integrate correctly regardless of configuration',
       ({ systemCount, entityCount }) => {
         const world = new CorePackage.World('integration-test');
         const loop = new CorePackage.Loop();
@@ -265,9 +262,7 @@ describe('Package Architecture Validation', () => {
           expect(entity.integrationTest).toBe(true);
           expect(entity.position).toBeDefined();
         });
-      },
-      { numRuns: 30 }
-    );
+      }, { numRuns: 30 });
   });
 
   describe('Performance and Resource Management', () => {

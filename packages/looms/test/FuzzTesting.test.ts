@@ -1,4 +1,5 @@
-import { fc } from '@fast-check/vitest';
+import { test as fcTest } from '@fast-check/vitest';
+import * as fc from 'fast-check';
 import { Agent, AISystem } from '@realm-walker/ai';
 import { World } from '@realm-walker/core';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -77,15 +78,14 @@ describe('Loom Framework Fuzz Testing', () => {
     });
 
     // Property-based fuzz test for Loom input validation
-    fc.it('property: Loom framework handles arbitrary input parameters gracefully',
-      fc.record({
+    fcTest.prop([fc.record({
         worldScale: fc.integer({ min: 1, max: 10 }),
         minNodes: fc.integer({ min: 1, max: 8 }),
         dangerLevel: fc.integer({ min: 1, max: 11 }),
         magicLevel: fc.integer({ min: 1, max: 10 }),
         technologyLevel: fc.integer({ min: 1, max: 10 }),
         seedLength: fc.integer({ min: 3, max: 20 })
-      }),
+      })])('property: Loom framework handles arbitrary input parameters gracefully',
       ({ worldScale, minNodes, dangerLevel, magicLevel, technologyLevel, seedLength }) => {
         // Generate random seed
         const seed = 'fuzz-' + Math.random().toString(36).substring(2, 2 + seedLength);
@@ -112,9 +112,7 @@ describe('Loom Framework Fuzz Testing', () => {
         expect(tapestry.settings.controls.dangerLevel).toBe(dangerLevel);
         expect(tapestry.settings.controls.magicLevel).toBe(magicLevel);
         expect(tapestry.settings.controls.technologyLevel).toBe(technologyLevel);
-      },
-      { numRuns: 50 }
-    );
+      }, { numRuns: 50 });
   });
 
   describe('AI Driver Integration Fuzz Testing', () => {
@@ -156,12 +154,11 @@ describe('Loom Framework Fuzz Testing', () => {
     });
 
     // Property-based fuzz test for AI-Loom interaction
-    fc.it('property: AI driver produces valid decisions for any generated world state',
-      fc.record({
+    fcTest.prop([fc.record({
         entityCount: fc.integer({ min: 1, max: 4 }),
         worldSize: fc.integer({ min: 5, max: 15 }),
         simulationSteps: fc.integer({ min: 1, max: 10 })
-      }),
+      })])('property: AI driver produces valid decisions for any generated world state',
       ({ entityCount, worldSize, simulationSteps }) => {
         // Generate random world configuration
         const entities = [];
@@ -202,9 +199,7 @@ describe('Loom Framework Fuzz Testing', () => {
             expect(entity.position.y).toBeGreaterThanOrEqual(0);
           });
         }
-      },
-      { numRuns: 25 }
-    );
+      }, { numRuns: 25 });
   });
 
   describe('Stress Testing with Random Scenarios', () => {
@@ -242,12 +237,11 @@ describe('Loom Framework Fuzz Testing', () => {
     });
 
     // Property-based stress test
-    fc.it('property: system remains stable under random entity modifications',
-      fc.record({
+    fcTest.prop([fc.record({
         initialEntities: fc.integer({ min: 2, max: 5 }),
         modifications: fc.integer({ min: 5, max: 15 }),
         maxHealth: fc.integer({ min: 50, max: 150 })
-      }),
+      })])('property: system remains stable under random entity modifications',
       ({ initialEntities, modifications, maxHealth }) => {
         // Create initial entities
         for (let i = 0; i < initialEntities; i++) {
@@ -297,9 +291,7 @@ describe('Loom Framework Fuzz Testing', () => {
             expect(entity.stats.int).toBeGreaterThan(0);
           });
         }
-      },
-      { numRuns: 20 }
-    );
+      }, { numRuns: 20 });
   });
 
   describe('Edge Case Discovery', () => {

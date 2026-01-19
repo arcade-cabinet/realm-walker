@@ -171,6 +171,9 @@ importers:
       '@types/node':
         specifier: ^25.0.6
         version: 25.0.6
+      fast-check:
+        specifier: ^4.5.3
+        version: 4.5.3
       vitest:
         specifier: ^1.2.2
         version: 1.6.1(@types/node@25.0.6)(sass@1.97.2)(terser@5.44.1)
@@ -196,6 +199,9 @@ importers:
       '@fast-check/vitest':
         specifier: ^0.2.4
         version: 0.2.4(vitest@1.6.1(@types/node@25.0.6)(sass@1.97.2)(terser@5.44.1))
+      fast-check:
+        specifier: ^4.5.3
+        version: 4.5.3
       typescript:
         specifier: ^5.2.2
         version: 5.9.3
