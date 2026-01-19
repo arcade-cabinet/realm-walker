@@ -1,0 +1,26 @@
+{
+  "name": "@realm-walker/cli",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "lint": "biome check .",
+    "generate-realm": "tsx src/index.ts",
+    "test": "vitest",
+    "test:headless": "tsx test/headless-runner.ts"
+  },
+  "dependencies": {
+    "@realm-walker/ai": "workspace:*",
+    "@realm-walker/core": "workspace:*",
+    "@realm-walker/looms": "workspace:*",
+    "@realm-walker/mechanics": "workspace:*",
+    "@realm-walker/shared": "workspace:*",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@fast-check/vitest": "^0.2.4",
+    "vite-tsconfig-paths": "^6.0.4"
+  }
+}

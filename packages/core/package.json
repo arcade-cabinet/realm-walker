@@ -1,0 +1,26 @@
+{
+  "name": "@realm-walker/core",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@realm-walker/shared": "workspace:*",
+    "miniplex": "^2.0.0",
+    "miniplex-react": "^2.0.0",
+    "three": "^0.182.0",
+    "yuka": "^0.7.4"
+  },
+  "devDependencies": {
+    "@fast-check/vitest": "^0.2.4",
+    "@realm-walker/ai": "workspace:^",
+    "@realm-walker/mechanics": "workspace:*",
+    "@types/node": "^25.0.6",
+    "fast-check": "^4.5.3",
+    "vitest": "^1.2.2"
+  }
+}

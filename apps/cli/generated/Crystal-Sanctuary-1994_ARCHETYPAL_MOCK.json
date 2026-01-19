@@ -1,0 +1,286 @@
+{
+  "settings": {
+    "seed": "Crystal-Sanctuary-1994",
+    "age": "The Age of Espers",
+    "controls": {
+      "worldScale": 6,
+      "minNodes": 5,
+      "dangerLevel": 7,
+      "magicLevel": 8,
+      "technologyLevel": 3
+    },
+    "preferences": {
+      "factions": true,
+      "items": true,
+      "bestiary": true,
+      "hero": true,
+      "quests": true,
+      "biases": {
+        "questFocus": "balanced",
+        "combatDifficulty": "balanced"
+      }
+    }
+  },
+  "world": {
+    "nodes": [
+      {
+        "id": "start",
+        "name": "Origin Town",
+        "description": "A peaceful starting town",
+        "type": "start",
+        "biome": "grassland",
+        "dangerLevel": 1
+      },
+      {
+        "id": "dungeon1",
+        "name": "Crystal Cave",
+        "description": "A mysterious cave filled with crystals",
+        "type": "dungeon",
+        "biome": "cave",
+        "dangerLevel": 5
+      },
+      {
+        "id": "end",
+        "name": "Final Tower",
+        "description": "The towering fortress of the final boss",
+        "type": "end",
+        "biome": "magical",
+        "dangerLevel": 10
+      }
+    ],
+    "edges": [
+      {
+        "from": "start",
+        "to": "dungeon1",
+        "type": "road",
+        "travelTime": 2
+      },
+      {
+        "from": "dungeon1",
+        "to": "end",
+        "type": "portal",
+        "travelTime": 1
+      }
+    ]
+  },
+  "factions": [
+    {
+      "id": "empire",
+      "name": "Gestahl Empire",
+      "description": "A tyrannical empire seeking world domination",
+      "archetype": "empire",
+      "motto": "Order through power",
+      "homeNodeId": "end",
+      "allies": [],
+      "enemies": [
+        "returners"
+      ],
+      "colors": [
+        "purple",
+        "black"
+      ]
+    },
+    {
+      "id": "returners",
+      "name": "Returners",
+      "description": "A rebel group fighting against the empire",
+      "archetype": "rebellion",
+      "motto": "Freedom for all",
+      "homeNodeId": "start",
+      "allies": [],
+      "enemies": [
+        "empire"
+      ],
+      "colors": [
+        "blue",
+        "white"
+      ]
+    }
+  ],
+  "classes": [
+    {
+      "id": "warrior",
+      "name": "Warrior",
+      "description": "A strong melee fighter",
+      "visuals": {
+        "spriteId": "warrior",
+        "scale": 1,
+        "billboard": true
+      },
+      "stats": {
+        "str": 8,
+        "agi": 5,
+        "int": 3,
+        "hp": 100,
+        "sp": 20
+      },
+      "skillsToLearn": []
+    },
+    {
+      "id": "mage",
+      "name": "Mage",
+      "description": "A master of magical arts",
+      "visuals": {
+        "spriteId": "mage",
+        "scale": 1,
+        "billboard": true
+      },
+      "stats": {
+        "str": 3,
+        "agi": 6,
+        "int": 9,
+        "hp": 60,
+        "sp": 80
+      },
+      "skillsToLearn": []
+    }
+  ],
+  "magicSystem": {
+    "id": "esper_system",
+    "name": "Esper Magicite System",
+    "description": "A magic system based on summoned beings called Espers",
+    "systemType": "esper_magicite",
+    "resourceType": "mp",
+    "learningMechanism": "ap_accumulation",
+    "espers": [
+      {
+        "id": "ifrit",
+        "name": "Ifrit",
+        "element": "fire",
+        "spells": [
+          {
+            "name": "Fire",
+            "learningRate": 10,
+            "mpCost": 4,
+            "power": 25
+          },
+          {
+            "name": "Fira",
+            "learningRate": 5,
+            "mpCost": 12,
+            "power": 60
+          }
+        ],
+        "summonPower": 80
+      }
+    ],
+    "statBonuses": true,
+    "summonPower": true
+  },
+  "atbCombat": {
+    "id": "atb_system",
+    "name": "Active Time Battle",
+    "description": "Real-time combat system with charging ATB bars",
+    "systemType": "active_time_battle",
+    "timingMechanism": "speed_based_charging",
+    "speedBasedTiming": true,
+    "actionModes": [
+      "active",
+      "wait"
+    ],
+    "castingTimes": true,
+    "interruptible": true,
+    "ringMenuInterface": false,
+    "realtimeCombat": true,
+    "chargeMechanics": true,
+    "cooperativePlay": false,
+    "weaponSkillProgression": false,
+    "castingInterruption": false
+  },
+  "dualTechs": [
+    {
+      "id": "x_strike",
+      "name": "X-Strike",
+      "description": "Two warriors cross their swords in a devastating attack",
+      "participantCount": 2,
+      "techType": "dual",
+      "requiredCharacters": [
+        "warrior",
+        "warrior"
+      ],
+      "positioningEffects": [
+        "line"
+      ],
+      "powerLevel": "high",
+      "resourceCost": "medium",
+      "mpCost": 8,
+      "damage": 150,
+      "effects": [
+        "physical_damage",
+        "armor_pierce"
+      ]
+    }
+  ],
+  "statusEffects": [
+    {
+      "id": "poison",
+      "name": "Poison",
+      "description": "A toxic condition that causes damage over time",
+      "category": "negative",
+      "duration": "battle_persistent",
+      "stackable": false,
+      "visualIndicator": "purple_bubbles",
+      "effects": [
+        {
+          "type": "damage_over_time",
+          "value": 5,
+          "description": "Loses 5 HP per turn"
+        }
+      ],
+      "cureConditions": [
+        "antidote",
+        "esuna",
+        "battle_end"
+      ]
+    }
+  ],
+  "elementalSystem": {
+    "id": "classic_elements",
+    "name": "Classic Elemental Wheel",
+    "description": "Traditional elemental system with weaknesses and strengths",
+    "elements": [
+      {
+        "id": "fire",
+        "name": "Fire",
+        "color": "#FF4444",
+        "weakTo": [
+          "ice"
+        ],
+        "strongAgainst": [
+          "ice"
+        ]
+      },
+      {
+        "id": "ice",
+        "name": "Ice",
+        "color": "#4444FF",
+        "weakTo": [
+          "fire"
+        ],
+        "strongAgainst": [
+          "fire"
+        ]
+      },
+      {
+        "id": "lightning",
+        "name": "Lightning",
+        "color": "#FFFF44",
+        "weakTo": [
+          "earth"
+        ],
+        "strongAgainst": [
+          "water"
+        ]
+      }
+    ],
+    "coreElements": [
+      "fire",
+      "ice",
+      "lightning"
+    ],
+    "weaknessChains": true,
+    "absorptionPossible": true,
+    "environmentalInteractions": true,
+    "equipmentAffinities": true
+  }
+}

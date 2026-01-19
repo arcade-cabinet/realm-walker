@@ -1,0 +1,21 @@
+{
+    "name": "@realm-walker/ai",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "build": "tsup src/index.ts --format esm,cjs --dts",
+        "test": "vitest"
+    },
+    "dependencies": {
+        "@realm-walker/core": "workspace:*",
+        "@realm-walker/shared": "workspace:*",
+        "yuka": "^0.7.4"
+    },
+    "devDependencies": {
+        "@types/yuka": "^0.7.4",
+        "fast-check": "^4.5.3",
+        "vitest": "^4.0.17"
+    }
+}

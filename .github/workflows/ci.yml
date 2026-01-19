@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main, release/*]
+  pull_request:
+    branches: [main, release/*]
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+          
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Shared (tier 1)
+        run: pnpm --filter @realm-walker/shared build
+
+      - name: Build Core, Mechanics, Looms (tier 2)
+        run: pnpm --filter @realm-walker/core --filter @realm-walker/mechanics --filter @realm-walker/looms build
+
+      - name: Build AI (tier 3)
+        run: pnpm --filter @realm-walker/ai build
+
+      - name: Test Core (The Gauntlet)
+        run: pnpm --filter @realm-walker/core test
+
+      - name: Upload Mechanics Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mechanics-dist
+          path: packages/mechanics/dist
