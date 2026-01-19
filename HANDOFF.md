@@ -1,96 +1,178 @@
-# 🌍 THE GRAND WEAVE: TOTAL HANDOFF (v0.2.0)
+# THE GRAND WEAVE: HANDOFF (v1.0 Mobile-First)
 
 > "Every scrap of lore, every line of logic, every ghost in the machine."
 
-## � The Meta-Mission
-We are building **RealmWalker**, a procedurally generated, engine-first RPG. We prove playability mathematically (Headless) before rendering any visuals.
+## The Meta-Mission
+
+We are building **RealmWalker**, a procedurally generated, engine-first RPG. We prove playability mathematically (Headless) before rendering any visuals. **v1.0 targets mobile-first deployment** using React Native + Babylon.js (Reactylon).
 
 ---
 
-## 🏗 CURRENT PROJECT STATUS: "CONSENSUS REACHED"
-We have successfully migrated from the fragmented `genai` prototype to the unified `@realm-walker/looms` framework.
+## CURRENT PROJECT STATUS: "v1.0 TRIAGE COMPLETE"
 
-### 📍 Key Locations
-- **Core Engine**: [packages/core](file:///Users/jbogaty/src/arcade-cabinet/realm-walker/packages/core) (Miniplex ECS, deteministic loop)
-- **AI Reflexes**: [packages/ai](file:///Users/jbogaty/src/arcade-cabinet/realm-walker/packages/ai) (Yuka agents, FSMs)
-- **The Weaving Framework**: [packages/looms](file:///Users/jbogaty/src/arcade-cabinet/realm-walker/packages/looms) (Tapestry/Shuttle API)
-- **Shared Schemas**: [packages/shared](file:///Users/jbogaty/src/arcade-cabinet/realm-walker/packages/shared) (The Zod Source of Truth)
-- **CLI/QA Driver**: [apps/cli](file:///Users/jbogaty/src/arcade-cabinet/realm-walker/apps/cli) (Headless playtesting)
-- **The Diorama**: [apps/game](file:///Users/jbogaty/src/arcade-cabinet/realm-walker/apps/game) (Visual mapping of the ECS)
+### Summary
 
----
+| Aspect | Status |
+|--------|--------|
+| Headless Core | STABLE - ECS, Looms, AI working |
+| Visual Layer | NEEDS REARCHITECTURE - move to Babylon.js Native |
+| PR #1 | OPEN - pending CodeRabbit approval, merge to main |
+| v1.0 Branch | PLANNED - release/v1.0-mobile-first |
 
-## 🧵 THE LOOM REGISTRY (Complete DDL Index)
+### Key Documents
 
-| Loom Definition | Purpose | Consumes | Produces | Priority |
-| :--- | :--- | :--- | :--- | :--- |
-| **WorldLoom** | Geographic Narrative Graph | Settings | `world` | **CRITICAL** |
-| **FactionLoom** | Socio-Political Entities | `world` | `factions` | **CRITICAL** |
-| **HistoryLoom** | Timeline & Millennial Eras | Settings | `history` | HIGH |
-| **PantheonLoom** | Deities & Divine Domains | `history` | `pantheon` | HIGH |
-| **ClassLoom** | Character Archetypes (SteamPunk themed) | Theme | `classes` | **CRITICAL** |
-| **AbilityLoom** | Combat Moves & MP/SP Costs | `classes` | `abilities` | MEDIUM |
-| **ItemLoom** | Weapons, Armor, Loot | `world`, `factions`| `items` | MEDIUM |
-| **BestiaryLoom** | Monsters & Bosses | `world` | `bestiary` | MEDIUM |
-| **DungeonLoom** | Room Layouts & Boss Placement | `world`, `bestiary`| `dungeons` | MEDIUM |
-| **ShopLoom** | Economy & Merchant Personality | `world`, `items` | `shops` | LOW |
-| **QuestLoom** | Narrative Objectives (Kill/Fetch/Explore) | ALL | `quests` | HIGH |
-| **NpcLoom** | Notable NPCs & Elite Bosses | `dungeons`, `world`| `npcs` | MEDIUM |
-| **DialogueLoom** | Greetings, Rumors, Barks | `npcs`, `world` | `dialogue` | LOW |
-| **TalentLoom** | Passive/Active skill trees | Theme | `talents` | LOW |
+- [TRIAGE_v1.0.md](./TRIAGE_v1.0.md) - Comprehensive triage and roadmap
+- [AGENTS.md](./AGENTS.md) - The Agentic Bible (updated for v1.0)
+- [.kiro/specs/realm-walker-v0-1/](..kiro/specs/realm-walker-v0-1/) - v0.1 spec (mostly complete)
 
 ---
 
-## 🏗 ARCHITECTURAL PILLARS
+## KEY LOCATIONS
 
-### 1. The Headless First Mandate ([AGENTS.md](file:///Users/jbogaty/src/arcade-cabinet/realm-walker/docs/AGENTS.md))
-- **Logic must be blind.** The engine should be provable in a text-only environment.
-- **Verification is Empirical.** Use the `apps/cli` simulate command.
-
-### 2. The Universal Loom DDL ([GEMINI.md](file:///Users/jbogaty/src/arcade-cabinet/realm-walker/docs/GEMINI.md))
-- We do not write concept-specific code; we write definitions in [definitions.ts](file:///Users/jbogaty/src/arcade-cabinet/realm-walker/packages/looms/src/definitions.ts).
-- Every Loom is wrapped in a `Shuttle` job for dependency-aware orchestration.
-
-### 3. Resilience & Retries
-- `GeminiAdapter` handles exponential backoff for 429s and schema-strict validation for **Gemini 2.0 Flash**.
-
----
-
-## 🧬 THE "SCRAPS" (Missing / Unaccounted Work)
-
-> [!CAUTION]
-> **UNMERGED/GHOST CONTENT**
-> Previous agent summaries mentioned **PR #7 (Stacking Zones)** and **PR #8 (Llama Visuals)**. 
-> - **Status**: These were not found in the `main` or `release/v0.1-headless-core` git history. 
-> - **Clue**: `poc.html` contains a "Handoff System" for "Next Zone". This might be the seed of the stacking zone work.
-> - **Action**: If the next task is visuals, look for the "Llama" in the procedural sprite generator logic or the textures.
+| Package | Purpose | Status |
+|---------|---------|--------|
+| `packages/core` | ECS Runtime (Miniplex) | STABLE |
+| `packages/ai` | Decision Engine (Yuka) | STABLE |
+| `packages/looms` | Tapestry/Shuttle API | STABLE |
+| `packages/shared` | Zod Schemas | STABLE |
+| `apps/cli` | Headless Playtesting | STABLE |
+| `apps/game` | Web Diorama (R3F) | DEPRECATE for v1.0 |
+| `packages/diorama` | Babylon.js Native | TO CREATE |
+| `apps/mobile` | React Native App | TO CREATE |
 
 ---
 
-## 🛠 ESSENTIAL TOOLING
+## THE LOOM REGISTRY
 
-| Command | Result |
-| :--- | :--- |
-| `pnpm build` | Full workspace re-compile. |
-| `pnpm generate-realm` | Weave a new `realm.json` in the CLI. |
-| `pnpm generate-realm simulate` | Run a 5-tick headless simulation. |
-| `pnpm --filter @realm-walker/cli test` | Run the full Weaver-to-Quest E2E proof. |
+### Core Looms (packages/looms)
+
+| Loom | Purpose | Status |
+|------|---------|--------|
+| WorldLoom | Geographic Narrative Graph | COMPLETE |
+| FactionLoom | Socio-Political Entities | COMPLETE |
+| HistoryLoom | Timeline & Eras | COMPLETE |
+| PantheonLoom | Deities & Domains | COMPLETE |
+| ClassLoom | Character Archetypes | COMPLETE |
+| AbilityLoom | Combat Moves | COMPLETE |
+| ItemLoom | Equipment & Loot | COMPLETE |
+| BestiaryLoom | Monsters & Bosses | COMPLETE |
+| DungeonLoom | Room Layouts | COMPLETE |
+| ShopLoom | Economy | COMPLETE |
+| QuestLoom | Narrative Objectives | COMPLETE |
+| NpcLoom | Notable Characters | COMPLETE |
+| DialogueLoom | Conversations | COMPLETE |
+| TalentLoom | Skill Trees | COMPLETE |
+
+### Extended Looms (feat/visual-bridge)
+
+| Loom | Purpose | Status |
+|------|---------|--------|
+| HeroLoom | 108 Stars of Destiny | COMMITTED |
+| CivilizationLoom | Cultural Patterns | COMMITTED |
 
 ---
 
-## 🌉 THE VISUAL BRIDGE (feat/visual-bridge)
-A satellite worktree exists in [.worktrees/visuals](file:///Users/jbogaty/src/arcade-cabinet/realm-walker/.worktrees/visuals). It contains:
-- `DioramaRenderer.tsx`: R3F mapping of ECS positions.
-- `SpriteGenerator.ts`: Procedural canvas textures for placeholders.
-- **Status**: Merged into `release/v0.1-headless-core` but the worktree remains as a reference.
+## v1.0 MOBILE-FIRST ARCHITECTURE
+
+### Technology Stack
+
+| Layer | v0.1 (Current) | v1.0 (Target) |
+|-------|----------------|---------------|
+| Framework | Vite + React | React Native + Expo SDK 54 |
+| 3D Engine | React Three Fiber | Babylon.js React Native |
+| Navigation | N/A | Expo Router |
+| Styling | CSS | NativeWind |
+| State | Zustand | Zustand + TanStack Query |
+| Build | pnpm | EAS Build |
+
+### Reference Projects
+
+1. **wheres-ball-though**: React Native patterns, EAS builds, CI/CD
+2. **neo-tokyo-rival-academies**: Babylon.js diorama, isometric camera, hex grids
+
+### Reactylon Benefits
+
+- Native 3D performance on iOS/Android
+- Procedural mesh generation for Loom output
+- WebXR support for future AR features
+- Shared rendering logic between mobile and web
 
 ---
 
-## 🗓 2026 ROADMAP
-1. **Decision Graph**: Multi-step AI planning via world nodes.
-2. **Combat Integration**: Wire `@realm-walker/mechanics` to the core `AISystem`.
-3. **Interior Mapping**: Move from World Graph to Room-level dioramas.
+## IMMEDIATE ACTION ITEMS
+
+### For PR #1 Merge
+
+1. Review and resolve critical CodeRabbit comments
+2. Verify all headless tests pass
+3. Get approval and merge to main
+4. Tag as v0.1.0
+
+### For v1.0 Kickoff
+
+1. Create `release/v1.0-mobile-first` branch from main (post-merge)
+2. Add React Native + Expo SDK 54 (reference wheres-ball-though)
+3. Create `packages/diorama` with Babylon.js Native renderer
+4. Create `apps/mobile` with Expo Router navigation
+5. Port hex tile system from neo-tokyo patterns
 
 ---
-*Signed, Antigravity*
-*(Finalizing after GenAI-to-Looms Migration)*
+
+## ESSENTIAL TOOLING
+
+| Command | Purpose |
+|---------|---------|
+| `pnpm build` | Full workspace compile |
+| `pnpm generate-realm` | Weave realm.json via CLI |
+| `pnpm generate-realm simulate` | Run 5-tick headless simulation |
+| `pnpm test` | Run all tests |
+
+### Future v1.0 Commands (TBD)
+
+| Command | Purpose |
+|---------|---------|
+| `just mobile-dev` | Start Metro bundler |
+| `just mobile-android` | Build and run Android |
+| `just mobile-ios` | Build and run iOS |
+| `just mobile-prebuild` | Regenerate native projects |
+
+---
+
+## OPEN ISSUES
+
+| # | Title | v1.0 Action |
+|---|-------|-------------|
+| #8 | v0.1 Headless Core | Supersede with v1.0 tracking |
+| #7 | Docstring coverage | Keep |
+| #6 | Magic numbers | Keep |
+| #5 | find-up for .env | Keep |
+| #3 | Visual Bridge | Rearchitect for mobile |
+
+---
+
+## 2026 ROADMAP
+
+### Q1 2026
+
+- [x] v0.1 Headless Core stabilization
+- [ ] Merge PR #1 to main
+- [ ] v1.0 Mobile architecture setup
+- [ ] Babylon.js Native integration
+
+### Q2 2026
+
+- [ ] Complete mobile diorama renderer
+- [ ] EAS builds for iOS/Android
+- [ ] App store submission
+
+### Beyond
+
+- [ ] Decision Graph: Multi-step AI planning
+- [ ] Combat Integration: Full mechanics system
+- [ ] Interior Mapping: Room-level dioramas
+- [ ] Multiplayer: Realm sharing
+
+---
+
+*Last Updated: 2026-01-16*
+*Next Agent: Review TRIAGE_v1.0.md for detailed roadmap*

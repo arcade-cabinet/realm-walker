@@ -26,8 +26,8 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Core & Mechanics
-        run: pnpm --filter "./packages/**" build
+      - name: Build Packages (topological order)
+        run: pnpm -r build
 
       - name: Test Core (The Gauntlet)
         run: pnpm --filter @realm-walker/core test
